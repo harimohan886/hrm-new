@@ -214,6 +214,24 @@ class Utility extends Model
         return $setting[$key];
     }
 
+    public static function getValTimings($key, $empId)
+    {   
+        // dd($empId);
+        $emp = Employee::select('shift_code')->where('id', '=', $empId)->first();
+        $shift = ManageShift::where('shift_code', '=', $emp->shift_code)->first();
+
+        if($key=="company_start_time"){
+            $key = "start_time";
+            $getShift = date('H:i', strtotime($shift->start_time));
+        }else{
+            $key = "end_time";
+            $getShift = date('H:i', strtotime($shift->end_time));
+        }
+
+       
+        return $getShift;
+    }
+
     public static function setEnvironmentValue(array $values)
     {
         $envFile = app()->environmentFilePath();
@@ -1071,6 +1089,7 @@ class Utility extends Model
             }
             if (!empty($curr_noti_tempLang) && !empty($curr_noti_tempLang->content)) {
                 $msg = self::replaceVariable($curr_noti_tempLang->content, $obj);
+                // $msg = "hii gaurav sharma";
             }
         }
         if (isset($msg)) {

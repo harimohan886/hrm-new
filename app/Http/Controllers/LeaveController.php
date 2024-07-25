@@ -23,9 +23,9 @@ class LeaveController extends Controller
             if (\Auth::user()->type == 'employee') {
                 $user     = \Auth::user();
                 $employee = Employee::where('user_id', '=', $user->id)->first();
-                $leaves   = LocalLeave::where('employee_id', '=', $employee->id)->get();
+                $leaves   = LocalLeave::where('employee_id', '=', $employee->id)->where('leave_type_id','!=',4)->get();
             } else {
-                $leaves = LocalLeave::where('created_by', '=', \Auth::user()->creatorId())->with(['employees', 'leaveType'])->get();
+                $leaves = LocalLeave::where('created_by', '=', \Auth::user()->creatorId())->where('leave_type_id','!=',4)->with(['employees', 'leaveType'])->get();
             }
 
             return view('leave.index', compact('leaves'));
@@ -35,14 +35,14 @@ class LeaveController extends Controller
     }
 
     public function create()
-    {
+    {   
         if (\Auth::user()->can('Create Leave')) {
             if (Auth::user()->type == 'employee') {
                 $employees = Employee::where('user_id', '=', \Auth::user()->id)->first();
             } else {
                 $employees = Employee::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id');
             }
-            $leavetypes      = LeaveType::where('created_by', '=', \Auth::user()->creatorId())->get();
+            $leavetypes      = LeaveType::where('created_by', '=', \Auth::user()->creatorId())->where('id','!=','4')->get();
             $leavetypes_days = LeaveType::where('created_by', '=', \Auth::user()->creatorId())->get();
 
             return view('leave.create', compact('employees', 'leavetypes', 'leavetypes_days'));
@@ -52,7 +52,7 @@ class LeaveController extends Controller
     }
 
     public function store(Request $request)
-    {
+    { 
         if (\Auth::user()->can('Create Leave')) {
             $validator = \Validator::make(
                 $request->all(),
@@ -161,7 +161,7 @@ class LeaveController extends Controller
 
                 // $employees  = Employee::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id');
                 // $leavetypes = LeaveType::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('title', 'id');
-                $leavetypes      = LeaveType::where('created_by', '=', \Auth::user()->creatorId())->get();
+                $leavetypes      = LeaveType::where('created_by', '=', \Auth::user()->creatorId())->where('id','!=',4)->get();
 
                 return view('leave.edit', compact('leave', 'employees', 'leavetypes'));
             } else {
@@ -174,7 +174,7 @@ class LeaveController extends Controller
 
     public function update(Request $request, $leave)
     {
-
+        
         $leave = LocalLeave::find($leave);
         if (\Auth::user()->can('Edit Leave')) {
             if ($leave->created_by == Auth::user()->creatorId()) {
@@ -270,7 +270,7 @@ class LeaveController extends Controller
     }
 
     public function action($id)
-    {
+    {   
         $leave     = LocalLeave::find($id);
         $employee  = Employee::find($leave->employee_id);
         $leavetype = LeaveType::find($leave->leave_type_id);
@@ -334,7 +334,7 @@ class LeaveController extends Controller
             ->leftjoin(
                 'leaves',
                 function ($join) use ($request, $date) {
-                    $join->on('leaves.leave_type_id', '=', 'leave_types.id');
+                    $join->on('leaves.leave_type_id', '=', 'leave_types.id')->where('id','!=',"4");
                     $join->where('leaves.employee_id', '=', $request->employee_id);
                     $join->where('leaves.status', '=', 'Approved');
                     $join->whereBetween('leaves.created_at', [$date['start_date'],$date['end_date']]);

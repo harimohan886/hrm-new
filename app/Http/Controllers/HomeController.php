@@ -6,6 +6,8 @@ use App\Models\AccountList;
 use App\Models\Announcement;
 use App\Models\AttendanceEmployee;
 use App\Models\Employee;
+use App\Models\ManageWeekOff;
+use App\Models\Leave;
 use App\Models\Event;
 use App\Models\LandingPageSection;
 use App\Models\Meeting;
@@ -43,18 +45,31 @@ class HomeController extends Controller
 
                 $emp = Employee::where('user_id', '=', $user->id)->first();
 
-                $announcements = Announcement::orderBy('announcements.id', 'desc')->take(5)->leftjoin('announcement_employees', 'announcements.id', '=', 'announcement_employees.announcement_id')->where('announcement_employees.employee_id', '=', $emp->id)->orWhere(
+                $announcements = Announcement::orderBy('announcements.id', 'desc')->leftjoin('announcement_employees', 'announcements.id', '=', 'announcement_employees.announcement_id')->where('announcement_employees.employee_id', '=', $emp->id)->orWhere(
                     function ($q){
                         $q->where('announcements.department_id', '["0"]')->where('announcements.employee_id', '["0"]');
                     }
                 )->get();
 
                 $employees = Employee::get();
-                $meetings  = Meeting::orderBy('meetings.id', 'desc')->take(5)->leftjoin('meeting_employees', 'meetings.id', '=', 'meeting_employees.meeting_id')->where('meeting_employees.employee_id', '=', $emp->id)->orWhere(
+                $meetings  = Meeting::orderBy('meetings.id', 'desc')->leftjoin('meeting_employees', 'meetings.id', '=', 'meeting_employees.meeting_id')->where('meeting_employees.employee_id', '=', $emp->id)->orWhere(
                     function ($q){
                         $q->where('meetings.department_id', '["0"]')->where('meetings.employee_id', '["0"]'); 
                     }
                 )->get();
+
+                $weekoffs = ManageWeekOff::orderBy('id', 'desc')
+                            
+                            ->where('employee_id', '=', $user->id)
+                            ->get();
+                    // dd($user->id);
+
+                $leaves = Leave::orderBy('id', 'desc')
+                            ->where('weekoff_id',0)
+                            ->where('employee_id', '=', $emp->id)
+                            ->get();
+                // dd($leaves);
+
 
                 $events    = Event::select('events.*','events.id as event_id_pk','event_employees.*')
                 ->leftjoin('event_employees', 'events.id', '=', 'event_employees.event_id')
@@ -85,10 +100,13 @@ class HomeController extends Controller
                 $time               = date("H:i:s");
                 $employeeAttendance = AttendanceEmployee::orderBy('id', 'desc')->where('employee_id', '=', !empty(\Auth::user()->employee) ? \Auth::user()->employee->id : 0)->where('date', '=', $date)->first();
 
-                $officeTime['startTime'] = Utility::getValByName('company_start_time');
-                $officeTime['endTime']   = Utility::getValByName('company_end_time');
+                $officeTime['startTime'] = Utility::getValTimings('company_start_time',\Auth::user()->employee->id);
+                $officeTime['endTime']   = Utility::getValTimings('company_end_time',\Auth::user()->employee->id);
 
-                return view('dashboard.dashboard', compact('arrEvents', 'announcements', 'employees', 'meetings', 'employeeAttendance', 'officeTime'));
+                // If employee then pass 1 otherwise 0
+                $showName = 1;
+
+                return view('dashboard.dashboard', compact('user','emp','arrEvents', 'announcements', 'employees', 'meetings', 'employeeAttendance', 'officeTime','weekoffs','leaves','showName'));
             }
             else
             {
@@ -110,7 +128,7 @@ class HomeController extends Controller
                     $arrEvents[] = $arr;
                 }
 
-                $announcements = Announcement::orderBy('announcements.id', 'desc')->take(5)->where('created_by', '=', \Auth::user()->creatorId())->get();
+                $announcements = Announcement::orderBy('announcements.id', 'desc')->where('created_by', '=', \Auth::user()->creatorId())->get();
 
                 $emp           = User::where('type', '=', 'employee')->where('created_by', '=', \Auth::user()->creatorId())->get();
                 $countEmployee = count($emp);
@@ -136,9 +154,14 @@ class HomeController extends Controller
                 $totalPayee = Payees::where('created_by', '=', \Auth::user()->creatorId())->count();
                 $totalPayer = Payer::where('created_by', '=', \Auth::user()->creatorId())->count();
 
-                $meetings = Meeting::where('created_by', '=', \Auth::user()->creatorId())->limit(5)->get();
+                $meetings = Meeting::where('created_by', '=', \Auth::user()->creatorId())->get();
 
-                return view('dashboard.dashboard', compact('arrEvents', 'announcements', 'activeJob','inActiveJOb','meetings', 'countEmployee', 'countUser', 'countTicket', 'countOpenTicket', 'countCloseTicket', 'notClockIns', 'countEmployee', 'accountBalance', 'totalPayee', 'totalPayer'));
+                $weekoffs = ManageWeekOff::get();
+                $leaves = Leave::where('weekoff_id',0)->get();
+
+                $showName = 0;
+                    // dd($weekoffs);
+                return view('dashboard.dashboard', compact('user','emp','arrEvents', 'announcements', 'activeJob','inActiveJOb','meetings', 'countEmployee', 'countUser', 'countTicket', 'countOpenTicket', 'countCloseTicket', 'notClockIns', 'countEmployee', 'accountBalance', 'totalPayee', 'totalPayer','weekoffs','leaves','showName'));
             }
         }
         else

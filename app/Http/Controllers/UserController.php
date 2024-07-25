@@ -329,4 +329,11 @@ class UserController extends Controller
 
         return response()->json(['is_success' => true], 200);
     }
+
+    public function syncData()
+    {
+        // $output = shell_exec('python3 /var/www/html/hrm_script.py');
+                
+        return redirect()->back()->with('success', 'Data synced successfully.');
+    }
 }

@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\Designation;
 use App\Models\Document;
 use App\Models\Employee;
+use App\Models\ManageShift;
 use App\Models\EmployeeDocument;
 use App\Mail\UserCreate;
 use App\Models\User;
@@ -40,7 +41,7 @@ class EmployeeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    {  
 
         if (\Auth::user()->can('Manage Employee')) {
             if (Auth::user()->type == 'employee') {
@@ -68,7 +69,9 @@ class EmployeeController extends Controller
 
             $employeesId      = \Auth::user()->employeeIdFormat($this->employeeNumber());
 
-            return view('employee.create', compact('employees', 'employeesId', 'departments', 'designations', 'documents', 'branches', 'company_settings'));
+            $manageShift = ManageShift::pluck('shift_name', 'shift_code');
+            
+            return view('employee.create', compact('employees', 'employeesId', 'departments', 'designations', 'documents', 'branches', 'company_settings','manageShift'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -90,6 +93,10 @@ class EmployeeController extends Controller
                 'department_id' => 'required',
                 'designation_id' => 'required',
                 'document.*' => 'required',
+                'shift_code' => 'required',
+                'enable_ot' => 'required',
+                'enable_weekoff' => 'required',
+                'enable_letter' => 'required',
             ];
             $rules['biometric_emp_id'] = [
                 'required',
@@ -168,7 +175,10 @@ class EmployeeController extends Controller
                     'branch_id' => $request['branch_id'],
                     'department_id' => $request['department_id'],
                     'designation_id' => $request['designation_id'],
-                    'company_doj' => $request['company_doj'],
+                    'shift_code' => $request['shift_code'],
+                    'enable_ot' => $request['enable_ot'],
+                    'enable_weekoff' => $request['enable_weekoff'],
+                    'enable_letter' => $request['enable_letter'],
                     'documents' => $document_implode,
                     'account_holder_name' => $request['account_holder_name'],
                     'account_number' => $request['account_number'],
@@ -247,8 +257,13 @@ class EmployeeController extends Controller
             $designations = Designation::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
             $employee     = Employee::find($id);
             $employeesId  = \Auth::user()->employeeIdFormat($employee->employee_id);
+            $manageShift = ManageShift::pluck('shift_name', 'shift_code');
+            $selectedShift = $employee->shift_code;
+            $selectedOvertime = $employee->enable_ot;
+            $selectedWeekoff = $employee->enable_weekoff;
+            $selectedLetter = $employee->enable_letter;
 
-            return view('employee.edit', compact('employee', 'employeesId', 'branches', 'departments', 'designations', 'documents'));
+            return view('employee.edit', compact('employee', 'employeesId', 'branches', 'departments', 'designations', 'documents','manageShift','selectedShift','selectedOvertime','selectedWeekoff','selectedLetter'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -266,6 +281,10 @@ class EmployeeController extends Controller
                 'gender' => 'required',
                 'phone' => 'required|numeric',
                 'address' => 'required',
+                'shift_code' => 'required',
+                'enable_ot' => 'required',
+                'enable_weekoff' => 'required',
+                'enable_letter' => 'required',
             ];
 
             if ($request->has('biometric_emp_id') && $employee->biometric_emp_id != $request->biometric_emp_id) {

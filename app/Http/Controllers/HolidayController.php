@@ -9,6 +9,7 @@ use App\Models\Utility;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use DateTime;
 use Spatie\GoogleCalendar\Event as GoogleEvent;
 
 class HolidayController extends Controller
@@ -62,10 +63,16 @@ class HolidayController extends Controller
                 return redirect()->back()->with('error', $messages->first());
             }
 
+            $start_date = new DateTime($request->start_date);
+            $end_date = new DateTime($request->end_date);
+            $interval = $start_date->diff($end_date);
+            $days_difference = $interval->days;
+
             $holiday             = new LocalHoliday();
             $holiday->occasion          = $request->occasion;
             $holiday->start_date        = $request->start_date;
             $holiday->end_date          = $request->end_date;
+            $holiday->total_days        = $days_difference;
             $holiday->created_by = \Auth::user()->creatorId();
             $holiday->save();
 
@@ -164,9 +171,15 @@ class HolidayController extends Controller
                 return redirect()->back()->with('error', $messages->first());
             }
 
+            $start_date = new DateTime($request->start_date);
+            $end_date = new DateTime($request->end_date);
+            $interval = $start_date->diff($end_date);
+            $days_difference = $interval->days;
+
             $holiday->occasion          = $request->occasion;
             $holiday->start_date        = $request->start_date;
             $holiday->end_date          = $request->end_date;
+            $holiday->total_days        = $days_difference;
             $holiday->save();
 
             return redirect()->route('holiday.index')->with(

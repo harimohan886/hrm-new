@@ -160,12 +160,12 @@
                                         <span class="btn-inner--icon"><i class="ti ti-trash-off text-white-off "></i></span>
                                     </a>
 
-                                    <a href="#" data-url="{{ route('attendance.file.import') }}"
+                                    <!-- <a href="#" data-url="{{ route('attendance.file.import') }}"
                                         data-ajax-popup="true" data-title="{{ __('Import  Attendance CSV File') }}"
                                         data-bs-toggle="tooltip" title="" class="btn btn-sm btn-primary"
                                         data-bs-original-title="{{ __('Import') }}">
                                         <i class="ti ti-file"></i>
-                                    </a>
+                                    </a> -->
 
                                 </div>
 
@@ -177,6 +177,91 @@
             </div>
         </div>
     </div>
+
+
+<!-- For Manually Punch form start  -->
+
+@if(\Auth::user()->type=='company' || \Auth::user()->type=='hr')
+<div class="col-sm-12">
+    <div class="mt-2" id="multiCollapseExample1">
+        <div class="card">
+            <div class="card-body">
+                <h4>Manually Employees Attendance:</h4>
+                {{ Form::open(['route' => ['manual.employees.attendance.store'], 'method' => 'post', 'id' => 'manual_employee_attendance']) }}
+                <div class="row">
+                    <div class="col-xl-10">
+                        <div class="row">
+
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <div class="form-group">
+                                {{ Form::label('user', __('Employees'), ['class' => 'form-label']) }}
+                                <div class="form-icon-user">
+                                    {{ Form::select('user_id[]', $employee_option, null, ['class' => 'form-control select2', 'id' => 'choices-multiple', 'multiple' => 'multiple', 'required' => 'required']) }}
+                                </div>
+                            </div>
+                        </div>
+
+
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                                <div class="btn-box">
+                                    {{ Form::label('from_date', 'From Date', ['class' => 'form-label']) }}
+                                    {{ Form::date('from_date', '', ['class' => 'form-control', 'placeholder' => 'From Date']) }}
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                                <div class="btn-box">
+                                    {{ Form::label('to_date', 'To Date', ['class' => 'form-label']) }}
+                                    {{ Form::date('to_date', '', ['class' => 'form-control', 'placeholder' => 'To Date']) }}
+                                </div>
+                            </div>
+
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                <div class="btn-box">
+                                    {{ Form::label('clock_in', 'Clock In', ['class' => 'form-label']) }}
+                                    {{ Form::text('clock_in', '', ['class' => 'form-control', 'placeholder' => 'HH:mm:ss']) }}
+                                </div>
+                                <span style="color:red; font-size:11px; margin-top:10px;"><b>Note:- Clock In Time Example: HH:mm:ss (00:00:00) & 24 Hours Time Format (10:00:00)</b></span>
+                            </div>
+
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                <div class="btn-box">
+                                    {{ Form::label('clock_out', 'Clock Out', ['class' => 'form-label']) }}
+                                    {{ Form::text('clock_out', '', ['class' => 'form-control', 'placeholder' => 'HH:mm:ss']) }}
+                                </div>
+                                <span style="color:red; font-size:11px; margin-top:10px;"><b>Note:- Clock Out Time Example: HH:mm:ss (00:00:00) & 24 Hours Time Format (19:00:00)</b></span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row align-items-center justify-content-end mt-3">
+                    <div class="col-auto">
+                        <div class="row">
+                            <div class="col-auto mt-4">
+                                <a href="#" class="btn btn-sm btn-primary"
+                                    onclick="document.getElementById('manual_employee_attendance').submit(); return false;"
+                                    data-bs-toggle="tooltip" title="Apply">
+                                    <span class="btn-inner--icon"><i class="ti ti-search"></i></span>
+                                </a>
+                                <a href="{{ route('attendanceemployee.index') }}" class="btn btn-sm btn-danger"
+                                    data-bs-toggle="tooltip" title="Reset">
+                                    <span class="btn-inner--icon"><i class="ti ti-trash-off text-white-off"></i></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{ Form::close() }}
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+<!-- For Manually Punch form end  -->
+
+
 
 
 
@@ -215,9 +300,27 @@
                                     </td>
                                     <td>{{ $attendance->clock_out != '00:00:00' ? \Auth::user()->timeFormat($attendance->clock_out) : '00:00' }}
                                     </td>
-                                    <td>{{ $attendance->late }}</td>
-                                    <td>{{ $attendance->early_leaving }}</td>
-                                    <td>{{ $attendance->overtime }}</td>
+                                    @if($attendance->late > '00:00:00')
+                                        <td style="color:red;"><b>{{ $attendance->late }}</b></td>
+                                    @else
+                                        <td>{{ $attendance->late }}</td>
+                                    @endif
+
+                                    @if($attendance->early_leaving > '00:00:00')
+                                        <td style="color:red;"><b>{{ $attendance->early_leaving }}</b></td>
+                                    @else
+                                        <td>{{ $attendance->early_leaving }}</td>
+                                    @endif
+
+                                    @if($attendance->employee->enable_ot=="Enabled")
+                                        @if($attendance->overtime > '00:00:00')
+                                            <td style="color:green;"><b>{{ $attendance->overtime }}</b></td>
+                                        @else
+                                            <td>{{ $attendance->overtime }}</td>
+                                        @endif 
+                                    @else
+                                        <td></td>
+                                    @endif
                                     <td class="Action">
                                         @if (Gate::check('Edit Attendance') || Gate::check('Delete Attendance'))
                                             <span>

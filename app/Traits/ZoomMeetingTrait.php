@@ -40,9 +40,13 @@ trait ZoomMeetingTrait
     }
 
     public function createmitting($data)
-    {
+    {   
+        // dd($data);
+
         $path = 'users/me/meetings';
         $url = $this->retrieveZoomUrl();
+
+        // dd($url);
 
         $body = [
             'headers' => $this->getHeader(),
@@ -61,9 +65,9 @@ trait ZoomMeetingTrait
                 ],
             ]),
         ];
-
+        // dd($body);
         $response =  $this->client->post($url . $path, $body);
-
+        // dd($response);
         return [
             'success' => $response->getStatusCode() === 201,
             'data'    => json_decode($response->getBody(), true),
@@ -170,7 +174,7 @@ trait ZoomMeetingTrait
 
             // Decode the response and retrieve the access token
             $token = json_decode($response->getBody(), true);
-
+            // dd($token);
             if (isset($token['access_token'])) {
                 return $token['access_token'];
             }

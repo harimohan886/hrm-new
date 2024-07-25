@@ -154,6 +154,31 @@
                                     {!! Form::label('company_doj', __('Company Date Of Joining'), ['class' => 'form-label']) !!}
                                     {{ Form::date('company_doj', null, ['class' => 'form-control current_date', 'required' => 'required', 'autocomplete' => 'off', 'placeholder' => 'Select Company Date Of Joining']) }}
                                 </div>
+                               {{-- Shift dropdown --}}
+                                <div class="form-group">
+                                    {!! Form::label('shift_code', __('Shift'), ['class' => 'form-label']) !!}
+                                    {!! Form::select('shift_code', $manageShift, null, ['class' => 'form-control', 'required' => 'required', 'placeholder' => 'Select Shift']) !!}
+                                </div>
+
+                                {{-- Overtime dropdown --}}
+                                <div class="form-group">
+                                    {!! Form::label('enable_ot', __('Overtime'), ['class' => 'form-label']) !!}
+                                    {!! Form::select('enable_ot', ['Enabled' => 'Enabled', 'Disabled' => 'Disabled'], null, ['class' => 'form-control', 'required' => 'required', 'placeholder' => 'Select OT']) !!}
+                                </div>
+
+                                {{-- Weekoff dropdown --}}
+                                <div class="form-group">
+                                    {!! Form::label('enable_weekoff', __('Weekoff'), ['class' => 'form-label']) !!}
+                                    {!! Form::select('enable_weekoff', ['Enabled' => 'Enabled (For Two Days)', 'Disabled' => 'Disabled (For One Day)'], null, ['class' => 'form-control', 'required' => 'required', 'placeholder' => 'Select Weekoff']) !!}
+                                </div>
+
+                                 {{-- letters (joining,exp letter) dropdown --}}
+                                 <div class="form-group">
+                                    {!! Form::label('enable_letter', __('Letter'), ['class' => 'form-label']) !!}
+                                    {!! Form::select('enable_letter', ['Enabled' => 'Enabled', 'Disabled' => 'Disabled'], null, ['class' => 'form-control', 'required' => 'required', 'placeholder' => 'Select Letters']) !!}
+                                </div>
+
+
                             </div>
                         </div>
                     </div>

@@ -20,6 +20,7 @@
     </div>
     <div class="text-end mb-3">
         <div class="d-flex justify-content-end drp-languages">
+            @if($employee->enable_letter=="Enabled")
             <ul class="list-unstyled mb-0 m-2">
                 <li class="dropdown dash-h-item drp-language">
                     <a class="dash-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
@@ -56,7 +57,8 @@
                     </div>
                 </li>
             </ul>
-            <ul class="list-unstyled mb-0 m-2">
+            @endif
+            {{-- <ul class="list-unstyled mb-0 m-2">
                 <li class="dropdown dash-h-item drp-language">
                     <a class="dash-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
                         role="button" aria-haspopup="false" aria-expanded="false">
@@ -73,7 +75,7 @@
                                 class="ti ti-download ">&nbsp;</i>{{ __('DOC') }}</a>
                     </div>
                 </li>
-            </ul>
+            </ul> --}}
         </div>
     </div>
 @endsection
@@ -135,6 +137,12 @@
                                     <div class="info text-sm">
                                         <strong class="font-bold">{{ __('Basic Salary') }} :</strong>
                                         <span>{{ $employee->salary }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info text-sm">
+                                        <strong class="font-bold">{{ __('Shift Mode') }} :</strong>
+                                        <span>{{ $employee->shift_code }}</span>
                                     </div>
                                 </div>
                             </div>

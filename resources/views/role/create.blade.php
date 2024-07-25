@@ -76,6 +76,7 @@
                                     'Announcement',
                                     'Leave Type',
                                     'Leave',
+                                    'Weekoff',
                                     'Meeting',
                                     'Ticket',
                                     'Attendance',

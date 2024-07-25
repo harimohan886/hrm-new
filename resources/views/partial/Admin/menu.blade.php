@@ -62,10 +62,10 @@
                                             data-feather="chevron-right"></i></span></a>
                                 <ul class="dash-submenu">
                                     @can('Manage Report')
-                                        <li class="dash-item">
+                                        {{-- <li class="dash-item">
                                             <a class="dash-link"
                                                 href="{{ route('report.income-expense') }}">{{ __('Income Vs Expense') }}</a>
-                                        </li>
+                                        </li> --}}
 
                                         <li class="dash-item">
                                             <a class="dash-link"
@@ -78,10 +78,10 @@
                                         </li>
 
 
-                                        <li class="dash-item">
+                                        {{-- <li class="dash-item">
                                             <a class="dash-link"
                                                 href="{{ route('report.account.statement') }}">{{ __('Account Statement') }}</a>
-                                        </li>
+                                        </li> --}}
 
 
                                         <li class="dash-item">
@@ -89,11 +89,11 @@
                                                 href="{{ route('report.payroll') }}">{{ __('Payroll') }}</a>
                                         </li>
 
-
+{{-- 
                                         <li class="dash-item">
                                             <a class="dash-link"
                                                 href="{{ route('report.timesheet') }}">{{ __('Timesheet') }}</a>
-                                        </li>
+                                        </li> --}}
                                     @endcan
 
 
@@ -144,11 +144,11 @@
                                         href="{{ route('employee.profile') }}">{{ __('Employee Profile') }}</a>
                                 </li>
                             @endcan
-                            {{-- @can('Manage Employee Last Login')
+                            @can('Manage Employee Last Login')
                                     <li class="dash-item">
                                         <a class="dash-link" href="{{ route('lastlogin') }}">{{ __('Last Login') }}</a>
                                     </li>
-                                @endcan --}}
+                                @endcan
 
                         </ul>
                     </li>
@@ -218,9 +218,9 @@
             @endif
 
             <!-- timesheet-->
-            @if (Gate::check('Manage Attendance') || Gate::check('Manage Leave') || Gate::check('Manage TimeSheet'))
-                <li class="dash-item dash-hasmenu {{ Request::segment(2) == 'leave' ? 'dash-trigger active' : '' }}">
-                    <a href="#!" class="dash-link"><span class="dash-micon"><i
+            @if (Gate::check('Manage Attendance') || Gate::check('Manage Leave') || Gate::check('Manage Weekoff') || Gate::check('Manage TimeSheet'))
+                <li class="dash-item dash-hasmenu {{ Request::segment(2) == 'leave' || Request::segment(2) == 'Weekoff' ? 'dash-trigger active' : '' }}">
+                <a href="#!" class="dash-link"><span class="dash-micon"><i
                                 class="ti ti-clock"></i></span><span
                             class="dash-mtext">{{ __('Timesheet') }}</span><span class="dash-arrow"><i
                                 data-feather="chevron-right"></i></span></a>
@@ -231,8 +231,13 @@
                             </li>
                         @endcan
                         @can('Manage Leave')
-                            <li class="dash-item {{ Request::segment(2) == 'leave' ? ' active' : '' }}">
+                            <li class="dash-item {{ Request::segment(2) == 'leave' || Request::segment(2) == 'Weekoff' ? ' active' : '' }}">
                                 <a class="dash-link" href="{{ route('leave.index') }}">{{ __('Manage Leave') }}</a>
+                            </li>
+                        @endcan
+                        @can('Manage Weekoff')
+                            <li class="dash-item {{ Request::segment(2) == 'leave' || Request::segment(2) == 'Weekoff' ? ' active' : '' }}">
+                                <a class="dash-link" href="{{ route('weekoff.index') }}">{{ __('Manage Weekoff') }}</a>
                             </li>
                         @endcan
                         @can('Manage Attendance')
@@ -297,7 +302,7 @@
             <!--performance-->
 
             <!--fianance-->
-            @if (Gate::check('Manage Account List') ||
+            {{-- @if (Gate::check('Manage Account List') ||
                     Gate::check('Manage Payee') ||
                     Gate::check('Manage Payer') ||
                     Gate::check('Manage Deposit') ||
@@ -353,7 +358,7 @@
                         @endcan
                     </ul>
                 </li>
-            @endif
+            @endif --}}
             <!-- fianance-->
 
             <!--trainning-->
@@ -398,7 +403,7 @@
                     class="dash-item dash-hasmenu {{ Request::segment(1) == 'holiday' ? 'dash-trigger active' : '' }}">
                     <a href="#!" class="dash-link"><span class="dash-micon"><i
                                 class="ti ti-user-plus"></i></span><span
-                            class="dash-mtext">{{ __('HR Admin Setup') }}</span><span class="dash-arrow"><i
+                            class="dash-mtext">{{ __('Additional Features') }}</span><span class="dash-arrow"><i
                                 data-feather="chevron-right"></i></span></a>
                     <ul class="dash-submenu">
                         <li class="dash-item {{ Request::segment(1) == 'award' ? 'active' : '' }}">
@@ -509,14 +514,14 @@
             @endif
             <!-- recruitment-->
             <!--contract-->
-            @can('Manage Contract')
+            {{-- @can('Manage Contract')
                 <li
                     class="dash-item {{ Request::route()->getName() == 'contract.index' || Request::route()->getName() == 'contract.show' ? 'active' : '' }}">
                     <a href="{{ route('contract.index') }}" class="dash-link"><span class="dash-micon"><i
                                 class="ti ti-device-floppy"></i></span><span
                             class="dash-mtext">{{ __('Contracts') }}</span></a>
                 </li>
-            @endcan
+            @endcan --}}
 
             {{-- @endcan --}}
 
@@ -616,6 +621,7 @@
                             class="dash-micon"><i class="ti ti-bell"></i></span><span
                             class="dash-mtext">{{ __('Notification Template') }}</span></a>
                 </li>
+                
             @endif
 
             @if (\Auth::user()->type == 'super admin')
@@ -862,9 +868,9 @@ href="{{ route('competencies.index') }}">{{ __('Competencies') }}</a>
             @endif
             <!--constant-->
 
-            @if (\Auth::user()->type == 'company')
+            {{-- @if (\Auth::user()->type == 'company')
                 @include('landingpage::menu.landingpage')
-            @endif
+            @endif --}}
 
             @if (Gate::check('Manage Company Settings') || Gate::check('Manage System Settings'))
                 <li class="dash-item ">

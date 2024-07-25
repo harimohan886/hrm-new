@@ -101,6 +101,15 @@
                                                             </form>
                                                         </div>
                                                     @endcan
+
+                                                    
+                                                    <div class="action-btn bg-success ms-2">
+                                                        <a href="{{ route('employee.idcard', $employee->id) }}" class="mx-3 btn btn-sm align-items-center" target="blank">
+                                                            <i class="ti ti-download text-white"></i>
+                                                        </a>
+                                                    </div>                                                    
+                                                    
+
                                                 </span>
                                             @else
                                                 <i class="ti ti-lock"></i>

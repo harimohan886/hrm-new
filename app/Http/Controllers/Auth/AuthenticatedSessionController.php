@@ -13,6 +13,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
+use App\Models\IpRestrict;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -54,6 +55,16 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request)
     {
         $settings = Utility::settings();
+
+        // if (!empty($settings['ip_restrict']) && $settings['ip_restrict'] == 'on') {
+        //     $userIp = request()->ip();
+        //     $ip     = IpRestrict::whereIn('ip', [$userIp])->first();
+        //         // dd($userIp,$ip);
+        //     if (empty($ip)) {
+        //         return redirect()->back()->with('error', __('This IP is not allowed in this network!!'));
+        //     }
+        // }
+
         $validation = [];
         if (isset($settings['recaptcha_module']) && $settings['recaptcha_module'] == 'yes') {
             if ($settings['google_recaptcha_version'] == 'v2-checkbox') {

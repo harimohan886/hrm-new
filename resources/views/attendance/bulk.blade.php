@@ -210,7 +210,7 @@
                                                     <div class="col-md-4">
                                                         <input type="time" class="form-control timepicker"
                                                             name="in-{{ $employee->id }}"
-                                                            value="{{ !empty($attendance) && $attendance->clock_in != '00:00:00' ? $attendance->clock_in : \Utility::getValByName('company_start_time') }}">
+                                                            value="{{ !empty($attendance) && $attendance->clock_in != '00:00:00' ? $attendance->clock_in : \Utility::getValByName('company_start_time',$employee->id) }}">
                                                     </div>
 
                                                     <label for="inputValue"
@@ -218,7 +218,7 @@
                                                     <div class="col-md-4">
                                                         <input type="time" class="form-control timepicker"
                                                             name="out-{{ $employee->id }}"
-                                                            value="{{ !empty($attendance) && $attendance->clock_out != '00:00:00' ? $attendance->clock_out : \Utility::getValByName('company_end_time') }}">
+                                                            value="{{ !empty($attendance) && $attendance->clock_out != '00:00:00' ? $attendance->clock_out : \Utility::getValTimings('company_end_time',$employee->id) }}">
                                                     </div>
                                                 </div>
                                             </div>

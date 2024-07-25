@@ -66,6 +66,9 @@ class ZoomMeetingController extends Controller
             if ($settings['zoom_account_id'] != "" && $settings['zoom_client_id'] != "" && $settings['zoom_client_secret'] != "") {
                 $data['topic'] = $request->title;
                 $data['start_time'] = date('y:m:d H:i:s', strtotime($request->start_date));
+                // $data['start_time'] = '2024-07-09T15:30:00';
+
+
                 $data['duration'] = (int)$request->duration;
                 $data['password'] = $request->password;
                 $data['host_video'] = 0;
@@ -139,6 +142,121 @@ class ZoomMeetingController extends Controller
             return redirect()->back()->with('error', __('Permission denied.'));
         }
     }
+
+//     public function store(Request $request)
+// {
+//     // Check if the user has permission to create Zoom meetings
+//     if (\Auth::user()->can('Create Zoom meeting')) {
+//         // Retrieve necessary settings from your application configuration
+//         $settings = \App\Models\Utility::settings();
+
+//         // Check if Zoom account settings are configured
+//         if ($settings['zoom_account_id'] != "" && $settings['zoom_client_id'] != "" && $settings['zoom_client_secret'] != "") {
+//             // Prepare data for creating the Zoom meeting
+//             $data = [
+//                 'topic' => $request->title,
+//                 'start_time' => $request->start_date, // Ensure this is in 'Y-m-d\TH:i:s' format in Asia/Kolkata timezone
+//                 'duration' => (int) $request->duration,
+//                 'password' => $request->password,
+//                 'host_video' => 0,
+//                 'participant_video' => 0,
+//                 'agenda' => '', // Optionally set agenda if available in your form
+//             ];
+
+//             // Generate Zoom JWT token
+//             $key = env('ZOOM_API_KEY', '');
+//             $secret = env('ZOOM_API_SECRET', '');
+//             $jwt = \Firebase\JWT\JWT::encode(['iss' => $key, 'exp' => strtotime('+1 minute')], $secret, 'HS256');
+
+//             // Retrieve Zoom API URL
+//             $zoomApiUrl = env('ZOOM_API_URL', '');
+
+//             // Prepare headers for API request
+//             $headers = [
+//                 'Authorization' => 'Bearer ' . $jwt,
+//                 'Content-Type' => 'application/json',
+//                 'Accept' => 'application/json',
+//             ];
+
+//             // Prepare body for API request
+//             $body = [
+//                 'headers' => $headers,
+//                 'body' => json_encode([
+//                     'topic' => $data['topic'],
+//                     'type' => self::MEETING_TYPE_SCHEDULE,
+//                     'start_time' => $this->toZoomTimeFormat($data['start_time']),
+//                     'duration' => $data['duration'],
+//                     'agenda' => (!empty($data['agenda'])) ? $data['agenda'] : null,
+//                     'timezone' => 'Asia/Kolkata',
+//                     'settings' => [
+//                         'host_video' => ($data['host_video'] == "1") ? true : false,
+//                         'participant_video' => ($data['participant_video'] == "1") ? true : false,
+//                         'waiting_room' => true,
+//                     ],
+//                 ]),
+//             ];
+
+//             try {
+//                 // Make POST request to Zoom API to create meeting
+//                 $client = new \GuzzleHttp\Client();
+//                 $response = $client->post($zoomApiUrl . 'users/me/meetings', $body);
+
+//                 // Decode response
+//                 $responseData = json_decode($response->getBody(), true);
+
+//                 // Check if meeting creation was successful
+//                 if ($response->getStatusCode() === 201) {
+//                     // Extract meeting details from the response
+//                     $meeting_id = $responseData['id'];
+//                     $start_url = $responseData['start_url'];
+//                     $join_url = $responseData['join_url'];
+//                     $status = $responseData['status'];
+
+//                     // Save meeting details to your local database (assuming LocalZoomMeeting model)
+//                     $ZoomMeeting = new LocalZoomMeeting();
+//                     $ZoomMeeting->title = $request->title;
+//                     $ZoomMeeting->meeting_id = $meeting_id;
+//                     $ZoomMeeting->user_id = Auth::user()->creatorId();
+//                     $ZoomMeeting->password = $request->password;
+//                     $ZoomMeeting->join_url = $join_url;
+//                     $ZoomMeeting->start_date = $request->start_date;
+//                     $ZoomMeeting->duration = $request->duration;
+//                     $ZoomMeeting->start_url = $start_url;
+//                     $ZoomMeeting->status = $status;
+//                     $ZoomMeeting->created_by = Auth::user()->creatorId(); // Adjust this based on your application logic
+//                     $ZoomMeeting->save();
+
+//                     // Optionally synchronize with Google Calendar if specified
+//                     if ($request->get('synchronize_type') == 'google_calendar') {
+//                         $type = 'zoom_meeting';
+//                         $googleEvent = new GoogleEvent();
+//                         $googleEvent->title = $request->title;
+//                         $googleEvent->start_date = $request->start_date;
+//                         $googleEvent->end_date = $request->start_date; // Adjust end date if needed
+//                         Utility::addCalendarData($googleEvent, $type);
+//                     }
+
+//                     // Redirect back with success message
+//                     return redirect()->back()->with('success', __('Meeting created successfully.'));
+//                 } else {
+//                     // Redirect back with error message if meeting creation failed
+//                     return redirect()->back()->with('error', __('Meeting not created.'));
+//                 }
+//             } catch (\Exception $e) {
+//                 // Handle exceptions, for example, invalid access token
+//                 \Log::error('Zoom API Error: ' . $e->getMessage());
+//                 return redirect()->back()->with('error', __('Error creating meeting. Please try again later.'));
+//             }
+
+//         } else {
+//             // Redirect back with error message if Zoom account settings are not configured
+//             return redirect()->back()->with('error', __('Please Add Zoom Settings.'));
+//         }
+//     } else {
+//         // Redirect back with error message if user does not have permission
+//         return redirect()->back()->with('error', __('Permission denied.'));
+//     }
+// }
 
 
     public function show(LocalZoomMeeting $ZoomMeeting)

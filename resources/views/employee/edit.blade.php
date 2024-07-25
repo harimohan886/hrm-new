@@ -133,6 +133,38 @@
                                             'required' => 'required',
                                         ]) !!}
                                     </div>
+                                    <div class="form-group col-md-6">
+                                        {!! Form::label('shift_code', 'Shift Code', ['class' => 'form-label']) !!}
+                                        {!! Form::select('shift_code', $manageShift, $selectedShift, [
+                                            'class' => 'form-control',
+                                            'id' => 'shift_code',
+                                            'required' => 'required'
+                                        ]) !!}
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        {!! Form::label('enable_ot', 'Overtime', ['class' => 'form-label']) !!}
+                                        {!! Form::select('enable_ot', ['Enabled' => 'Enabled', 'Disabled' => 'Disabled'], $selectedOvertime, [
+                                            'class' => 'form-control',
+                                            'id' => 'enable_ot',
+                                            'required' => 'required'
+                                        ]) !!}
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        {!! Form::label('enable_weekoff', 'WeekOff', ['class' => 'form-label']) !!}
+                                        {!! Form::select('enable_weekoff', ['Enabled' => 'Enabled (For Two Days)', 'Disabled' => 'Disabled (For One Day)'], $selectedWeekoff, [
+                                            'class' => 'form-control',
+                                            'id' => 'enable_weekoff',
+                                            'required' => 'required'
+                                        ]) !!}
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        {!! Form::label('enable_letter', 'Letter', ['class' => 'form-label']) !!}
+                                        {!! Form::select('enable_letter', ['Enabled' => 'Enabled', 'Disabled' => 'Disabled'], $selectedLetter, [
+                                            'class' => 'form-control',
+                                            'id' => 'enable_letter',
+                                            'required' => 'required'
+                                        ]) !!}
+                                    </div>
                                 </div>
                             </div>
                         </div>

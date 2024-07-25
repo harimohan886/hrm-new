@@ -15,6 +15,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ExpenseTypeController;
 use App\Http\Controllers\AttendanceEmployeeController;
 use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\WeekOffController;
 use App\Http\Controllers\LeaveTypeController;
 use App\Http\Controllers\AccountListController;
 use App\Http\Controllers\AiTemplateController;
@@ -82,6 +83,7 @@ use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\NotificationTemplatesController;
 use App\Http\Controllers\PayslipTypeController;
 use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\IDCardController;
 use Illuminate\Support\Facades\Artisan;
 
 /*
@@ -116,6 +118,10 @@ Route::get('/check', [HomeController::class, 'check'])->middleware(
 // Route::get('/password/resets/{lang?}', 'Auth\LoginController@showLinkRequestForm')->name('change.langPass');
 
 Route::get('/', [HomeController::class, 'index'])->name('home')->middleware(['XSS']);
+
+Route::get('/', function () {
+    return redirect('/login');
+});
 
 Route::get('career/{id}/{lang}', [JobController::class, 'career'])->name('career');
 Route::get('job/requirement/{code}/{lang}', [JobController::class, 'jobRequirement'])->name('job.requirement');
@@ -271,6 +277,8 @@ Route::group(['middleware' => ['verified']], function () {
             'XSS',
         ]
     );
+
+    Route::get('employee/idcard/{id}', [IDCardController::class, 'idCardDownload'])->name('employee.idcard')->middleware(['auth', 'XSS']);
 
     Route::resource('employee', EmployeeController::class)->middleware(
         [
@@ -640,6 +648,13 @@ Route::group(['middleware' => ['verified']], function () {
         ]
     );
 
+    Route::post('payslip/delete/all', [PaySlipController::class, 'destroyAll'])->name('payslip.delete.all')->middleware(
+        [
+            'auth',
+            'XSS',
+        ]
+    );
+
     Route::resource('payslip', PaySlipController::class)->middleware(
         [
             'auth',
@@ -692,6 +707,13 @@ Route::group(['middleware' => ['verified']], function () {
         ]
     );
 
+    Route::post('/sync-data', [UserController::class, 'syncData'])->name('sync.data')->middleware(
+        [
+            'auth',
+            'XSS',
+        ]
+    );
+
     Route::post('edit-profile', [UserController::class, 'editprofile'])->name('update.account')->middleware(
         [
             'auth',
@@ -720,7 +742,19 @@ Route::group(['middleware' => ['verified']], function () {
             'XSS',
         ]
     );
+    Route::get('weekoff/{id}/action', [WeekOffController::class, 'action'])->name('weekoff.action')->middleware(
+        [
+            'auth',
+            'XSS',
+        ]
+    );
     Route::post('leave/changeaction', [LeaveController::class, 'changeaction'])->name('leave.changeaction')->middleware(
+        [
+            'auth',
+            'XSS',
+        ]
+    );
+    Route::post('weekoff/changeaction', [WeekOffController::class, 'changeaction'])->name('weekoff.changeaction')->middleware(
         [
             'auth',
             'XSS',
@@ -733,6 +767,13 @@ Route::group(['middleware' => ['verified']], function () {
         ]
     );
     Route::resource('leave', LeaveController::class)->middleware(
+        [
+            'auth',
+            'XSS',
+        ]
+    );
+
+    Route::resource('weekoff', WeekOffController::class)->middleware(
         [
             'auth',
             'XSS',
@@ -778,6 +819,13 @@ Route::group(['middleware' => ['verified']], function () {
         ]
     );
 
+    Route::get('employee/idcard/download', [IDCardController::class, 'idCardDownload'])->name('employee.idcard.download')->middleware(
+        [
+            'auth',
+            'XSS',
+        ]
+    );
+
     Route::post('attendanceemployee/attendance', [AttendanceEmployeeController::class, 'attendance'])->name('attendanceemployee.attendance')->middleware(
         [
             'auth',
@@ -795,6 +843,12 @@ Route::group(['middleware' => ['verified']], function () {
     //import attendance
     Route::get('import/attendance/file', [AttendanceEmployeeController::class, 'importFile'])->name('attendance.file.import');
     Route::post('import/attendance', [AttendanceEmployeeController::class, 'import'])->name('attendance.import');
+    Route::post('manual/employees/attendance/store', [AttendanceEmployeeController::class, 'manualEmployeeAttendance'])->name('manual.employees.attendance.store');
+
+
+    Route::post('timesheet/shift/manage/store', [TimeSheetController::class, 'shiftManage'])->name('timesheet.shift.manage.store');
+    Route::delete('timesheet/shift/manage/delete/{id}', [TimeSheetController::class, 'deleteShift'])->name('timesheet.shift.manage.delete');
+    Route::put('timesheet/shift/manage/update/{id}', [TimeSheetController::class, 'updateShift'])->name('timesheet.shift.manage.update');
 
     Route::resource('timesheet', TimeSheetController::class)->middleware(
         [
@@ -943,6 +997,7 @@ Route::group(['middleware' => ['verified']], function () {
             'XSS',
         ]
     );
+
     Route::get('notification-templates/{id?}/{lang?}/', [NotificationTemplatesController::class, 'index'])->name('notification-templates.index')->middleware(['auth', 'XSS']);
 
     Route::resource('trainingtype', TrainingTypeController::class)->middleware(
@@ -1258,7 +1313,9 @@ Route::group(['middleware' => ['verified']], function () {
     Route::get('export/payroll/{month}/{branch}/{department}', [ReportController::class, 'PayrollReportExport'])->name('payroll.report.export');
 
     // payslip export
-    Route::post('export/payslip', [PaySlipController::class, 'PayslipExport'])->name('payslip.export');
+    // Route::post('export/payslip', [PaySlipController::class, 'PayslipExport'])->name('payslip.export');
+    Route::post('export/payslip', [PaySlipController::class, 'attendancePayslipExport'])->name('payslip.export');
+    Route::post('export/payslip/banksheet', [PaySlipController::class, 'BanksheetExport'])->name('payslip.export.banksheet');
 
     //deposite Export
     Route::get('export/deposite', [DepositController::class, 'export'])->name('deposite.export');

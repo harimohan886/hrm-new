@@ -7,6 +7,8 @@ use App\Models\AttendanceEmployee;
 use App\Models\Branch;
 use App\Models\Department;
 use App\Models\Employee;
+use App\Models\ManageShift;
+use DateTime;
 use App\Models\IpRestrict;
 use App\Models\User;
 use App\Models\Utility;
@@ -136,7 +138,10 @@ class AttendanceEmployeeController extends Controller
 
             }
 
-            return view('attendance.index', compact('attendanceEmployee', 'branch', 'department'));
+            $created_by = Auth::user()->creatorId();
+            $employee_option = User::where('created_by', $created_by)->whereNotIn('type', ['company','hr'])->pluck('name', 'id');
+
+            return view('attendance.index', compact('attendanceEmployee', 'branch', 'department','employee_option'));
         }
         else
         {
@@ -179,8 +184,8 @@ class AttendanceEmployeeController extends Controller
                 return redirect()->back()->with('error', $messages->first());
             }
 
-            $startTime  = Utility::getValByName('company_start_time');
-            $endTime    = Utility::getValByName('company_end_time');
+            $startTime  = Utility::getValTimings('company_start_time',$request->employee_id);
+            $endTime    = Utility::getValTimings('company_end_time',$request->employee_id);
             $attendance = AttendanceEmployee::where('employee_id', '=', $request->employee_id)->where('date', '=', $request->date)->where('clock_out', '=', '00:00:00')->get()->toArray();
             if($attendance)
             {
@@ -267,8 +272,8 @@ class AttendanceEmployeeController extends Controller
     //         $employeeId      = AttendanceEmployee::where('employee_id', $request->employee_id)->first();
     //         $check = AttendanceEmployee::where('employee_id', '=', $request->employee_id)->where('date', $request->date)->first();
             
-    //         $startTime = Utility::getValByName('company_start_time');
-    //         $endTime   = Utility::getValByName('company_end_time');
+    //         $startTime = Utility::getValTimings('company_start_time',$request->employee_id);
+    //         $endTime   = Utility::getValTimings('company_end_time',$request->employee_id);
             
     //         $clockIn = $request->clock_in;
     //         $clockOut = $request->clock_out;
@@ -321,8 +326,8 @@ class AttendanceEmployeeController extends Controller
     //     $todayAttendance = AttendanceEmployee::where('employee_id', '=', $employeeId)->where('date', date('Y-m-d'))->first();
     //     if(!empty($todayAttendance) && $todayAttendance->clock_out == '00:00:00')
     //     {
-    //         $startTime = Utility::getValByName('company_start_time');
-    //         $endTime   = Utility::getValByName('company_end_time');
+    //         $startTime = Utility::getValTimings('company_start_time',$employeeId);
+    //         $endTime   = Utility::getValTimings('company_end_time',$employeeId);
     //         if(Auth::user()->type == 'employee')
     //         {
 
@@ -418,8 +423,8 @@ class AttendanceEmployeeController extends Controller
             $employeeId      = AttendanceEmployee::where('employee_id', $request->employee_id)->first();
             $check = AttendanceEmployee::where('id', '=', $id)->where('employee_id', '=', $request->employee_id)->where('date', $request->date)->first();
 
-            $startTime = Utility::getValByName('company_start_time');
-            $endTime   = Utility::getValByName('company_end_time');
+            $startTime = Utility::getValTimings('company_start_time',$request->employee_id);
+            $endTime   = Utility::getValTimings('company_end_time',$request->employee_id);
 
             $clockIn = $request->clock_in;
             $clockOut = $request->clock_out;
@@ -471,8 +476,8 @@ class AttendanceEmployeeController extends Controller
         $employeeId      = !empty(\Auth::user()->employee) ? \Auth::user()->employee->id : 0;
         $todayAttendance = AttendanceEmployee::where('employee_id', '=', $employeeId)->where('date', date('Y-m-d'))->first();
 
-        $startTime = Utility::getValByName('company_start_time');
-        $endTime   = Utility::getValByName('company_end_time');
+        $startTime = Utility::getValTimings('company_start_time',$employeeId);
+        $endTime   = Utility::getValTimings('company_end_time',$employeeId);
         if (Auth::user()->type == 'employee') {
 
             $date = date("Y-m-d");
@@ -585,8 +590,8 @@ class AttendanceEmployeeController extends Controller
     //     if(empty($todayAttendance))
     //     {
 
-    //         $startTime = Utility::getValByName('company_start_time');
-    //         $endTime   = Utility::getValByName('company_end_time');
+    //         $startTime = Utility::getValTimings('company_start_time',$employeeId);
+    //         $endTime   = Utility::getValTimings('company_end_time',$employeeId);
 
     //         $attendance = AttendanceEmployee::orderBy('id', 'desc')->where('employee_id', '=', $employeeId)->where('clock_out', '=', '00:00:00')->first();
 
@@ -670,8 +675,8 @@ class AttendanceEmployeeController extends Controller
 
         $employeeId = !empty(\Auth::user()->employee) ? \Auth::user()->employee->id : 0;
 
-        $startTime = Utility::getValByName('company_start_time');
-        $endTime = Utility::getValByName('company_end_time');
+        $startTime = Utility::getValTimings('company_start_time',$employeeId);
+        $endTime = Utility::getValTimings('company_end_time',$employeeId);
 
         // Find the last clocked out entry for the employee
         $lastClockOutEntry = AttendanceEmployee::orderBy('id', 'desc')
@@ -787,8 +792,8 @@ class AttendanceEmployeeController extends Controller
         {
             if(!empty($request->branch) && !empty($request->department))
             {
-                $startTime = Utility::getValByName('company_start_time');
-                $endTime   = Utility::getValByName('company_end_time');
+                $startTime = Utility::getValTimings('company_start_time',$request->employee_id);
+                $endTime   = Utility::getValTimings('company_end_time',$request->employee_id);
                 $date      = $request->date;
 
                 $employees = $request->employee_id;
@@ -934,8 +939,7 @@ class AttendanceEmployeeController extends Controller
         $totalattendance = count($attendance) - 1;
         $errorArray    = [];
 
-        $startTime = Utility::getValByName('company_start_time');
-        $endTime   = Utility::getValByName('company_end_time');
+        
 
         if (!empty($attendanceData)) {
             $errorArray[] = $attendanceData;
@@ -944,7 +948,13 @@ class AttendanceEmployeeController extends Controller
                 if ($key != 0) {
                     $employeeData = Employee::where('email', $value[0])->where('created_by', \Auth::user()->creatorId())->first();
                     // $employeeId = 0;
+
+                    
                     if (!empty($employeeData)) {
+
+                        $startTime = Utility::getValTimings('company_start_time',$employeeData->id);
+                        $endTime   = Utility::getValTimings('company_end_time',$employeeData->id);
+
                         $employeeId = $employeeData->id;
 
 
@@ -1031,5 +1041,302 @@ class AttendanceEmployeeController extends Controller
             }
         }
     }
+
+    // public function manualEmployeeAttendance(Request $request)
+    // {   
+    //     dd($request->all());
+    //     // Validate the incoming request data as needed
+    //     $validatedData = $request->validate([
+    //         'user_id' => 'required|array',
+    //         'from_date' => 'required|date',
+    //         'to_date' => 'required|date',
+    //         'clock_in' => 'required',
+    //         'clock_out' => 'required',
+    //     ]);
+
+    //     // Retrieve user_ids selected
+    //     $userIds = $request->input('user_id');
+    //     dd($userIds);
+
+    //     @foreach($userIds){
+
+    
+
+    //     $emp = Employee::select('id','shift_mode')->where('user_id', $user_id)->first();
+
+    //     $shift = ManageShift::where('shift_mode',$emp->shift_mode)->first();
+
+    //     $late = 
+    //     $earlyGoing = 
+    //     $overtime = 
+
+    //     $entry = new AttendanceEmployee();
+    //     $entry->employee_id = 
+    //     $entry->date = 
+    //     $entry->status = "Present";
+    //     $entry->clock_in = 
+    //     $entry->clock_out = 
+    //     $entry->late = 
+    //     $entry->early_going = 
+    //     $entry->overtime = 
+    //     $entry->total_rest = "00:00:00";
+    //     $entry->save();
+
+    // }
+
+    // }
+
+//     public function manualEmployeeAttendance(Request $request)
+// {
+//     // Validate the incoming request data
+//     $validatedData = $request->validate([
+//         'user_id' => 'required|array',
+//         'from_date' => 'required|date',
+//         'to_date' => 'required|date',
+//         'clock_in.*' => 'required',
+//         'clock_out.*' => 'required',
+//     ]);
+
+//     $userIds = $request->input('user_id');
+//     $fromDate = $request->input('from_date');
+//     $toDate = $request->input('to_date');
+//     $clockIn = $request->input('clock_in');
+//     $clockOut = $request->input('clock_out');
+
+//     // dd($clockIn,$clockOut);
+
+//     foreach ($userIds as $userId) {
+//         // Fetch employee details
+//         $employee = Employee::where('user_id', $userId)->first();
+//         // dd($employee->id);
+
+//         // Fetch shift details
+//         $shift = ManageShift::where('shift_code', $employee->shift_code)->first();
+//         dd($shift);
+
+
+//         // Loop through each date from from_date to to_date
+//         $currentDate = $fromDate;
+//         while ($currentDate <= $toDate) {
+
+//             $late =  diff($clockIn,$shift->start_time);
+//             $earlyGoing = diff($clockOut,$shift->endtime_time);
+//             $overtime = also calcualte overtime 
+
+//             // Perform calculations for late, early going, overtime based on $clockIn, $clockOut, $shift->start_time, $shift->end_time
+
+//             // Create AttendanceEmployee entry
+//             $entry = new AttendanceEmployee();
+//             $entry->employee_id = $employee->id;
+//             $entry->date = $currentDate;
+//             $entry->status = "Present";
+//             $entry->clock_in = $clockIn;
+//             $entry->clock_out = $clockOut;
+//             $entry->late = $late; // Calculate actual late time
+//             $entry->early_leaving = $earlyGoing; // Calculate actual early leaving time
+//             $entry->overtime = $overtime; // Calculate actual overtime
+//             $entry->total_rest = "00:00:00";
+//             $entry->save();
+
+//             $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
+//         }
+//     }
+
+//     // Optionally, redirect or return a response after processing
+//     return redirect()->back()->with('success', 'Attendance entries saved successfully');
+// }
+
+
+public function manualEmployeeAttendance(Request $request)
+{
+    // Validate the incoming request data
+    $validatedData = $request->validate([
+        'user_id' => 'required|array',
+        'from_date' => 'required|date',
+        'to_date' => 'required|date',
+        'clock_in.*' => 'required',
+        'clock_out.*' => 'required',
+    ]);
+
+    $userIds = $request->input('user_id');
+    $fromDate = $request->input('from_date');
+    $toDate = $request->input('to_date');
+    $clockIn = $request->input('clock_in');
+    $clockOut = $request->input('clock_out');
+
+    foreach ($userIds as $userId) {
+        // Fetch employee details
+        $employee = Employee::where('user_id', $userId)->first();
+
+
+        // Fetch shift details
+        $shift = ManageShift::where('shift_code', $employee->shift_code)->first();
+        // dd($shift);
+
+        // Loop through each date from from_date to to_date
+        $currentDate = $fromDate;
+        while ($currentDate <= $toDate) {
+            $clockInTime = $clockIn;
+            $clockOutTime = $clockOut;
+            // dd($clockOutTime);
+
+            // Perform calculations for late, early going, overtime based on $clockInTime, $clockOutTime, $shift->start_time, $shift->end_time
+
+            // Calculate late time
+            $late = $this->calculateLate($clockInTime, $shift->start_time);
+            // dd($late);
+            // Calculate early going time
+            $earlyGoing = $this->calculateEarlyGoing($clockOutTime, $shift->end_time);
+            // dd($earlyGoing);
+            // Calculate overtime
+            $overtime = $this->calculateOvertime($clockInTime, $clockOutTime, $shift->start_time, $shift->end_time);
+            // dd($overtime);
+            // Create AttendanceEmployee entry
+            $entry = new AttendanceEmployee();
+            $entry->employee_id = $employee->id;
+            $entry->date = $currentDate;
+            $entry->status = "Present";
+            $entry->clock_in = $clockInTime;
+            $entry->clock_out = $clockOutTime;
+            $entry->late = $late;
+            $entry->early_leaving = $earlyGoing;
+            $entry->overtime = $overtime;
+            $entry->total_rest = "00:00:00";
+            $entry->save();
+
+            $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
+        }
+    }
+
+    // Optionally, redirect or return a response after processing
+    return redirect()->back()->with('success', 'Attendance entries saved successfully');
+}
+
+private function calculateLate($clockInTime, $shiftStartTime)
+{
+    // Assuming both $clockInTime and $shiftStartTime are in 'H:i:s' format
+    $clockIn = new DateTime($clockInTime);
+    $start = new DateTime($shiftStartTime);
+
+    if ($clockIn > $start) {
+        $diff = $clockIn->diff($start);
+        return $diff->format('%H:%I:%S');
+    }
+
+    return "00:00:00";
+}
+
+private function calculateEarlyGoing($clockOutTime, $shiftEndTime)
+{
+    // Assuming both $clockOutTime and $shiftEndTime are in 'H:i:s' format
+    $clockOut = new DateTime($clockOutTime);
+    $end = new DateTime($shiftEndTime);
+
+    if ($clockOut < $end) {
+        $diff = $end->diff($clockOut);
+        return $diff->format('%H:%I:%S');
+    }
+
+    return "00:00:00";
+}
+
+// private function calculateOvertime($clockInTime, $clockOutTime, $shiftStartTime, $shiftEndTime)
+// {
+//     // Assuming all times are in 'H:i:s' format
+//     $clockIn = new DateTime($clockInTime);
+//     $clockOut = new DateTime($clockOutTime);
+//     $start = new DateTime($shiftStartTime);
+//     $end = new DateTime($shiftEndTime);
+
+//     $workHours = $start->diff($end)->format('%H:%I:%S');
+//     $actualWorkHours = $clockIn->diff($clockOut)->format('%H:%I:%S');
+
+//     if ($actualWorkHours > $workHours) {
+//         $diff = $actualWorkHours->diff($workHours);
+//         return $diff->format('%H:%I:%S');
+//     }
+
+//     return "00:00:00";
+// }
+
+// private function calculateOvertime($clockInTime, $clockOutTime, $shiftStartTime, $shiftEndTime)
+// {
+//     // Create DateTime objects
+//     $clockIn = new DateTime($clockInTime);
+//     $clockOut = new DateTime($clockOutTime);
+//     $start = new DateTime($shiftStartTime);
+//     $end = new DateTime($shiftEndTime);
+
+//     // Adjust end time if it's before start time (indicating shift spans across midnight)
+//     if ($end < $start) {
+//         $end->modify('+1 day');
+//     }
+
+//     // Calculate work hours in seconds
+//     $workHoursSeconds = $start->diff($end)->h * 3600 + $start->diff($end)->i * 60;
+
+//     // Calculate actual work hours in seconds
+//     $actualWorkHoursSeconds = $clockIn->diff($clockOut)->h * 3600 + $clockIn->diff($clockOut)->i * 60;
+
+//     // Check if actual work hours exceed regular work hours
+//     if ($actualWorkHoursSeconds > $workHoursSeconds) {
+//         // Calculate overtime in seconds
+//         $overtimeSeconds = $actualWorkHoursSeconds - $workHoursSeconds;
+
+//         // Convert overtime seconds to hours, minutes, seconds
+//         $overtimeHours = floor($overtimeSeconds / 3600);
+//         $overtimeSeconds %= 3600;
+//         $overtimeMinutes = floor($overtimeSeconds / 60);
+
+//         // Format overtime as HH:MM:SS
+//         $overtimeFormatted = sprintf('%02d:%02d:%02d', $overtimeHours, $overtimeMinutes, $overtimeSeconds);
+
+//         return $overtimeFormatted;
+//     }
+
+//     return "00:00:00";  // No overtime
+// }
+
+
+private function calculateOvertime($clockInTime, $clockOutTime, $shiftStartTime, $shiftEndTime)
+{
+    // Create DateTime objects
+    $clockIn = new DateTime($clockInTime);
+    $clockOut = new DateTime($clockOutTime);
+    $start = new DateTime($shiftStartTime);
+    $end = new DateTime($shiftEndTime);
+
+    // Adjust end time if it's before start time (indicating shift spans across midnight)
+    if ($end < $start) {
+        $end->modify('+1 day');
+    }
+
+    // Calculate work hours in seconds
+    $workHoursSeconds = $start->diff($end)->h * 3600 + $start->diff($end)->i * 60;
+
+    // Calculate actual work hours in seconds
+    $actualWorkHoursSeconds = $clockIn->diff($clockOut)->h * 3600 + $clockIn->diff($clockOut)->i * 60;
+
+    // Check if actual work hours exceed regular work hours
+    if ($actualWorkHoursSeconds > $workHoursSeconds) {
+        // Calculate overtime in seconds
+        $overtimeSeconds = $actualWorkHoursSeconds - $workHoursSeconds;
+
+        // Calculate hours, minutes, seconds from overtime seconds
+        $overtimeHours = floor($overtimeSeconds / 3600);
+        $overtimeSeconds %= 3600;
+        $overtimeMinutes = floor($overtimeSeconds / 60);
+        $overtimeSeconds %= 60;
+
+        // Format overtime as HH:MM:SS
+        $overtimeFormatted = sprintf('%02d:%02d:%02d', $overtimeHours, $overtimeMinutes, $overtimeSeconds);
+
+        return $overtimeFormatted;
+    }
+
+    return "00:00:00";  // No overtime
+}
+
+
 
 }

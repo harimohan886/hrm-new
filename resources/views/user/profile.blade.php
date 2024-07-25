@@ -166,6 +166,26 @@ $profile = \App\Models\Utility::get_file('uploads/avatar/');
                 </div>
 
 
+                @if(\Auth::user()->type=='company')
+                <div id="useradd-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">{{ __('Sync Data') }}</h5>
+                            <small> {{ __('For Sync Device Attendance Data into HRM DB') }}</small>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ route('sync.data') }}">
+                                @csrf
+                                <button type="submit" class="btn btn-success" style="float:right;">Sync Data</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+
+
+
             </div>
 
         </div>

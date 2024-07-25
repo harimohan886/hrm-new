@@ -81,6 +81,20 @@
                                 <input type="submit" value="{{ __('Export') }}" class="btn btn-primary">
                                 {{ Form::close() }}
                             @endif
+                            @if (Auth::user()->type == 'company' || Auth::user()->type == 'hr')
+                                {{ Form::open(['route' => ['payslip.export.banksheet'], 'method' => 'POST', 'id' => 'payslip_form_banksheet', 'style' => 'margin-left:10px;']) }}
+                                <input type="hidden" name="filter_month" class="filter_month">
+                                <input type="hidden" name="filter_year" class="filter_year">
+                                <input type="submit" value="{{ __('Export BankSheet') }}" class="btn btn-primary">
+                                {{ Form::close() }}
+                            @endif
+                            @if (Auth::user()->type == 'company' || Auth::user()->type == 'hr')
+                                {{ Form::open(['route' => ['payslip.delete.all'], 'method' => 'POST', 'id' => 'payslip_delete_all', 'style' => 'margin-left:10px;']) }}
+                                <input type="hidden" name="filter_month" class="filter_month">
+                                <input type="hidden" name="filter_year" class="filter_year">
+                                <input type="submit" value="{{ __('Delete All') }}" class="btn btn-danger">
+                                {{ Form::close() }}
+                            @endif
                             {{-- </div> --}}
                             <div class="ml-2 float-end">
                                 @can('Create Pay Slip')
@@ -181,7 +195,7 @@
                                 var payslip =
                                     '<a href="#" data-url="{{ url('payslip/pdf/') }}/' + id +
                                     '/' + datePicker +
-                                    '" data-size="md-pdf"  data-ajax-popup="true" class="btn btn-primary" data-title="{{ __('Employee Payslip') }}">' +
+                                    '" data-size="md-pdf"  data-ajax-popup="true" class="btn btn-primary d-none" data-title="{{ __('Employee Payslip') }}">' +
                                     '{{ __('Payslip') }}' + '</a> ';
                             }
 
@@ -203,7 +217,7 @@
                                 edit =
                                     '<a href="#" data-url="{{ url('payslip/editemployee/') }}/' +
                                     payslip_id +
-                                    '"  data-ajax-popup="true" class="view-btn blue-bg" data-title="{{ __('Edit Employee salary') }}">' +
+                                    '"  data-ajax-popup="true" class="view-btn blue-bg d-none" data-title="{{ __('Edit Employee salary') }}">' +
                                     '{{ __('Edit') }}' + '</a>';
                             }
 
@@ -244,7 +258,7 @@
                                         '<a href="#" data-url="{{ url('payslip/pdf/') }}/' +
                                         id +
                                         '/' + datePicker +
-                                        '" data-size="lg"  data-ajax-popup="true" class=" btn-sm btn btn-warning" data-title="{{ __('Employee Payslip') }}">' +
+                                        '" data-size="lg"  data-ajax-popup="true" class=" btn-sm btn btn-warning d-none" data-title="{{ __('Employee Payslip') }}">' +
                                         '{{ __('Payslip') }}' + '</a> ';
                                 }
                                 if (valueOfElement[6] == "UnPaid" && valueOfElement[7] != 0) {
@@ -261,7 +275,7 @@
                                     var edit =
                                         '<a href="#" data-url="{{ url('payslip/editemployee/') }}/' +
                                         payslip_id +
-                                        '"  data-ajax-popup="true" class="btn-sm btn btn-info" data-title="{{ __('Edit Employee salary') }}">' +
+                                        '"  data-ajax-popup="true" class="btn-sm btn btn-info d-none" data-title="{{ __('Edit Employee salary') }}">' +
                                         '{{ __('Edit') }}' + '</a>';
                                 } else {
                                     var edit = '';

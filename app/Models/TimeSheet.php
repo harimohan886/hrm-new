@@ -17,7 +17,7 @@ class TimeSheet extends Model
     {
         return $this->hasOne('App\Models\User', 'id', 'employee_id');
     }
-
+    
     public function employees()
     {
         return $this->hasOne('App\Models\Employee', 'id', 'employee_id');

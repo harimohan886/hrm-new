@@ -45,6 +45,13 @@
             <h2 class="mb-3 f-w-600">{{ __('Login') }}</h2>
         </div>
         <div class="custom-login-form">
+
+             @if(session('error'))
+                <div class="alert alert-danger" role="alert">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate="">
                 @csrf
                 <div class="form-group mb-3">

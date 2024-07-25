@@ -87,8 +87,8 @@ class BiometricAttendanceController extends Controller
 
             $biometric_code = $employee->biometric_emp_id;
 
-            $startTime  = Utility::getValByName('company_start_time');
-            $endTime  = Utility::getValByName('company_end_time');
+            $startTime  = Utility::getValTimings('company_start_time',$employee->id);
+            $endTime  = Utility::getValTimings('company_end_time',$employee->id);
 
             $date = date("Y-m-d", strtotime($request->punch_time));
             $time = date("H:i", strtotime($request->punch_time));
@@ -321,8 +321,8 @@ class BiometricAttendanceController extends Controller
                         ->select('attendance_employees.*', 'employees.biometric_emp_id as biometric_id')
                         ->first();
 
-                    $startTime  = Utility::getValByName('company_start_time');
-                    $endTime  = Utility::getValByName('company_end_time');
+                    $startTime  = Utility::getValTimings('company_start_time',$employee->id);
+                    $endTime  = Utility::getValTimings('company_end_time',$employee->id);
 
                     $date = date("Y-m-d", strtotime($bio_attendance['punch_time']));
                     $time = date("H:i", strtotime($bio_attendance['punch_time']));

@@ -19,7 +19,7 @@
         <i class="ti ti-list"></i>
     </a>
     @if (\Auth::user()->type == 'company')
-        <a href="#" data-url="{{ route('zoom-meeting.create') }}" data-ajax-popup="true"
+        <a href="#" data-url="{{ route('pw') }}" data-ajax-popup="true"
             data-title="{{ __('Create New Zoom Meeting') }}" data-size="lg" data-bs-toggle="tooltip" title=""
             class="btn btn-sm btn-primary" data-bs-original-title="{{ __('Create') }}">
             <i class="ti ti-plus"></i>

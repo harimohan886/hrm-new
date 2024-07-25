@@ -51,7 +51,7 @@
             </div>
         </div>
         <div class="col-xxl-6">
-            <div class="card"style="height: 230px;">
+            {{-- <div class="card"style="height: 230px;">
                 <div class="card-header">
                     <h5>{{ __('Mark Attandance') }}</h5>
                 </div>
@@ -83,7 +83,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <div class="card" style="height: 462px;">
                 <div class="card-header card-body table-border-style">
                     <h5>{{ __('Meeting schedule') }}</h5>
@@ -112,6 +112,85 @@
                 </div>
             </div>
         </div>
+
+        
+        <div class="col-xl-12 col-lg-12 col-md-12">
+        <div class="card">
+                <div class="card-header card-body table-border-style">
+                    <h5>{{ __('Week Offs') }}</h5>
+                </div>
+                <div class="card-body" style="height: 320px">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                            
+                                    <th>{{ __('Week Off Date') }}</th>
+                                    <th>{{ __('Week Off Day Name') }}</th>
+                                    <th>{{ __('Remark') }}</th>
+                                    <th>{{ __('Status') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="list">
+                                @foreach ($weekoffs as $weekoff)
+                                    <tr>
+                                        
+                                        <td>{{ $weekoff->week_off_date }}</td>
+                                        <td>{{ $weekoff->day_name }}</td>
+                                        <td>{{ $weekoff->remark }}</td>
+                                        <td>{{ $weekoff->status }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-12 col-lg-12 col-md-12">
+        <div class="card">
+                <div class="card-header card-body table-border-style">
+                    <h5>{{ __('Leaves') }}</h5>
+                </div>
+                <div class="card-body" style="height: 320px">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                            
+                                    <th>{{ __('Leave Type') }}</th>
+                                    <th>{{ __('Start Date') }}</th>
+                                    <th>{{ __('End Date') }}</th>
+                                    <th>{{ __('Total leave Days') }}</th>
+                                    <th>{{ __('Applied On') }}</th>
+                                    <th>{{ __('Leave Reason') }}</th>
+                                    <th>{{ __('Remark') }}</th>
+                                    <th>{{ __('Status') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="list">
+                                @foreach ($leaves as $leave)
+                                    <tr>
+                                          
+                                        <td>{{ App\Models\LeaveType::where('id', $leave->leave_type_id)->value('title') }}</td>
+                                        <td>{{ $leave->start_date }}</td>
+                                        <td>{{ $leave->end_date }}</td>
+                                        <td>{{ $leave->total_leave_days }}</td>
+                                        <td>{{ $leave->applied_on }}</td>
+                                        <td>{{ $leave->leave_reason }}</td>
+                                        <td>{{ $leave->remark }}</td>
+                                        <td>{{ $leave->status }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <div class="col-xl-12 col-lg-12 col-md-12">
             <div class="card">
                 <div class="card-header card-body table-border-style">
@@ -149,7 +228,7 @@
             {{-- start --}}
             <div class="row">
 
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-6 col-md-6">
 
                     <div class="card">
                         <div class="card-body">
@@ -173,7 +252,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-4 col-md-6">
+                <!-- <div class="col-lg-4 col-md-6">
 
                     <div class="card">
                         <div class="card-body">
@@ -195,8 +274,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
+                </div> -->
+
+                <!-- <div class="col-lg-4 col-md-6">
 
                     <div class="card">
                         <div class="card-body">
@@ -218,13 +298,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
+                </div> -->
 
 
-
-        <div class="col-lg-4 col-md-6">
+                <div class="col-lg-6 col-md-6">
             <div class="card">
                 <div class="card-body">
                     <div class="row align-items-center justify-content-between">
@@ -247,7 +324,37 @@
             </div>
 
         </div>
-        <div class="col-lg-4 col-md-6">
+
+
+            </div>
+        </div>
+
+
+
+        <!-- <div class="col-lg-4 col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center justify-content-between">
+                        <div class="col-auto mb-3 mb-sm-0">
+                            <div class="d-flex align-items-center">
+                                <div class="theme-avtar bg-primary">
+                                    <i class="ti ti-cast"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <small class="text-muted">{{ __('Total') }}</small>
+                                    <h6 class="m-0">{{ __('Jobs') }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto text-end">
+                            <h4 class="m-0 text-primary">{{ $activeJob + $inActiveJOb }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div> -->
+        <div class="col-lg-6 col-md-6">
 
             <div class="card">
                 <div class="card-body">
@@ -270,7 +377,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 col-md-6">
+        <div class="col-lg-6 col-md-6">
 
             <div class="card">
                 <div class="card-body">
@@ -330,6 +437,7 @@
                         </div>
                     </div>
 
+
                     <div class="card">
                         <div class="card-header card-body table-border-style">
                             <h5>{{ __("Today's Not Clock In") }}</h5>
@@ -387,6 +495,131 @@
                 </div>
             </div>
         </div>
+
+
+        <div class="card" style="height: 462px;">
+                <div class="card-header card-body table-border-style">
+                    <h5>{{ __('Week Offs') }}</h5>
+                </div>
+                <div class="card-body" style="height: 320px">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    @if($showName == 0)
+                                        <th>{{ __('Emp Name') }}</th>
+                                    @endif
+                                    <th>{{ __('Week Off Date') }}</th>
+                                    <th>{{ __('Week Off Day Name') }}</th>
+                                    <th>{{ __('Remark') }}</th>
+                                    <th>{{ __('Status') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="list">
+                                @foreach ($weekoffs as $weekoff)
+                                    <tr>
+                                        @if($showName == 0)
+                                            
+                                            <td>{{ App\Models\User::where('id', $weekoff->employee_id)->value('name') }}</td>
+                                        @endif
+                                        <td>{{ $weekoff->week_off_date }}</td>
+                                        <td>{{ $weekoff->day_name }}</td>
+                                        <td>{{ $weekoff->remark }}</td>
+                                        <td>{{ $weekoff->status }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12">
+            <div class="card">
+                <div class="card-header card-body table-border-style">
+                    <h5>{{ __('Week Offs') }}</h5>
+                </div>
+                <div class="card-body" style="height: 320px">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    @if($showName == 0)
+                                        <th>{{ __('Emp Name') }}</th>
+                                    @endif
+                                    <th>{{ __('Week Off Date') }}</th>
+                                    <th>{{ __('Week Off Day Name') }}</th>
+                                    <th>{{ __('Remark') }}</th>
+                                    <th>{{ __('Status') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="list">
+                                @foreach ($weekoffs as $weekoff)
+                                    <tr>
+                                        @if($showName == 0)
+                                            
+                                            <td>{{ App\Models\User::where('id', $weekoff->employee_id)->value('name') }}</td>
+                                        @endif
+                                        <td>{{ $weekoff->week_off_date }}</td>
+                                        <td>{{ $weekoff->day_name }}</td>
+                                        <td>{{ $weekoff->remark }}</td>
+                                        <td>{{ $weekoff->status }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-xl-12 col-lg-12 col-md-12">
+        <div class="card">
+                <div class="card-header card-body table-border-style">
+                    <h5>{{ __('Leaves') }}</h5>
+                </div>
+                <div class="card-body" style="height: 320px">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    @if($showName == 0)
+                                            <th>{{ __('Emp Name') }}</th>
+                                    @endif
+                                    <th>{{ __('Leave Type') }}</th>
+                                    <th>{{ __('Start Date') }}</th>
+                                    <th>{{ __('End Date') }}</th>
+                                    <th>{{ __('Total leave Days') }}</th>
+                                    <th>{{ __('Applied On') }}</th>
+                                    <th>{{ __('Leave Reason') }}</th>
+                                    <th>{{ __('Remark') }}</th>
+                                    <th>{{ __('Status') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="list">
+                                @foreach ($leaves as $leave)
+                                    <tr>
+                                        @if($showName == 0)
+                                            <td>{{ App\Models\User::where('id', $weekoff->employee_id)->value('name') }}</td>
+                                        @endif
+                                        <td>{{ App\Models\LeaveType::where('id', $leave->leave_type_id)->value('title') }}</td>
+                                        <td>{{ $leave->start_date }}</td>
+                                        <td>{{ $leave->end_date }}</td>
+                                        <td>{{ $leave->total_leave_days }}</td>
+                                        <td>{{ $leave->applied_on }}</td>
+                                        <td>{{ $leave->leave_reason }}</td>
+                                        <td>{{ $leave->remark }}</td>
+                                        <td>{{ $leave->status }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="col-xl-12 col-lg-12 col-md-12">
             <div class="card">
