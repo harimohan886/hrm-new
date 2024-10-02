@@ -17,10 +17,14 @@
         <i class="ti ti-file-export"></i>
     </a>
 
+    @if(\Auth::user()->type == 'company' || \Auth::user()->type == 'hr')
+
     <a href="{{ route('leave.calender') }}" class="btn btn-sm btn-primary" data-bs-toggle="tooltip"
         data-bs-original-title="{{ __('Calendar View') }}">
         <i class="ti ti-calendar"></i>
     </a>
+
+    @endif
 
     @can('Create Leave')
         <a href="#" data-url="{{ route('leave.create') }}" data-ajax-popup="true" data-title="{{ __('Create New Leave') }}"
@@ -29,9 +33,82 @@
             <i class="ti ti-plus"></i>
         </a>
     @endcan
+
 @endsection
 
 @section('content')
+
+<div class="col-sm-12 col-lg-12 col-xl-12 col-md-12">
+    <div class="mt-2" id="" style="">
+        <div class="card">
+            <div class="card-body">
+                {{ Form::open(['route' => ['leave.index'], 'method' => 'get', 'id' => 'leaves_filter']) }}
+                <div class="d-flex align-items-center justify-content-end">
+                    <!-- Month Field -->
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12 applied_on">
+                    <div class="btn-box">
+                        {{ Form::label('applied_on', __('Applied On'), ['class' => 'form-label']) }}
+                        {{ Form::date('applied_on', isset($_GET['applied_on']) ? $_GET['applied_on'] : '', ['class' => 'form-control', 'placeholder' => 'Applied Date']) }}
+                    </div>
+                </div>
+
+                    <!-- Date Range Field -->
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 mx-4">
+                        <div class="btn-box">
+                            {{ Form::label('date_range', __('Date Range'), ['class' => 'form-label']) }}
+                            <div class="d-flex">
+                                {{ Form::date('start_date', isset($_GET['start_date']) ? $_GET['start_date'] : '', ['class' => 'form-control', 'placeholder' => 'Start Date']) }}
+                                <span class="mx-2" style="margin-top:7px; font-weight:900; font-size:16px;"><strong>to</strong></span>
+                                {{ Form::date('end_date', isset($_GET['end_date']) ? $_GET['end_date'] : '', ['class' => 'form-control', 'placeholder' => 'End Date']) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Field -->
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12 mx-2">
+                    <div class="btn-box">
+                        {{ Form::label('status', __('Status'), ['class' => 'form-label']) }}
+                        {{ Form::select('status', [
+                            '' => 'Select Status',
+                            'Approved' => 'Approved',
+                            'Reject' => 'Reject',
+                            'Pending' => 'Pending'
+                        ], isset($_GET['status']) ? $_GET['status'] : '', ['class' => 'form-control']) }}
+                    </div>
+                </div>
+
+                    @if (\Auth::user()->type != 'employee')
+                    <!-- Employee Field -->
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 mx-4">
+                        <div class="btn-box">
+                            {{ Form::label('employee', __('Employee'), ['class' => 'form-label']) }}
+                            {{ Form::select('employee', $usersList, isset($_GET['employee']) ? $_GET['employee'] : '', ['class' => 'form-control select', 'id' => 'employee_id']) }}
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Buttons -->
+                    <div class="col-auto float-end ms-2 mt-4">
+                        <a href="#" class="btn btn-sm btn-primary"
+                            onclick="document.getElementById('leaves_filter').submit(); return false;"
+                            data-bs-toggle="tooltip" title="" data-bs-original-title="apply">
+                            <span class="btn-inner--icon"><i class="ti ti-search"></i></span>
+                        </a>
+                        <a href="{{ route('leave.index') }}" class="btn btn-sm btn-danger"
+                            data-bs-toggle="tooltip" title="" data-bs-original-title="Reset">
+                            <span class="btn-inner--icon"><i class="ti ti-trash-off text-white-off"></i></span>
+                        </a>
+                    </div>
+                </div>
+                {{ Form::close() }}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
     <div class="col-xl-12">
         <div class="card">
             <div class="card-header card-body table-border-style">

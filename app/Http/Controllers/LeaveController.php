@@ -12,27 +12,90 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\User;
 use Spatie\GoogleCalendar\Event as GoogleEvent;
 
 class LeaveController extends Controller
 {
-    public function index()
-    {
+    // public function index()
+    // {
 
-        if (\Auth::user()->can('Manage Leave')) {
-            if (\Auth::user()->type == 'employee') {
-                $user     = \Auth::user();
-                $employee = Employee::where('user_id', '=', $user->id)->first();
-                $leaves   = LocalLeave::where('employee_id', '=', $employee->id)->where('leave_type_id','!=',4)->get();
-            } else {
-                $leaves = LocalLeave::where('created_by', '=', \Auth::user()->creatorId())->where('leave_type_id','!=',4)->with(['employees', 'leaveType'])->get();
-            }
+    //     if (\Auth::user()->can('Manage Leave')) {
+    //         if (\Auth::user()->type == 'employee') {
+    //             $user     = \Auth::user();
+    //             $employee = Employee::where('user_id', '=', $user->id)->first();
+    //             $leaves   = LocalLeave::where('employee_id', '=', $employee->id)->where('leave_type_id','!=',4)->orderBy('updated_at', 'desc')->get();
+    //         } else {
+    //             $leaves = LocalLeave::where('created_by', '=', \Auth::user()->creatorId())->where('leave_type_id','!=',4)->with(['employees', 'leaveType'])->orderBy('updated_at', 'desc')->get();
+    //         }
 
-            return view('leave.index', compact('leaves'));
+    //         return view('leave.index', compact('leaves'));
+    //     } else {
+    //         return redirect()->back()->with('error', __('Permission denied.'));
+    //     }
+    // }
+
+    public function index(Request $request)
+{   
+    // dd($request->all());
+    // Check if user has permission to manage leave
+    if (\Auth::user()->can('Manage Leave')) {
+        $query = LocalLeave::query();
+        
+        // Filter based on employee type
+        if (\Auth::user()->type == 'employee') {
+            $user = \Auth::user();
+            $employee = Employee::where('user_id', '=', $user->id)->first();
+            $query->where('employee_id', '=', $employee->id);
         } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
+            // Filter by created_by for non-employee users
+            $query->where('created_by', '=', \Auth::user()->creatorId());
         }
+
+        $appliedOn = $request->input('applied_on');
+        if ($appliedOn) {
+            $query->whereDate('applied_on', $appliedOn);
+        }
+        
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $query->whereBetween('start_date', [$startDate, $endDate]);
+            $query->whereBetween('end_date', [$startDate, $endDate]);
+        }
+
+        if ($request->filled('status')) {
+            $status = $request->input('status');
+            $query->where('status', $status);
+        }
+
+        if ($request->filled('employee')) {
+            $employeeId = $request->input('employee');
+            $emp =  Employee::where('user_id',$employeeId)->first();
+           // dd($emp->id);
+           $query->where('employee_id', $emp->id);
+        }
+
+        // Apply additional filter to exclude leave_type_id = 4
+        $query->where('leave_type_id', '!=', 4);
+
+        // Fetch the filtered results
+        $leaves = $query->with(['employees', 'leaveType'])->orderBy('updated_at', 'desc')->get();
+
+        // Fetch the list of users for filter dropdown
+        $objUser = \Auth::user();
+        $usersList = User::where('created_by', '=', $objUser->creatorId())
+            ->whereNotIn('type', ['super admin', 'company'])->get()->pluck('name', 'id');
+        $usersList->prepend('All', '');
+
+        // Return view with leaves and users list
+        return view('leave.index', compact('leaves', 'usersList'));
+    } else {
+        // Redirect if user does not have permission
+        return redirect()->back()->with('error', __('Permission denied.'));
     }
+}
+
 
     public function create()
     {   
@@ -387,17 +450,29 @@ class LeaveController extends Controller
             $arrayJson =  Utility::getCalendarData($type);
         } else {
             $data = LocalLeave::get();
-
+            // dd($data);
             foreach ($data as $val) {
+                // dd($val->status);
                 $end_date = date_create($val->end_date);
                 date_add($end_date, date_interval_create_from_date_string("1 days"));
+                
+                $backgroundColor = "";
+                if($val->status=="Approved"){
+                    $backgroundColor = "#51fc59";
+                }elseif($val->status=="Rejected"){
+                    $backgroundColor = "#f57558";
+                }else{
+                    $backgroundColor = "#eaf551";
+                }
+
                 $arrayJson[] = [
                     "id" => $val->id,
                     "title" => !empty(\Auth::user()->getLeaveType($val->leave_type_id)) ? \Auth::user()->getLeaveType($val->leave_type_id)->title : '',
                     "start" => $val->start_date,
                     "end" => date_format($end_date, "Y-m-d H:i:s"),
                     "className" => $val->color,
-                    "textColor" => '#FFF',
+                    "textColor" => '#030303',
+                    "backgroundColor" => $backgroundColor,
                     "allDay" => true,
                     "url" => route('leave.action', $val['id']),
                 ];

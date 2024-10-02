@@ -276,7 +276,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-4 col-lg-3 col-xl-3">
                 <div class="card p-4 mb-4">
                     <h6 class="report-text gray-text mb-0"><?php echo e(__('Total Basic Salary')); ?> :</h6>
@@ -327,7 +327,7 @@
                     <h7 class="report-text mb-0"><?php echo e(\Auth::user()->priceFormat($filterData['totalOverTime'])); ?></h7>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <div class="col">

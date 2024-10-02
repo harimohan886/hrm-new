@@ -375,26 +375,24 @@
             <div class="row">
                 <div class="col-xl-5">
 
-                    <div class="card">
+                <div class="card">
                         <div class="card-header card-body table-border-style">
-                            <h5><?php echo e(__('Meeting schedule')); ?></h5>
+                            <h5><?php echo e(__("Today's Clock In")); ?></h5>
                         </div>
                         <div class="card-body" style="height: 324px; overflow:auto">
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th><?php echo e(__('Title')); ?></th>
-                                            <th><?php echo e(__('Date')); ?></th>
-                                            <th><?php echo e(__('Time')); ?></th>
+                                            <th><?php echo e(__('Name')); ?></th>
+                                            <th><?php echo e(__('Status')); ?></th>
                                         </tr>
                                     </thead>
                                     <tbody class="list">
-                                        <?php $__currentLoopData = $meetings; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $meeting): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php $__currentLoopData = $clockIns; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $clockIn): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <tr>
-                                                <td><?php echo e($meeting->title); ?></td>
-                                                <td><?php echo e(\Auth::user()->dateFormat($meeting->date)); ?></td>
-                                                <td><?php echo e(\Auth::user()->timeFormat($meeting->time)); ?></td>
+                                                <td><?php echo e($clockIn->name); ?></td>
+                                                <td><span class="absent-btn"><?php echo e(__('Present')); ?></span></td>
                                             </tr>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </tbody>
@@ -467,7 +465,7 @@
                 <div class="card-header card-body table-border-style">
                     <h5><?php echo e(__('Week Offs')); ?></h5>
                 </div>
-                <div class="card-body" style="height: 320px">
+                <div class="card-body" style="height: 320px; overflow:auto">
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -502,41 +500,32 @@
 
             <div class="col-xl-12 col-lg-12 col-md-12">
             <div class="card">
-                <div class="card-header card-body table-border-style">
-                    <h5><?php echo e(__('Week Offs')); ?></h5>
+                        <div class="card-header card-body table-border-style">
+                            <h5><?php echo e(__('Meeting schedule')); ?></h5>
+                        </div>
+                        <div class="card-body" style="height: 324px; overflow:auto">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th><?php echo e(__('Title')); ?></th>
+                                            <th><?php echo e(__('Date')); ?></th>
+                                            <th><?php echo e(__('Time')); ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="list">
+                                        <?php $__currentLoopData = $meetings; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $meeting): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <tr>
+                                                <td><?php echo e($meeting->title); ?></td>
+                                                <td><?php echo e(\Auth::user()->dateFormat($meeting->date)); ?></td>
+                                                <td><?php echo e(\Auth::user()->timeFormat($meeting->time)); ?></td>
+                                            </tr>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                 </div>
-                <div class="card-body" style="height: 320px">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <?php if($showName == 0): ?>
-                                        <th><?php echo e(__('Emp Name')); ?></th>
-                                    <?php endif; ?>
-                                    <th><?php echo e(__('Week Off Date')); ?></th>
-                                    <th><?php echo e(__('Week Off Day Name')); ?></th>
-                                    <th><?php echo e(__('Remark')); ?></th>
-                                    <th><?php echo e(__('Status')); ?></th>
-                                </tr>
-                            </thead>
-                            <tbody class="list">
-                                <?php $__currentLoopData = $weekoffs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $weekoff): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <tr>
-                                        <?php if($showName == 0): ?>
-                                            
-                                            <td><?php echo e(App\Models\User::where('id', $weekoff->employee_id)->value('name')); ?></td>
-                                        <?php endif; ?>
-                                        <td><?php echo e($weekoff->week_off_date); ?></td>
-                                        <td><?php echo e($weekoff->day_name); ?></td>
-                                        <td><?php echo e($weekoff->remark); ?></td>
-                                        <td><?php echo e($weekoff->status); ?></td>
-                                    </tr>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </div>
 
 
@@ -545,7 +534,7 @@
                 <div class="card-header card-body table-border-style">
                     <h5><?php echo e(__('Leaves')); ?></h5>
                 </div>
-                <div class="card-body" style="height: 320px">
+                <div class="card-body" style="height: 320px; overflow:auto">
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -567,7 +556,7 @@
                                 <?php $__currentLoopData = $leaves; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $leave): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr>
                                         <?php if($showName == 0): ?>
-                                            <td><?php echo e(App\Models\User::where('id', $weekoff->employee_id)->value('name')); ?></td>
+                                            <td><?php echo e(App\Models\Employee::where('id', $leave->employee_id)->value('name')); ?></td>
                                         <?php endif; ?>
                                         <td><?php echo e(App\Models\LeaveType::where('id', $leave->leave_type_id)->value('title')); ?></td>
                                         <td><?php echo e($leave->start_date); ?></td>
@@ -592,7 +581,7 @@
                 <div class="card-header card-body table-border-style">
                     <h5><?php echo e(__('Announcement List')); ?></h5>
                 </div>
-                <div class="card-body" style="height: 270px; overflow:auto">
+                <div class="card-body" style="height: 370px; overflow:auto">
                     <div class="table-responsive">
                         <table class="table">
                             <thead>

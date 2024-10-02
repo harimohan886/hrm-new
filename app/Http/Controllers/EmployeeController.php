@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Imports\EmployeesImport;
 use App\Exports\EmployeesExport;
 use App\Models\Asset;
+use App\Models\EmpBreak;
 use App\Models\Contract;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\NOC;
@@ -280,6 +281,7 @@ class EmployeeController extends Controller
                 'dob' => 'required',
                 'gender' => 'required',
                 'phone' => 'required|numeric',
+                'email' => 'required',
                 'address' => 'required',
                 'shift_code' => 'required',
                 'enable_ot' => 'required',
@@ -355,6 +357,9 @@ class EmployeeController extends Controller
             $employee = Employee::findOrFail($id);
             $input    = $request->all();
             $employee->fill($input)->save();
+
+            User::where('id',$employee->user_id)->update(['email'=>$employee->email]);
+
             if ($request->salary) {
                 return redirect()->route('setsalary.index')->with('success', 'Employee successfully updated.');
             }
@@ -850,4 +855,386 @@ class EmployeeController extends Controller
 
         return response()->json($designations);
     }
+
+    // public function employeeBreak(Request $request)
+    // {   
+    //         $id = Auth::user()->id;
+
+    //         dd($request->all(),$id);
+
+    //         $break = new EmpBreak();
+    //         $break->id = $id;
+    //         $break->date = 
+    //         $break->start_break = 
+    //         $break->end_break = 
+    //         $break->total_break = 
+
+    //         return;
+    // }
+
+//     public function employeeBreak(Request $request)
+// {   
+//     $id = Auth::user()->id;
+//     $date = now()->format('Y-m-d'); // Current date
+
+//     // Find existing break record for today
+//     $break = EmpBreak::where('employee_id', $id)
+//                      ->where('date', $date)
+//                      ->first();
+
+//     if (!$break) {
+//         // Create a new break record if not exists
+//         $break = new EmpBreak();
+//         $break->employee_id = $id;
+//         $break->date = $date;
+//     }
+
+//     // Update break details based on status
+//     if ($request->status === 'active') {
+//         // If break is starting, set start time
+//         $break->start_break = now()->format('H:i:s');
+//     } else {
+//         // If break is ending, set end time and calculate total break
+//         $break->end_break = now()->format('H:i:s');
+//         if ($break->start_break) {
+//             $start = new \DateTime($break->start_break);
+//             $end = new \DateTime($break->end_break);
+//             $interval = $start->diff($end);
+//             $break->total_break = ($interval->h * 60) + $interval->i; // Total minutes
+//         }
+//     }
+
+//     $break->save();
+
+//     return response()->json(['status' => 'success']);
+// }
+
+// public function employeeBreak(Request $request)
+// {   
+//     $id = Auth::user()->id;
+//     $date = now()->format('Y-m-d'); // Current date
+//     $now = now()->format('H:i:s'); // Current time
+
+//     // Find the latest ongoing break record for today
+//     $latestBreak = EmpBreak::where('employee_id', $id)
+//                            ->where('date', $date)
+//                            ->whereNull('end_break')
+//                            ->latest('created_at')
+//                            ->first();
+
+//     if ($request->status === 'active') {
+//         // If starting a new break and no break is ongoing, create a new record
+//         if (!$latestBreak) {
+//             $break = new EmpBreak();
+//             $break->employee_id = $id;
+//             $break->date = $date;
+//             $break->start_break = $now;
+//             $break->save();
+//         }
+//     } else {
+//         // If ending the current break, update the latest break record
+//         if ($latestBreak) {
+//             $latestBreak->end_break = $now;
+//             if ($latestBreak->start_break) {
+//                 $start = new \DateTime($latestBreak->start_break);
+//                 $end = new \DateTime($latestBreak->end_break);
+//                 $interval = $start->diff($end);
+//                 dd($interval);
+//                 $latestBreak->total_break = ($interval->h * 60) + $interval->i; // Total minutes
+//             }
+//             $latestBreak->save();
+//         }
+//     }
+
+//     // Calculate the total break time for today
+//     $totalBreakTime = EmpBreak::where('employee_id', $id)
+//                               ->where('date', $date)
+//                               ->whereNotNull('total_break')
+//                               ->sum('total_break'); // Sum of total_break column
+
+//     return response()->json([
+//         'status' => 'success',
+//         'total_break_time' => $totalBreakTime
+//     ]);
+// }
+
+// public function employeeBreak(Request $request)
+// {
+//     $id = Auth::user()->id;
+//     $date = now()->format('Y-m-d'); // Current date
+//     $now = now()->format('H:i:s'); // Current time
+
+//     // Find the latest ongoing break record for today
+//     $latestBreak = EmpBreak::where('employee_id', $id)
+//                            ->where('date', $date)
+//                            ->whereNull('end_break')
+//                            ->latest('created_at')
+//                            ->first();
+
+//     if ($request->status === 'active') {
+//         // If starting a new break and no break is ongoing, create a new record
+//         if (!$latestBreak) {
+//             $break = new EmpBreak();
+//             $break->employee_id = $id;
+//             $break->date = $date;
+//             $break->start_break = $now;
+//             $break->save();
+//         }
+//     } else {
+//         // If ending the current break, update the latest break record
+//         if ($latestBreak) {
+//             $latestBreak->end_break = $now;
+//             if ($latestBreak->start_break) {
+//                 $start = new \DateTime($latestBreak->start_break);
+//                 $end = new \DateTime($latestBreak->end_break);
+//                 $interval = $start->diff($end);
+
+//                 // Display the interval in hours, minutes, and seconds
+//                 $intervalStr = sprintf(
+//                     "%d hours, %d minutes, %d seconds",
+//                     $interval->h,
+//                     $interval->i,
+//                     $interval->s
+//                 );
+//                 // Optionally, you can log or display this $intervalStr
+
+//                 // Calculate total minutes including seconds
+//                 $totalMinutes = ($interval->h * 60) + $interval->i + ($interval->s / 60);
+//                 dd($totalMinutes);
+//                 $latestBreak->total_break = $totalMinutes;
+//             }
+//             $latestBreak->save();
+//         }
+//     }
+
+//     // Calculate the total break time for today
+//     $totalBreakTime = EmpBreak::where('employee_id', $id)
+//                               ->where('date', $date)
+//                               ->whereNotNull('total_break')
+//                               ->sum('total_break'); // Sum of total_break column
+
+//     return response()->json([
+//         'status' => 'success',
+//         'total_break_time' => $totalBreakTime
+//     ]);
+// }
+
+public function employeeBreak(Request $request)
+{
+    $id = Auth::user()->id;
+    $date = now()->format('Y-m-d'); // Current date
+    $now = now()->format('H:i:s'); // Current time
+
+    // Find the latest ongoing break record for today
+    $latestBreak = EmpBreak::where('employee_id', $id)
+                           ->where('date', $date)
+                           ->whereNull('end_break')
+                           ->latest('created_at')
+                           ->first();
+
+    if ($request->status === 'active') {
+        // If starting a new break and no break is ongoing, create a new record
+        if (!$latestBreak) {
+            $break = new EmpBreak();
+            $break->employee_id = $id;
+            $break->date = $date;
+            $break->start_break = $now;
+            $break->save();
+
+            User::where('id', $id)->update(['break' => 'Active']);
+        }
+    } else {
+        // If ending the current break, update the latest break record
+        if ($latestBreak) {
+            $latestBreak->end_break = $now;
+            if ($latestBreak->start_break) {
+                $start = new \DateTime($latestBreak->start_break);
+                $end = new \DateTime($latestBreak->end_break);
+                $interval = $start->diff($end);
+
+                // Format the interval as HH:MM:SS
+                $formattedBreakTime = sprintf(
+                    "%02d:%02d:%02d",
+                    $interval->h,
+                    $interval->i,
+                    $interval->s
+                );
+
+                // Store formatted break time
+                $latestBreak->total_break = $formattedBreakTime;
+            }
+            User::where('id', $id)->update(['break' => 'Inactive']);
+            $latestBreak->save();
+        }
+    }
+
+    // Calculate the total break time for today in seconds
+    $totalBreakTimeInSeconds = EmpBreak::where('employee_id', $id)
+                                       ->where('date', $date)
+                                       ->whereNotNull('total_break')
+                                       ->get()
+                                       ->reduce(function ($carry, $break) {
+                                           list($hours, $minutes, $seconds) = explode(':', $break->total_break);
+                                           return $carry + ($hours * 3600) + ($minutes * 60) + $seconds;
+                                       }, 0);
+
+    // Convert total break time from seconds to HH:MM:SS format
+    $totalHours = floor($totalBreakTimeInSeconds / 3600);
+    $totalMinutes = floor(($totalBreakTimeInSeconds % 3600) / 60);
+    $totalSeconds = $totalBreakTimeInSeconds % 60;
+    $formattedTotalBreakTime = sprintf(
+        "%02d:%02d:%02d",
+        $totalHours,
+        $totalMinutes,
+        $totalSeconds
+    );
+
+    return response()->json([
+        'status' => 'success',
+        'total_break_time' => $formattedTotalBreakTime
+    ]);
+}
+
+// public function empIndex()
+// {
+//     $date = now()->format('Y-m-d'); // Initialize date
+
+//     if (\Auth::user()->type == 'company' || \Auth::user()->type == 'hr') {
+//         // If the user is company or HR, show data for all employees, grouped by date
+//         $breaks = EmpBreak::select('employee_id', 'date')
+//             ->selectRaw('SUM(TIME_TO_SEC(total_break)) AS total_break_seconds')
+//             ->groupBy('employee_id', 'date')
+//             ->orderBy('updated_at', 'desc')
+//             ->get()
+//             ->map(function ($break) {
+//                 $totalBreakTimeInSeconds = $break->total_break_seconds;
+                
+//                 $totalHours = floor($totalBreakTimeInSeconds / 3600);
+//                 $totalMinutes = floor(($totalBreakTimeInSeconds % 3600) / 60);
+//                 $totalSeconds = $totalBreakTimeInSeconds % 60;
+                
+//                 $break->total_break = sprintf("%02d:%02d:%02d", $totalHours, $totalMinutes, $totalSeconds);
+//                 return $break;
+//             });
+
+//     } else if (\Auth::user()->type == 'employee') {
+//         // If the user is an employee, show data only for that specific employee
+//         $employeeId = \Auth::user()->id;
+
+//         $breaks = EmpBreak::where('employee_id', $employeeId)
+//             ->select('employee_id','date')
+//             ->selectRaw('SUM(TIME_TO_SEC(total_break)) AS total_break_seconds')
+//             ->groupBy('date')
+//             ->orderBy('updated_at', 'desc')
+//             ->get()
+//             ->map(function ($break) {
+//                 $totalBreakTimeInSeconds = $break->total_break_seconds;
+                
+//                 $totalHours = floor($totalBreakTimeInSeconds / 3600);
+//                 $totalMinutes = floor(($totalBreakTimeInSeconds % 3600) / 60);
+//                 $totalSeconds = $totalBreakTimeInSeconds % 60;
+                
+//                 $break->total_break = sprintf("%02d:%02d:%02d", $totalHours, $totalMinutes, $totalSeconds);
+//                 return $break;
+//             });
+//     } else {
+//         return redirect()->back()->with('error', __('Permission denied.'));
+//     }
+
+//     $objUser = \Auth::user();
+//     $usersList = User::where('created_by', $objUser->creatorId())
+//         // ->whereNotIn('type', ['super admin', 'company'])
+//         ->get()
+//         ->pluck('name', 'id');
+//     $usersList->prepend('All', '');
+
+//     return view('employee.break', compact('breaks','usersList'));
+// }
+
+public function empIndex(Request $request)
+{
+    $date = $request->input('date');
+    $startDate = $request->input('start_date');
+    $endDate = $request->input('end_date');
+    $employeeId = $request->input('employee');
+
+    $query = EmpBreak::query();
+
+    if (\Auth::user()->type == 'company' || \Auth::user()->type == 'hr') {
+        // If the user is company or HR, show data for all employees, grouped by date
+        $query->select('employee_id', 'date')
+            ->selectRaw('SUM(TIME_TO_SEC(total_break)) AS total_break_seconds')
+            ->groupBy('employee_id', 'date');
+
+    } elseif (\Auth::user()->type == 'employee') {
+        // If the user is an employee, show data only for that specific employee
+        $query->where('employee_id', \Auth::user()->id)
+            ->select('employee_id', 'date')
+            ->selectRaw('SUM(TIME_TO_SEC(total_break)) AS total_break_seconds')
+            ->groupBy('date');
+    } else {
+        return redirect()->back()->with('error', __('Permission denied.'));
+    }
+
+    // Apply filters if present
+    if ($date) {
+        $query->whereDate('date', $date);
+    }
+
+    if ($startDate && $endDate) {
+        $query->whereBetween('date', [$startDate, $endDate]);
+    }
+
+    // Apply filter for specific employee if not 'employee' type
+    if (\Auth::user()->type != 'employee' && $employeeId) {
+           // $employeeId = $request->input('employee');
+            $emp =  Employee::where('user_id',$employeeId)->first();
+           // dd($emp->id);
+           $query->where('employee_id', $emp->id);
+    }
+
+    // Apply ordering and fetching results
+    $breaks = $query->orderBy('updated_at', 'desc')
+        ->get()
+        ->map(function ($break) {
+            $totalBreakTimeInSeconds = $break->total_break_seconds;
+            $totalHours = floor($totalBreakTimeInSeconds / 3600);
+            $totalMinutes = floor(($totalBreakTimeInSeconds % 3600) / 60);
+            $totalSeconds = $totalBreakTimeInSeconds % 60;
+            $break->total_break = sprintf("%02d:%02d:%02d", $totalHours, $totalMinutes, $totalSeconds);
+            return $break;
+        });
+
+    // Fetch users for dropdown list
+    $objUser = \Auth::user();
+    $usersList = User::where('created_by', $objUser->creatorId())
+        // ->whereNotIn('type', ['super admin', 'company']) // Uncomment if needed
+        ->get()
+        ->pluck('name', 'id');
+    $usersList->prepend('All', '');
+
+    return view('employee.break', compact('breaks', 'usersList'));
+}
+
+
+// Add this method to your existing controller
+public function getBreakDetails(Request $request)
+{
+    $date = $request->input('date');
+    $employeeId = $request->input('employee_id');
+    // dd($request->all());
+    $breaks = EmpBreak::where('date', $date)
+        ->when($employeeId, function ($query, $employeeId) {
+            return $query->where('employee_id', $employeeId);
+        })
+        ->orderBy('updated_at', 'desc')
+        ->get(['employee_id', 'date', 'start_break', 'end_break', 'total_break', 'created_at', 'updated_at']);
+
+        // dd($breaks);
+    return view('employee.view-break', compact('breaks'));
+}
+
+
+
+
 }

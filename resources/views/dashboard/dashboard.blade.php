@@ -409,26 +409,24 @@
             <div class="row">
                 <div class="col-xl-5">
 
-                    <div class="card">
+                <div class="card">
                         <div class="card-header card-body table-border-style">
-                            <h5>{{ __('Meeting schedule') }}</h5>
+                            <h5>{{ __("Today's Clock In") }}</h5>
                         </div>
                         <div class="card-body" style="height: 324px; overflow:auto">
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>{{ __('Title') }}</th>
-                                            <th>{{ __('Date') }}</th>
-                                            <th>{{ __('Time') }}</th>
+                                            <th>{{ __('Name') }}</th>
+                                            <th>{{ __('Status') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody class="list">
-                                        @foreach ($meetings as $meeting)
+                                        @foreach ($clockIns as $clockIn)
                                             <tr>
-                                                <td>{{ $meeting->title }}</td>
-                                                <td>{{ \Auth::user()->dateFormat($meeting->date) }}</td>
-                                                <td>{{ \Auth::user()->timeFormat($meeting->time) }}</td>
+                                                <td>{{ $clockIn->name }}</td>
+                                                <td><span class="absent-btn">{{ __('Present') }}</span></td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -501,7 +499,7 @@
                 <div class="card-header card-body table-border-style">
                     <h5>{{ __('Week Offs') }}</h5>
                 </div>
-                <div class="card-body" style="height: 320px">
+                <div class="card-body" style="height: 320px; overflow:auto">
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -536,41 +534,32 @@
 
             <div class="col-xl-12 col-lg-12 col-md-12">
             <div class="card">
-                <div class="card-header card-body table-border-style">
-                    <h5>{{ __('Week Offs') }}</h5>
+                        <div class="card-header card-body table-border-style">
+                            <h5>{{ __('Meeting schedule') }}</h5>
+                        </div>
+                        <div class="card-body" style="height: 324px; overflow:auto">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ __('Title') }}</th>
+                                            <th>{{ __('Date') }}</th>
+                                            <th>{{ __('Time') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="list">
+                                        @foreach ($meetings as $meeting)
+                                            <tr>
+                                                <td>{{ $meeting->title }}</td>
+                                                <td>{{ \Auth::user()->dateFormat($meeting->date) }}</td>
+                                                <td>{{ \Auth::user()->timeFormat($meeting->time) }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                 </div>
-                <div class="card-body" style="height: 320px">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    @if($showName == 0)
-                                        <th>{{ __('Emp Name') }}</th>
-                                    @endif
-                                    <th>{{ __('Week Off Date') }}</th>
-                                    <th>{{ __('Week Off Day Name') }}</th>
-                                    <th>{{ __('Remark') }}</th>
-                                    <th>{{ __('Status') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody class="list">
-                                @foreach ($weekoffs as $weekoff)
-                                    <tr>
-                                        @if($showName == 0)
-                                            
-                                            <td>{{ App\Models\User::where('id', $weekoff->employee_id)->value('name') }}</td>
-                                        @endif
-                                        <td>{{ $weekoff->week_off_date }}</td>
-                                        <td>{{ $weekoff->day_name }}</td>
-                                        <td>{{ $weekoff->remark }}</td>
-                                        <td>{{ $weekoff->status }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </div>
 
 
@@ -579,7 +568,7 @@
                 <div class="card-header card-body table-border-style">
                     <h5>{{ __('Leaves') }}</h5>
                 </div>
-                <div class="card-body" style="height: 320px">
+                <div class="card-body" style="height: 320px; overflow:auto">
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -601,7 +590,7 @@
                                 @foreach ($leaves as $leave)
                                     <tr>
                                         @if($showName == 0)
-                                            <td>{{ App\Models\User::where('id', $weekoff->employee_id)->value('name') }}</td>
+                                            <td>{{ App\Models\Employee::where('id', $leave->employee_id)->value('name') }}</td>
                                         @endif
                                         <td>{{ App\Models\LeaveType::where('id', $leave->leave_type_id)->value('title') }}</td>
                                         <td>{{ $leave->start_date }}</td>
@@ -626,7 +615,7 @@
                 <div class="card-header card-body table-border-style">
                     <h5>{{ __('Announcement List') }}</h5>
                 </div>
-                <div class="card-body" style="height: 270px; overflow:auto">
+                <div class="card-body" style="height: 370px; overflow:auto">
                     <div class="table-responsive">
                         <table class="table">
                             <thead>

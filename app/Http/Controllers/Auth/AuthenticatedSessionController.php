@@ -65,6 +65,15 @@ class AuthenticatedSessionController extends Controller
         //     }
         // }
 
+        $getUser1 = User::where('email', $request->email)->where('is_active', 0)->first();
+        // dd($getUser1); 
+
+        if($getUser1){
+            return redirect()->back()->with('error', __('You are not allowed, Please contact admadministrator!!'));
+        }
+        // dd("esle");
+        // dd($request->all());
+
         $validation = [];
         if (isset($settings['recaptcha_module']) && $settings['recaptcha_module'] == 'yes') {
             if ($settings['google_recaptcha_version'] == 'v2-checkbox') {

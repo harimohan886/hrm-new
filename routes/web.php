@@ -16,6 +16,7 @@ use App\Http\Controllers\ExpenseTypeController;
 use App\Http\Controllers\AttendanceEmployeeController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\WeekOffController;
+use App\Http\Controllers\wfhController;
 use App\Http\Controllers\LeaveTypeController;
 use App\Http\Controllers\AccountListController;
 use App\Http\Controllers\AiTemplateController;
@@ -748,6 +749,12 @@ Route::group(['middleware' => ['verified']], function () {
             'XSS',
         ]
     );
+    Route::get('wfh/{id}/action', [WfhController::class, 'action'])->name('wfh.action')->middleware(
+        [
+            'auth',
+            'XSS',
+        ]
+    );
     Route::post('leave/changeaction', [LeaveController::class, 'changeaction'])->name('leave.changeaction')->middleware(
         [
             'auth',
@@ -755,6 +762,12 @@ Route::group(['middleware' => ['verified']], function () {
         ]
     );
     Route::post('weekoff/changeaction', [WeekOffController::class, 'changeaction'])->name('weekoff.changeaction')->middleware(
+        [
+            'auth',
+            'XSS',
+        ]
+    );
+    Route::post('wfh/changeaction', [WfhController::class, 'changeaction'])->name('wfh.changeaction')->middleware(
         [
             'auth',
             'XSS',
@@ -774,6 +787,13 @@ Route::group(['middleware' => ['verified']], function () {
     );
 
     Route::resource('weekoff', WeekOffController::class)->middleware(
+        [
+            'auth',
+            'XSS',
+        ]
+    );
+
+    Route::resource('wfh', wfhController::class)->middleware(
         [
             'auth',
             'XSS',
@@ -818,6 +838,28 @@ Route::group(['middleware' => ['verified']], function () {
             'XSS',
         ]
     );
+
+    Route::post('employee/break', [EmployeeController::class, 'employeeBreak'])->name('employee.break')->middleware(
+        [
+            'auth',
+            'XSS',
+        ]
+    );
+
+    Route::get('employee/break/index', [EmployeeController::class, 'empIndex'])->name('employee.break.index')->middleware(
+        [
+            'auth',
+            'XSS',
+        ]
+    );
+
+    Route::get('break-details', [EmployeeController::class, 'getBreakDetails'])->name('break.details')->middleware(
+        [
+            'auth',
+            'XSS',
+        ]
+    );
+
 
     Route::get('employee/idcard/download', [IDCardController::class, 'idCardDownload'])->name('employee.idcard.download')->middleware(
         [
@@ -1057,6 +1099,13 @@ Route::group(['middleware' => ['verified']], function () {
         ]
     );
     Route::get('report/monthly/attendance', [ReportController::class, 'monthlyAttendance'])->name('report.monthly.attendance')->middleware(
+        [
+            'auth',
+            'XSS',
+        ]
+    );
+
+    Route::get('generate-attendance-pdf', [ReportController::class, 'monthlyAttendancePdf'])->name('report.monthly.attendance.pdf')->middleware(
         [
             'auth',
             'XSS',

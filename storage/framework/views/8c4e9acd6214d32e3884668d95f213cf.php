@@ -69,6 +69,11 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <?php echo Form::label('email', __('Email'), ['class' => 'form-label']); ?><span class="text-danger pl-1">*</span>
+                                <?php echo Form::text('email', null, ['class' => 'form-control',]); ?>
+
+                            </div>
+                            <div class="form-group">
                                 <?php echo Form::label('address', __('Address'), ['class' => 'form-label']); ?><span class="text-danger pl-1">*</span>
                                 <?php echo Form::textarea('address', null, ['class' => 'form-control', 'rows' => 3]); ?>
 

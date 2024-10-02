@@ -250,11 +250,17 @@
                                         <a class="dash-link"
                                             href="{{ route('attendanceemployee.index') }}">{{ __('Marked Attendance') }}</a>
                                     </li>
+                                    @if (\Auth::user()->type == 'company' || \Auth::user()->type == 'hr')
+                                    <li class="dash-item">
+                                        <a class="dash-link"
+                                            href="{{ route('employee.break.index') }}">{{ __('Break') }}</a>
+                                    </li>
+                                    @endif
                                     @can('Create Attendance')
-                                        <li class="dash-item">
+                                        <!-- <li class="dash-item">
                                             <a class="dash-link"
                                                 href="{{ route('attendanceemployee.bulkattendance') }}">{{ __('Bulk Attendance') }}</a>
-                                        </li>
+                                        </li> -->
                                     @endcan
                                 </ul>
                             </li>
@@ -269,6 +275,12 @@
                 </li>
             @endif
             <!--timesheet-->
+
+            <li class="dash-item {{ Request::segment(1) == 'wfh' ? 'active' : '' }}" style="display:none !important;">
+                        <a href="{{ route('wfh.index') }}" class="dash-link"><span class="dash-micon"><i
+                                    class="ti ti-book"></i></span><span
+                                class="dash-mtext">{{ __('Work From Home') }}</span></a>
+            </li>
 
             <!-- performance-->
             @if (Gate::check('Manage Indicator') || Gate::check('Manage Appraisal') || Gate::check('Manage Goal Tracking'))

@@ -375,6 +375,7 @@
                                 <th><?php echo e(__('Approved Leaves')); ?></th>
                                 <th><?php echo e(__('Rejected Leaves')); ?></th>
                                 <th><?php echo e(__('Pending Leaves')); ?></th>
+                                <!-- <th><?php echo e(__('Week Offs')); ?></th> -->
                             </tr>
                         </thead>
                         <tbody>

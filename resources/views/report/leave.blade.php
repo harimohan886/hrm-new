@@ -365,6 +365,7 @@
                                 <th>{{ __('Approved Leaves') }}</th>
                                 <th>{{ __('Rejected Leaves') }}</th>
                                 <th>{{ __('Pending Leaves') }}</th>
+                                <!-- <th>{{ __('Week Offs') }}</th> -->
                             </tr>
                         </thead>
                         <tbody>

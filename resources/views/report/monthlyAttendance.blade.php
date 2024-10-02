@@ -9,51 +9,25 @@
     <li class="breadcrumb-item">{{ __('Manage Monthly Attendance Report') }}</li>
 @endsection
 @section('action-button')
-    <a href="#" class="btn btn-sm btn-primary" onclick="saveAsPDF()" data-bs-toggle="tooltip" title="{{ __('Download') }}"
-        data-original-title="{{ __('Download') }}">
-        <span class="btn-inner--icon"><i class="ti ti-download"></i></span>
-    </a>
+    <div class="d-flex align-items-center justify-content-end">
+        <span id="pdf_error_msg" style="color:red !important; margin-top:25px !important;"></span>
+        <span id="pdf_success_msg" style="color:green !important; margin-top:25px !important;"></span>
+        <!-- Month Selector -->
+        <div class="mx-2">
+            <div class="btn-box">
+                {{ Form::label('pdf_month', __('Month'), ['class' => 'form-label']) }}
+                {{ Form::month('pdf_month', request()->get('pdf_month', ''), ['class' => 'month-btn form-control current_date', 'autocomplete' => 'off', 'placeholder' => 'Select month', 'id' => 'pdf_month']) }}
+            </div>
+        </div>
 
-    @php
-        $emp = isset($_GET['employee_id']) && !empty($_GET['employee_id']) ? $_GET['employee_id'] : [];
-        $employees = implode(', ', $emp);
-    @endphp
-
-    <a href="{{ route('report.attendance', [isset($_GET['month']) ? $_GET['month'] : date('Y-m'), isset($_GET['branch_id']) && !empty($_GET['branch_id']) ? $_GET['branch_id'] : 0, isset($_GET['department']) && !empty($_GET['department']) ? $_GET['department'] : 0, !empty($employees) ? $employees : 0]) }}"
-        class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="" data-bs-original-title="Export">
-        <span class="btn-inner--icon"><i class="ti ti-file-export "></i></span>
-    </a>
+        <!-- Download Button -->
+        <div class="mx-2" style="margin-top:30px !important;">
+            <a href="#" class="btn btn-sm btn-primary" onclick="saveAsPDF()" data-bs-toggle="tooltip" title="{{ __('Download') }}">
+                <span class="btn-inner--icon" id="setDownloadStatus">Download ⬇️</span>
+            </a>
+        </div>
+    </div>
 @endsection
-
-
-@push('script-page')
-    <script type="text/javascript" src="{{ asset('js/html2pdf.bundle.min.js') }}"></script>
-    <script>
-        var filename = $('#filename').val();
-
-        function saveAsPDF() {
-            var element = document.getElementById('printableArea');
-            var opt = {
-                margin: 0.3,
-                filename: filename,
-                image: {
-                    type: 'jpeg',
-                    quality: 1
-                },
-                html2canvas: {
-                    scale: 4,
-                    dpi: 72,
-                    letterRendering: true
-                },
-                jsPDF: {
-                    unit: 'in',
-                    format: 'A2'
-                }
-            };
-            html2pdf().set(opt).from(element).save();
-        }
-    </script>
-@endpush
 
 @section('content')
     {{-- <div class="col-sm-12 col-lg-12 col-xl-12 col-md-12">
@@ -187,7 +161,7 @@
         </div>
     </div>
 
-    <div id="printableArea">
+    <!-- <div id="printableArea">
         <div class="row">
             <div class="col">
                 <div class="card">
@@ -359,7 +333,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div class="col">
         <div class="card">
@@ -381,9 +355,9 @@
                                     @foreach ($attendance['status'] as $status)
                                         <td>
                                             @if ($status == 'P')
-                                                <i class="badge bg-success p-2 rounded">{{ __('P') }}</i>
+                                                <i class="badge p-2 rounded" style="background-color:green;">{{ __('P') }}</i>
                                             @elseif($status == 'A')
-                                                <i class="badge bg-danger p-2 rounded">{{ __('A') }}</i>
+                                                <i class="badge p-2 rounded" style="background-color:red;">{{ __('A') }}</i>
                                             @endif
                                         </td>
                                     @endforeach
@@ -396,7 +370,108 @@
         </div>
     </div>
 @endsection
+@push('script-page')
+    <script type="text/javascript" src="{{ asset('js/html2pdf.bundle.min.js') }}"></script>
+    <script>
+    // function saveAsPDF(){
+    //     console.log("Checking");
 
+    //     $("#setDownloadStatus").text("Wait.. ⏳🥱");
+
+    //     var pdfMonth = $("#pdf_month").val();
+    //     var year = new Date().getFullYear();
+
+    //     console.log("Month:", pdfMonth);
+    //     console.log("Year:", year);
+
+    //     $.ajax({
+    //         url: '/generate-attendance-pdf',
+    //         type: 'GET',
+    //         data: {
+    //             _token: '{{ csrf_token() }}',
+    //             month: pdfMonth,
+    //             year: year
+    //         },
+    //         success: function(response) {
+    //             console.log(response);
+
+    //             if(response.error_msg=="error"){
+    //                 $("#pdf_error_msg").text('You cannot generate a PDF for future months.');
+    //             }else{
+    //             // Create a link to download the PDF
+    //             var link = document.createElement('a');
+    //             link.href = response.pdfUrl; // URL of the generated PDF
+    //             link.download = 'Monthly-Attendance.pdf'; // File name to save
+    //             document.body.appendChild(link);
+    //             link.click();
+    //             document.body.removeChild(link);
+
+    //             $("#setDownloadStatus").text("Download ⬇️");
+
+    //             $("#pdf_success_msg").text('You cannot generate a PDF for future months.');
+
+    //             }
+                
+    //             // Optionally, show a success message
+    //             // alert(response.message);
+    //         },
+    //         error: function(xhr) {
+    //             console.error("An error occurred while generating the PDF.");
+    //             alert('An error occurred. Please try again.');
+    //         }
+    //     });
+    // }
+    function saveAsPDF(){
+    console.log("Checking");
+
+    $("#setDownloadStatus").text("Wait.. ⏳🥱");
+
+    var pdfMonth = $("#pdf_month").val();
+    var year = new Date().getFullYear();
+
+    console.log("Month:", pdfMonth);
+    console.log("Year:", year);
+
+    $.ajax({
+        url: '/generate-attendance-pdf',
+        type: 'GET',
+        data: {
+            _token: '{{ csrf_token() }}',
+            month: pdfMonth,
+            year: year
+        },
+        success: function(response) {
+            console.log(response);
+
+            if (response.error_msg) {
+                // Display the error message
+                $("#pdf_error_msg").text(response.error_msg);
+                $("#pdf_success_msg").text(''); // Clear success message
+            } else {
+                // Create a link to download the PDF
+                var link = document.createElement('a');
+                link.href = response.pdfUrl; // URL of the generated PDF
+                link.download = 'Monthly-Attendance.pdf'; // File name to save
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                $("#setDownloadStatus").text("Download ⬇️");
+
+                // Display the success message
+                $("#pdf_success_msg").text(response.success_msg);
+                $("#pdf_error_msg").text(''); // Clear error message
+            }
+        },
+        error: function(xhr) {
+            console.error("An error occurred while generating the PDF.");
+            $("#pdf_error_msg").text('An error occurred. Please try again.');
+            $("#pdf_success_msg").text(''); // Clear success message
+        }
+    });
+}
+</script>
+@endpush
 @push('script-page')
     <script>
         $(document).ready(function() {
@@ -477,7 +552,7 @@
         }
     </script>
 
-    <script>
+    <!-- <script>
         $(document).ready(function() {
             var now = new Date();
             var month = (now.getMonth() + 1);
@@ -485,5 +560,29 @@
             var today = now.getFullYear() + '-' + month;
             $('.current_date').val(today);
         });
-    </script>
+    </script> -->
+@endpush
+
+@push('script-page')
+<script>
+    $(document).ready(function() {
+        var now = new Date();
+        
+        // Calculate previous month
+        var prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        
+        // Extract year and month
+        var year = prevMonth.getFullYear();
+        var month = prevMonth.getMonth() + 1; // Months are zero-based in JavaScript
+        
+        // Format month as two digits
+        if (month < 10) month = "0" + month;
+        
+        // Construct date string in YYYY-MM format
+        var previousMonth = year + '-' + month;
+        
+        // Set the value of the input with class 'current_date'
+        $('.current_date').val(previousMonth);
+    });
+</script>
 @endpush

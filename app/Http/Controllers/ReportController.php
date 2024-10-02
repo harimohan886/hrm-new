@@ -17,6 +17,9 @@ use App\Models\Leave;
 use App\Models\LeaveType;
 use App\Models\PaySlip;
 use App\Models\TimeSheet;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Storage;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -138,6 +141,7 @@ class ReportController extends Controller
             $employees = $employees->get();
 
             $leaves        = [];
+            // $totalApproved = $totalReject = $totalPending = $totalWeekoff = 0;
             $totalApproved = $totalReject = $totalPending = 0;
             foreach ($employees as $employee) {
 
@@ -145,9 +149,10 @@ class ReportController extends Controller
                 $employeeLeave['employee_id'] = $employee->employee_id;
                 $employeeLeave['employee']    = $employee->name;
 
-                $approved = Leave::where('employee_id', $employee->id)->where('status', 'Approved');
-                $reject   = Leave::where('employee_id', $employee->id)->where('status', 'Reject');
-                $pending  = Leave::where('employee_id', $employee->id)->where('status', 'Pending');
+                $approved = Leave::where('employee_id', $employee->id)->where('status', 'Approved')->where('leave_type_id', '!=', 4);
+                $reject   = Leave::where('employee_id', $employee->id)->where('status', 'Reject')->where('leave_type_id', '!=', 4);
+                $pending  = Leave::where('employee_id', $employee->id)->where('status', 'Pending')->where('leave_type_id', '!=', 4);
+                // $weekoff  = Leave::where('employee_id', $employee->id)->where('leave_type_id', 4);
 
                 if ($request->type == 'monthly' && !empty($request->month)) {
                     $month = date('m', strtotime($request->month));
@@ -156,6 +161,7 @@ class ReportController extends Controller
                     $approved->whereMonth('applied_on', $month)->whereYear('applied_on', $year);
                     $reject->whereMonth('applied_on', $month)->whereYear('applied_on', $year);
                     $pending->whereMonth('applied_on', $month)->whereYear('applied_on', $year);
+                    // $weekoff->whereMonth('applied_on', $month)->whereYear('applied_on', $year);
 
                     $filterYear['dateYearRange'] = date('M-Y', strtotime($request->month));
                     $filterYear['type']          = __('Monthly');
@@ -167,6 +173,7 @@ class ReportController extends Controller
                     $approved->whereMonth('applied_on', $month)->whereYear('applied_on', $year);
                     $reject->whereMonth('applied_on', $month)->whereYear('applied_on', $year);
                     $pending->whereMonth('applied_on', $month)->whereYear('applied_on', $year);
+                    // $weekoff->whereMonth('applied_on', $month)->whereYear('applied_on', $year);
 
                     $filterYear['dateYearRange'] = date('M-Y', strtotime($monthYear));
                     $filterYear['type']          = __('Monthly');
@@ -177,6 +184,7 @@ class ReportController extends Controller
                     $approved->whereYear('applied_on', $request->year);
                     $reject->whereYear('applied_on', $request->year);
                     $pending->whereYear('applied_on', $request->year);
+                    // $weekoff->whereYear('applied_on', $request->year);
 
 
                     $filterYear['dateYearRange'] = $request->year;
@@ -186,16 +194,19 @@ class ReportController extends Controller
                 $approved = $approved->count();
                 $reject   = $reject->count();
                 $pending  = $pending->count();
+                // $weekoff  = $weekoff->count();
 
                 $totalApproved += $approved;
                 $totalReject   += $reject;
                 $totalPending  += $pending;
+                // $totalWeekoff  += $weekoff;
 
                 $employeeLeave['approved'] = $approved;
                 $employeeLeave['reject']   = $reject;
                 $employeeLeave['pending']  = $pending;
+                // $employeeLeave['weekoff']  = $weekoff;
 
-
+                // dd( $employeeLeave['weekoff']);
                 $leaves[] = $employeeLeave;
             }
 
@@ -208,6 +219,7 @@ class ReportController extends Controller
             $filter['totalApproved'] = $totalApproved;
             $filter['totalReject']   = $totalReject;
             $filter['totalPending']  = $totalPending;
+            // $filter['totalWeekoff']  = $totalWeekoff;
 
 
             return view('report.leave', compact('department', 'branch', 'leaves', 'filterYear', 'filter'));
@@ -222,6 +234,7 @@ class ReportController extends Controller
             $leaveTypes = LeaveType::where('created_by', \Auth::user()->creatorId())->get();
             $leaves     = [];
             foreach ($leaveTypes as $leaveType) {
+                // dd($leaveType->title);
                 $leave        = new Leave();
                 $leave->title = $leaveType->title;
                 $totalLeave   = Leave::where('employee_id', $employee_id)->where('status', $status)->where('leave_type_id', $leaveType->id);
@@ -239,7 +252,7 @@ class ReportController extends Controller
                 $leaves[]     = $leave;
             }
 
-            $leaveData = Leave::where('employee_id', $employee_id)->where('status', $status);
+            $leaveData = Leave::where('employee_id', $employee_id)->where('status', $status)->where('leave_type_id', '!=',4);
             if ($type == 'yearly') {
                 $leaveData->whereYear('applied_on', $year);
             } else {
@@ -576,7 +589,7 @@ class ReportController extends Controller
                             $attendanceStatus[$date] = 'A';
                             $totalLeave              += 1;
                         } else {
-                            $attendanceStatus[$date] = '';
+                            $attendanceStatus[$date] = 'A';
                         }
                     } else {
                         $attendanceStatus[$date] = '';
@@ -831,4 +844,214 @@ class ReportController extends Controller
 
         return response()->json($employees);
     }
+
+//     public function monthlyAttendancePdf(Request $request)
+//     {       
+//         if(\Auth::user()->type == 'employee'){
+
+//             $empId = Auth::user()->id;
+//             $employee = Employee::where('user_id',$empId)->first();
+//             //dd($employee->id);
+
+//             ini_set('memory_limit', '512M');
+    
+//             // dd($request->all());
+//             $monthWithYear = $request->input('month');
+//             $year = $request->input('year');
+//             $parts = explode('-', $monthWithYear);
+//             $month = $parts[1];
+
+//             // Optionally, validate month to ensure it's not in the future
+//             $currentDate = date('Y-m');
+//             if ($monthWithYear >= $currentDate) {
+//                 return redirect()->back()->with('error', __('You cannot generate a PDF for future months.'));
+//             }
+
+
+//             $employees = Employee::where('id',$employee->id)->get();
+//             //dd($employees);
+
+//             $pdf = Pdf::loadView('report.monthlyAttendancePdf', compact('year','month','employees'));
+
+//             $pdf->setPaper('a4', 'landscape');
+
+//             $filePath = public_path('pdf/monthly/emp-' . $empId . '/' . $employee->name . '-' . $month . '-' . $year . '-Monthly-Attendance.pdf');
+
+//             // Create the directory if it doesn't exist
+//             if (!file_exists(dirname($filePath))) {
+//                 mkdir(dirname($filePath), 0777, true);
+//             }
+
+//             // Save the PDF file
+//             file_put_contents($filePath, $pdf->output());
+
+//             return response()->json([
+//                 'message' => __('Monthly Attendance Download Successfully..'),
+//                 'pdfUrl' => url('pdf/monthly/' . $month . '-Monthly-Attendance.pdf')
+//             ]);
+
+//         }else{
+//         dd("else");
+//         ini_set('memory_limit', '512M');
+        
+//         // dd($request->all());
+//         $monthWithYear = $request->input('month');
+//         $year = $request->input('year');
+//         $parts = explode('-', $monthWithYear);
+//         $month = $parts[1];
+
+//         // Optionally, validate month to ensure it's not in the future
+//         $currentDate = date('Y-m');
+//         if ($monthWithYear >= $currentDate) {
+//             return redirect()->back()->with('error', __('You cannot generate a PDF for future months.'));
+//         }
+
+
+//         $employees = Employee::all();
+
+//         $pdf = Pdf::loadView('report.monthlyAttendancePdf', compact('year','month','employees'));
+
+//         $pdf->setPaper('a4', 'landscape');
+
+//         $filePath = public_path('pdf/monthly/' . $month . '-Monthly-Attendance.pdf');
+
+//         // Create the directory if it doesn't exist
+//         if (!file_exists(dirname($filePath))) {
+//             mkdir(dirname($filePath), 0777, true);
+//         }
+
+//         // Save the PDF file
+//         file_put_contents($filePath, $pdf->output());
+
+//         return response()->json([
+//             'message' => __('Monthly Attendance Download Successfully..'),
+//             'pdfUrl' => url('pdf/monthly/' . $month . '-Monthly-Attendance.pdf')
+//         ]);
+
+//     }
+// }
+
+// public function monthlyAttendancePdf(Request $request)
+// {      
+//     ini_set('memory_limit', '512M');
+
+//     $monthWithYear = $request->input('month');
+//     $year = $request->input('year');
+//     $parts = explode('-', $monthWithYear);
+//     $month = $parts[1];
+
+//     // Optionally, validate month to ensure it's not in the future
+//     $currentDate = date('Y-m');
+//     if ($monthWithYear >= $currentDate) {
+//         //return redirect()->back()->with('error', __('You cannot generate a PDF for future months.'));
+//         return response()->json([
+//             'error_msg' => __('error'),
+//         ]);
+//     }
+
+
+//     // Check user type and fetch data accordingly
+//     if (\Auth::user()->type == 'employee') {
+//        // dd("dd");
+//         $empId = Auth::user()->id;
+//         $employee = Employee::where('user_id', $empId)->first();
+
+//         if (!$employee) {
+//             return response()->json(['message' => __('Employee not found.')], 404);
+//         }
+
+//         $employees = Employee::where('id', $employee->id)->get();
+//         $fileName = $employee->name . '-' . $month . '-' . $year . '-Monthly-Attendance.pdf';
+//     } else {
+//         $employees = Employee::all();
+//         $fileName = $month . '-' . $year . '-Monthly-Attendance.pdf';
+//     }
+
+//     $pdf = Pdf::loadView('report.monthlyAttendancePdf', compact('year', 'month', 'employees'));
+//     $pdf->setPaper('a4', 'landscape');
+
+//     $filePath = public_path('pdf/monthly/' . ($empId ?? '') . '/' . $fileName);
+
+//     // Create the directory if it doesn't exist
+//     if (!file_exists(dirname($filePath))) {
+//         mkdir(dirname($filePath), 0777, true);
+//     }
+
+//     // Save the PDF file
+//     file_put_contents($filePath, $pdf->output());
+
+//     return response()->json([
+//         'status' => __('success'),
+//         'success_msg' => __('Monthly Attendance Download Successfully..'),
+//         'pdfUrl' => url('pdf/monthly/' . ($empId ?? '') . '/' . $fileName)
+//     ]);
+// }
+
+public function monthlyAttendancePdf(Request $request)
+{       
+
+    ini_set('memory_limit', '512M');
+
+    $monthWithYear = $request->input('month');
+    $year = $request->input('year');
+    $parts = explode('-', $monthWithYear);
+    $month = $parts[1];
+
+    // Validate month to ensure it's not in the future
+    $currentDate = date('Y-m');
+    if ($monthWithYear >= $currentDate) {
+        return response()->json([
+            'error_msg' => __('You cannot generate a PDF for future months.')
+        ]);
+    }
+
+    // Check user type and fetch data accordingly
+    if (\Auth::user()->type == 'employee') {
+        $empId = \Auth::user()->id;
+        $employee = Employee::where('user_id', $empId)->first();
+
+        if (!$employee) {
+            return response()->json([
+                'error_msg' => __('Employee not found.')
+            ], 404);
+        }
+
+        $employees = Employee::where('id', $employee->id)->get();
+        $fileName = $employee->name . '-' . $month . '-' . $year . '-Monthly-Attendance.pdf';
+        $successMessage = __('Monthly Attendance Download Successfully for :name in :month :year', [
+            'name' => $employee->name,
+            'month' => $month,
+            'year' => $year
+        ]);
+    } else {
+        $employees = Employee::all();
+        $fileName = $month . '-' . $year . '-Monthly-Attendance.pdf';
+        $successMessage = __('Monthly Attendance Download Successfully for :month :year', [
+            'month' => $month,
+            'year' => $year
+        ]);
+    }
+
+    $pdf = Pdf::loadView('report.monthlyAttendancePdf', compact('year', 'month', 'employees'));
+    $pdf->setPaper('a4', 'landscape');
+
+    $filePath = public_path('pdf/monthly/' . ($empId ?? '') . '/' . $fileName);
+
+    // Create the directory if it doesn't exist
+    if (!file_exists(dirname($filePath))) {
+        mkdir(dirname($filePath), 0777, true);
+    }
+
+    // Save the PDF file
+    file_put_contents($filePath, $pdf->output());
+
+    return response()->json([
+        'status' => __('success'),
+        'success_msg' => $successMessage,
+        'pdfUrl' => url('pdf/monthly/' . ($empId ?? '') . '/' . $fileName)
+    ]);
+}
+
+
+
 }

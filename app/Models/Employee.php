@@ -38,6 +38,7 @@ class Employee extends Model
         'account_type',
         'salary',
         'created_by',
+        'break',
     ];
 
     public function documents()

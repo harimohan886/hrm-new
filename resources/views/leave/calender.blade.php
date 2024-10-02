@@ -59,11 +59,20 @@
         </div>
         <div class="col-lg-4">
             <div class="card">
-                <div class="card-body">
+                <div class="card-body" style="height: 1000px; overflow:auto">
                     <h4 class="mb-4">{{ __('Leaves') }}</h4>
                     <ul class="event-cards list-group list-group-flush mt-3 w-100">
                         @foreach ($leaves as $leave)
-                            <li class="list-group-item card mb-3">
+                            @php
+                            if($leave->status=="Approved"){
+                                $backgroundColor="#aaf257";
+                            }elseif($leave->status=="Rejected"){
+                                $backgroundColor="#fa7d4b";
+                            }else{
+                                $backgroundColor="#f5f05b";
+                            }
+                            @endphp
+                            <li class="list-group-item card mb-3" style="background-color:{{$backgroundColor}};">
                                 <div class="row align-items-center justify-content-between">
                                     <div class="col-auto mb-3 mb-sm-0">
                                         <div class="d-flex align-items-center">
@@ -75,7 +84,7 @@
                                                     <a href="#" data-size="lg"
                                                         data-url="{{ route('leave.action', $leave->id) }}"
                                                         data-ajax-popup="true" data-title="{{ __('Edit Event') }}"
-                                                        class="text-primary">{{ !empty(\Auth::user()->getLeaveType($leave->leave_type_id)) ? \Auth::user()->getLeaveType($leave->leave_type_id)->title : '' }}
+                                                        class="text-black">{{ !empty(\Auth::user()->getLeaveType($leave->leave_type_id)) ? \Auth::user()->getLeaveType($leave->leave_type_id)->title : '' }}
                                                     </a>
                                                 </h5>
                                                 <div class="card-text small text-dark">

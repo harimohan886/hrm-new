@@ -551,3 +551,264 @@ function calculateWorkingDays($startDate, $endDate) {
 }
 }
 
+
+if (!function_exists('attendanceDaysDeductionsForPdf')) {
+
+    function attendanceDaysDeductionsForPdf($month, $year, $empId, $otherSalary, $shiftCode, $enableWeekoff, $doj, $enable_ot) {
+        $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+        $dateFormat = "$year-$month";
+
+       // $empId = 24;
+        
+        // Fetch approved leaves
+        $checkLeaves = DB::table('leaves')
+            ->where('status', "Approved")
+            ->where('employee_id', $empId)
+            ->whereMonth('start_date', $month)
+            ->whereYear('start_date', $year)
+            ->where('leave_type_id', 2)
+            ->get(['start_date', 'end_date']);
+
+            $totalLeaveDays = DB::table('leaves')
+            ->where(function ($query) use ($month, $year, $empId) {
+                $query->where('status', 'Approved')
+                    ->where('employee_id', $empId)
+                    ->whereYear('start_date', $year)
+                    ->where('leave_type_id', 2)
+                    ->where(function ($query) use ($month) {
+                        $query->whereMonth('start_date', $month)
+                            ->orWhere(function ($query) use ($month) {
+                                $query->whereMonth('start_date', '<', $month)
+                                    ->whereMonth('end_date', '>=', $month);
+                            });
+                    });
+            })
+            ->get(['start_date', 'end_date'])
+            ->map(function ($leave) use ($month, $year) {
+                $startDate = Carbon::parse($leave->start_date);
+                $endDate = Carbon::parse($leave->end_date);
+        
+                $monthStart = Carbon::create($year, $month, 1);
+                $monthEnd = $monthStart->copy()->endOfMonth();
+        
+                $start = $startDate->greaterThan($monthStart) ? $startDate : $monthStart;
+                $end = $endDate->lessThan($monthEnd) ? $endDate : $monthEnd;
+
+                if ($start->lte($end)) {
+                    return $start->diffInDays($end) + 1;
+                } else {
+                    return 0;
+                }
+            })
+            ->sum();
+
+
+            $halfDayLeave = DB::table('leaves')
+            ->where(function ($query) use ($month, $year, $empId) {
+                $query->where('status', 'Approved')
+                    ->where('employee_id', $empId)
+                    ->whereYear('start_date', $year)
+                    ->where('leave_type_id', 3)
+                    ->where(function ($query) use ($month) {
+                        $query->whereMonth('start_date', $month)
+                            ->orWhere(function ($query) use ($month) {
+                                $query->whereMonth('start_date', '<', $month)
+                                    ->whereMonth('end_date', '>=', $month);
+                            });
+                    });
+            })
+            ->get(['start_date', 'end_date'])
+            ->map(function ($leave) use ($month, $year) {
+                $startDate = Carbon::parse($leave->start_date);
+                $endDate = Carbon::parse($leave->end_date);
+        
+                $monthStart = Carbon::create($year, $month, 1);
+                $monthEnd = $monthStart->copy()->endOfMonth();
+        
+                $start = $startDate->greaterThan($monthStart) ? $startDate : $monthStart;
+                $end = $endDate->lessThan($monthEnd) ? $endDate : $monthEnd;
+        
+                if ($start->lte($end)) {
+                    return $start->diffInDays($end) + 1;
+                } else {
+                    return 0;
+                }
+            })
+            ->sum();
+
+
+            $shortDayLeave= DB::table('leaves')
+            ->where(function ($query) use ($month, $year, $empId) {
+                $query->where('status', 'Approved')
+                    ->where('employee_id', $empId)
+                    ->whereYear('start_date', $year)
+                    ->where('leave_type_id', 1)
+                    ->where(function ($query) use ($month) {
+                        $query->whereMonth('start_date', $month)
+                            ->orWhere(function ($query) use ($month) {
+                                $query->whereMonth('start_date', '<', $month)
+                                    ->whereMonth('end_date', '>=', $month);
+                            });
+                    });
+            })
+            ->get(['start_date', 'end_date'])
+            ->map(function ($leave) use ($month, $year) {
+                $startDate = Carbon::parse($leave->start_date);
+                $endDate = Carbon::parse($leave->end_date);
+        
+                $monthStart = Carbon::create($year, $month, 1);
+                $monthEnd = $monthStart->copy()->endOfMonth();
+        
+                $start = $startDate->greaterThan($monthStart) ? $startDate : $monthStart;
+                $end = $endDate->lessThan($monthEnd) ? $endDate : $monthEnd;
+        
+                if ($start->lte($end)) {
+                    return $start->diffInDays($end) + 1;
+                } else {
+                    return 0;
+                }
+            })
+            ->sum();
+          
+        
+        $countHolidays = DB::table('holidays')
+                        ->where(function ($query) use ($month, $year) {
+                            $query->whereMonth('start_date', $month)
+                                ->whereYear('start_date', $year)
+                                ->orWhere(function ($query) use ($month, $year) {
+                                    $query->whereMonth('start_date', '<', $month)
+                                        ->whereMonth('end_date', '>=', $month)
+                                        ->whereYear('end_date', $year);
+                                });
+                        })
+                        ->get(['start_date', 'end_date', 'total_days']);
+        
+        
+        $totalDays = 0;
+
+        foreach ($countHolidays as $holiday) {
+            $startDate = new DateTime($holiday->start_date);
+            $endDate = new DateTime($holiday->end_date);
+            $totalDays += ($startDate->format('Y-m') == $dateFormat && $endDate->format('Y-m') == $dateFormat)
+                ? calculateWorkingDays($startDate, $endDate)
+                : calculateWorkingDays($startDate, min($endDate, new DateTime("$year-$month-$daysInMonth")));
+        }
+        
+        // Fetch attendance records
+        $attendanceRecords = DB::table('attendance_employees')
+            ->where('employee_id', $empId)
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->pluck('date')
+            ->toArray();
+        
+        $datesInMonth = [];
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            $dateString = sprintf('%d-%02d-%02d', $year, $month, $day);
+            if ($year == now()->year && $month == now()->month && $day == now()->day) {
+                break;
+            }
+            if (!in_array(Carbon::parse($dateString)->dayOfWeek, [Carbon::SATURDAY, Carbon::SUNDAY])) {
+                $datesInMonth[] = $dateString;
+            }
+        }
+        
+        if ($enableWeekoff === "Enabled") {
+            $weekOffCount = 8; 
+            $manageWeekOffRecords = [];
+        } else {
+            $employee = Employee::find($empId);
+            $manageWeekOffRecords = DB::table('manage_weekoff')
+                                    ->where('employee_id', $employee->user_id)
+                                    ->whereMonth('week_off_date', $month)
+                                    ->whereYear('week_off_date', $year)
+                                    ->pluck('week_off_date')
+                                    ->toArray();
+            $weekOffCount = count($manageWeekOffRecords);
+        }
+        
+        $missingDates = array_diff($datesInMonth, $attendanceRecords);
+        
+        foreach ($checkLeaves as $leave) {
+            $missingDates = array_filter($missingDates, fn($date) => $date < $leave->start_date || $date > $leave->end_date);
+        }
+        
+        $finalExceptDates = array_diff($missingDates, $manageWeekOffRecords);
+        
+        $presentDays = count($attendanceRecords);
+        $absentDays = $daysInMonth - $presentDays;
+        $absentDays = $totalLeaveDays+count($countHolidays)+$weekOffCount;
+
+        $halfDayDeduction = 0.5 * $halfDayLeave;
+        $shortDayDeduction = 0.3 * $shortDayLeave;
+
+        $adjustedPresentDays = max(0, $presentDays - $halfDayDeduction - $shortDayDeduction);
+        $adjustedAbsentDays = max(0, $absentDays + $halfDayDeduction + $shortDayDeduction);
+        $adjustedLeaveDays = max(0, $totalLeaveDays + $halfDayDeduction + $shortDayDeduction);
+       // $totalLeaveDays = $halfDayLeaveCount * 0.5 + $shortDayLeaveCount * 0.3;
+
+        return ( [
+            "missingDates" => $missingDates,
+            "finalExceptDates" => $finalExceptDates,
+            "missing_dates_count" => count($missingDates),
+            "finalExcept_dates_count" => count($finalExceptDates) - $totalDays,
+            'daysComeAttendance' => count($attendanceRecords),
+            'weekoffs' => $weekOffCount,
+            // 'present' => $presentDays,
+            'present' => $adjustedPresentDays,
+            'holidays' => count($countHolidays),
+            // 'absent' => $totalLeaveDays+count($countHolidays)+$weekOffCount,
+            'absent' =>  $adjustedAbsentDays,
+            // 'leave' => $totalLeaveDays,
+            'leave' => $adjustedLeaveDays,
+        ]);
+    }
+}
+
+if (!function_exists('getDayTotalHours')) {
+    function getDayTotalHours($date, $formattedOts, $formattedTimeIn, $shift_start_time , $daysHours, $enableOt, $empId, $checkingLate, $checkingEarlygoing) {
+        // dd($date, $formattedOts, $formattedTimeIn, $shift_start_time , $daysHours, $enableOt, $empId, $checkingLate);
+
+        $overtime = $formattedOts;
+
+        list($hours, $minutes) = explode(':', $checkingLate);
+        $totalMinutes = (int)$hours * 60 + (int)$minutes;
+        $dateTime = new DateTime($daysHours);
+        $interval = new DateInterval('PT' . $totalMinutes . 'M');
+        $dateTime->sub($interval);
+        $getLateHours = $dateTime->format('H:i');
+    
+        if($enableOt=="Enabled"){
+            list($lateHours, $lateMinutes) = explode(':', $getLateHours);
+            list($overtimeHours, $overtimeMinutes) = explode(':', $overtime);
+            $lateTotalMinutes = ($lateHours * 60) + $lateMinutes;
+            $overtimeTotalMinutes = ($overtimeHours * 60) + $overtimeMinutes;
+            $finalTotalMinutes = $lateTotalMinutes + $overtimeTotalMinutes;
+            $finalHours = intdiv($finalTotalMinutes, 60);
+            $finalMinutes = $finalTotalMinutes % 60;
+            $finalDayHours = sprintf('%02d:%02d', $finalHours, $finalMinutes);
+        }else{
+            $finalDayHours = $getLateHours;
+        }
+
+        $dateTime1 = new DateTime($finalDayHours);
+        list($hours1, $minutes1) = explode(':', $checkingEarlygoing);
+        $totalMinutes1 = (int)$hours1 * 60 + (int)$minutes1;
+        $interval1 = new DateInterval('PT' . $totalMinutes1 . 'M');
+        $dateTime1->sub($interval1);
+        $finalDayHours = $dateTime1->format('H:i');
+    
+        return $finalDayHours;
+        
+    }
+    }
+
+
+if (!function_exists('isNegativeTime')) {
+    function isNegativeTime($time) {
+        if (strpos($time, '-') === 0) {
+            return true;
+        }
+        return false;
+    }
+}

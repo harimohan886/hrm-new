@@ -79,7 +79,30 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-    <div class="col-sm-12">
+
+    @if(\Auth::user()->type != 'employee')
+    <div class="d-flex align-items-center justify-content-end mb-2" >
+        <span id="pdf_error_msg" style="color:red !important; margin-top:25px !important;"></span>
+        <span id="pdf_success_msg" style="color:green !important; margin-top:25px !important;"></span>
+        <!-- Month Selector -->
+        <div class="mx-2">
+            <div class="btn-box">
+                {{ Form::label('pdf_month', __('Month'), ['class' => 'form-label']) }}
+                {{ Form::month('pdf_month', request()->get('pdf_month', ''), ['class' => 'month-btn form-control current_date', 'autocomplete' => 'off', 'placeholder' => 'Select month', 'id' => 'pdf_month']) }}
+            </div>
+        </div>
+
+        <!-- Download Button -->
+        <div class="mx-2" style="margin-top:30px !important;">
+            <a href="#" class="btn btn-sm btn-primary" onclick="saveAsPDF()" data-bs-toggle="tooltip" title="{{ __('Download') }}">
+                <span class="btn-inner--icon" id="setDownloadStatus">Download ⬇️</span>
+            </a>
+        </div>
+    </div>
+    @endif
+
+
+    <!-- <div class="col-sm-12">
         <div class=" mt-2 " id="multiCollapseExample1">
             <div class="card">
                 <div class="card-body">
@@ -158,7 +181,7 @@
                                         data-bs-toggle="tooltip" title="{{ __('Reset') }}"
                                         data-original-title="{{ __('Reset') }}">
                                         <span class="btn-inner--icon"><i class="ti ti-trash-off text-white-off "></i></span>
-                                    </a>
+                                    </a> -->
 
                                     <!-- <a href="#" data-url="{{ route('attendance.file.import') }}"
                                         data-ajax-popup="true" data-title="{{ __('Import  Attendance CSV File') }}"
@@ -167,7 +190,7 @@
                                         <i class="ti ti-file"></i>
                                     </a> -->
 
-                                </div>
+                                <!-- </div>
 
                             </div>
                         </div>
@@ -176,7 +199,7 @@
                 {{ Form::close() }}
             </div>
         </div>
-    </div>
+    </div> -->
 
 
 <!-- For Manually Punch form start  -->
@@ -264,6 +287,65 @@
 
 
 
+<div class="col-sm-12 col-lg-12 col-xl-12 col-md-12">
+    <div class="mt-2" id="" style="">
+        <div class="card">
+            <div class="card-body">
+                {{ Form::open(['route' => ['attendanceemployee.index'], 'method' => 'get', 'id' => 'emp_attendance_filter']) }}
+                <div class="d-flex align-items-center justify-content-end">
+                    
+                    <!-- Week Off Date Field -->
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                        <div class="btn-box">
+                            {{ Form::label('date', __('Date'), ['class' => 'form-label']) }}
+                            {{ Form::date('date', request()->get('date'), ['class' => 'form-control', 'placeholder' => 'Date']) }}
+                        </div>
+                    </div>
+
+                    <!-- Date Range Field -->
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 mx-4">
+                        <div class="btn-box">
+                            {{ Form::label('date_range', __('Date Range'), ['class' => 'form-label']) }}
+                            <div class="d-flex">
+                                {{ Form::date('start_date', request()->get('start_date'), ['class' => 'form-control', 'placeholder' => 'Start Date']) }}
+                                <span class="mx-2" style="margin-top:7px; font-weight:900; font-size:16px;"><strong>to</strong></span>
+                                {{ Form::date('end_date', request()->get('end_date'), ['class' => 'form-control', 'placeholder' => 'End Date']) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (\Auth::user()->type != 'employee')
+                    <!-- Employee Field -->
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 mx-4">
+                        <div class="btn-box">
+                            {{ Form::label('employee', __('Employee'), ['class' => 'form-label']) }}
+                            {{ Form::select('employee', $usersList, request()->get('employee'), ['class' => 'form-control select', 'id' => 'employee_id']) }}
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Buttons -->
+                    <div class="col-auto float-end ms-2 mt-4">
+                        <a href="#" class="btn btn-sm btn-primary"
+                            onclick="document.getElementById('emp_attendance_filter').submit(); return false;"
+                            data-bs-toggle="tooltip" title="Apply">
+                            <span class="btn-inner--icon"><i class="ti ti-search"></i></span>
+                        </a>
+                        <a href="{{ route('attendanceemployee.index') }}" class="btn btn-sm btn-danger"
+                            data-bs-toggle="tooltip" title="Reset">
+                            <span class="btn-inner--icon"><i class="ti ti-trash-off text-white-off"></i></span>
+                        </a>
+                    </div>
+                </div>
+                {{ Form::close() }}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 
     <div class="col-xl-12">
         <div class="card">
@@ -296,14 +378,12 @@
                                     @endif
                                     <td>{{ \Auth::user()->dateFormat($attendance->date) }}</td>
                                     <td>{{ $attendance->status }}</td>
-                                    <td>{{ $attendance->clock_in != '00:00:00' ? \Auth::user()->timeFormat($attendance->clock_in) : '00:00' }}
-                                    </td>
-                                    <td>{{ $attendance->clock_out != '00:00:00' ? \Auth::user()->timeFormat($attendance->clock_out) : '00:00' }}
-                                    </td>
+                                    <td>{{ $attendance->clock_in }}</td>
+                                    <td>{{ $attendance->clock_out }}</td>
                                     @if($attendance->late > '00:00:00')
                                         <td style="color:red;"><b>{{ $attendance->late }}</b></td>
                                     @else
-                                        <td>{{ $attendance->late }}</td>
+                                        <td>00:00:00</td>                                      
                                     @endif
 
                                     @if($attendance->early_leaving > '00:00:00')
@@ -313,6 +393,7 @@
                                     @endif
 
                                     @if($attendance->employee->enable_ot=="Enabled")
+                                    
                                         @if($attendance->overtime > '00:00:00')
                                             <td style="color:green;"><b>{{ $attendance->overtime }}</b></td>
                                         @else
@@ -364,3 +445,79 @@
         </div>
     </div>
 @endsection
+
+@push('script-page')
+<script>
+    $(document).ready(function() {
+        var now = new Date();
+        
+        // Calculate previous month
+        var prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        
+        // Extract year and month
+        var year = prevMonth.getFullYear();
+        var month = prevMonth.getMonth() + 1; // Months are zero-based in JavaScript
+        
+        // Format month as two digits
+        if (month < 10) month = "0" + month;
+        
+        // Construct date string in YYYY-MM format
+        var previousMonth = year + '-' + month;
+        
+        // Set the value of the input with class 'current_date'
+        $('.current_date').val(previousMonth);
+    });
+
+    function saveAsPDF(){
+    console.log("Checking");
+
+    $("#setDownloadStatus").text("Wait.. ⏳🥱");
+
+    var pdfMonth = $("#pdf_month").val();
+    var year = new Date().getFullYear();
+
+    console.log("Month:", pdfMonth);
+    console.log("Year:", year);
+
+    $.ajax({
+        url: '/generate-attendance-pdf',
+        type: 'GET',
+        data: {
+            _token: '{{ csrf_token() }}',
+            month: pdfMonth,
+            year: year
+        },
+        success: function(response) {
+            console.log(response);
+
+            if (response.error_msg) {
+                // Display the error message
+                $("#pdf_error_msg").text(response.error_msg);
+                $("#pdf_success_msg").text(''); // Clear success message
+            } else {
+                // Create a link to download the PDF
+                var link = document.createElement('a');
+                link.href = response.pdfUrl; // URL of the generated PDF
+                link.download = 'Monthly-Attendance.pdf'; // File name to save
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                $("#setDownloadStatus").text("Download ⬇️");
+
+                // Display the success message
+                $("#pdf_success_msg").text(response.success_msg);
+                $("#pdf_error_msg").text(''); // Clear error message
+            }
+        },
+        error: function(xhr) {
+            console.error("An error occurred while generating the PDF.");
+            $("#pdf_error_msg").text('An error occurred. Please try again.');
+            $("#pdf_success_msg").text(''); // Clear success message
+        }
+    });
+}
+
+
+</script>
+@endpush

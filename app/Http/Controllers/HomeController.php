@@ -106,6 +106,8 @@ class HomeController extends Controller
                 // If employee then pass 1 otherwise 0
                 $showName = 1;
 
+                // dd($notClockIns);
+
                 return view('dashboard.dashboard', compact('user','emp','arrEvents', 'announcements', 'employees', 'meetings', 'employeeAttendance', 'officeTime','weekoffs','leaves','showName'));
             }
             else
@@ -144,8 +146,10 @@ class HomeController extends Controller
 
                 $countEmployee = count($emp);
                 $notClockIn    = AttendanceEmployee::where('date', '=', $currentDate)->get()->pluck('employee_id');
-
+                // dd($notClockIn);
                 $notClockIns    = Employee::where('created_by', '=', \Auth::user()->creatorId())->whereNotIn('id', $notClockIn)->get();
+                $clockIns    = Employee::where('created_by', '=', \Auth::user()->creatorId())->whereIn('id', $notClockIn)->get();
+                // dd($clockIns);
                 $accountBalance = AccountList::where('created_by', '=', \Auth::user()->creatorId())->sum('initial_balance');
                 
                 $activeJob   = Job::where('status', 'active')->where('created_by', '=', \Auth::user()->creatorId())->count();
@@ -160,8 +164,10 @@ class HomeController extends Controller
                 $leaves = Leave::where('weekoff_id',0)->get();
 
                 $showName = 0;
+
+                // dd($notClockIns);
                     // dd($weekoffs);
-                return view('dashboard.dashboard', compact('user','emp','arrEvents', 'announcements', 'activeJob','inActiveJOb','meetings', 'countEmployee', 'countUser', 'countTicket', 'countOpenTicket', 'countCloseTicket', 'notClockIns', 'countEmployee', 'accountBalance', 'totalPayee', 'totalPayer','weekoffs','leaves','showName'));
+                return view('dashboard.dashboard', compact('user','emp','arrEvents', 'announcements', 'activeJob','inActiveJOb','meetings', 'countEmployee', 'countUser', 'countTicket', 'countOpenTicket', 'countCloseTicket', 'notClockIns', 'clockIns','countEmployee', 'accountBalance', 'totalPayee', 'totalPayer','weekoffs','leaves','showName'));
             }
         }
         else

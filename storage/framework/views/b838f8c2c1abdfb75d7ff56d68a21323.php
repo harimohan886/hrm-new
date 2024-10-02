@@ -239,11 +239,17 @@
                                         <a class="dash-link"
                                             href="<?php echo e(route('attendanceemployee.index')); ?>"><?php echo e(__('Marked Attendance')); ?></a>
                                     </li>
+                                    <?php if(\Auth::user()->type == 'company' || \Auth::user()->type == 'hr'): ?>
+                                    <li class="dash-item">
+                                        <a class="dash-link"
+                                            href="<?php echo e(route('employee.break.index')); ?>"><?php echo e(__('Break')); ?></a>
+                                    </li>
+                                    <?php endif; ?>
                                     <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Create Attendance')): ?>
-                                        <li class="dash-item">
+                                        <!-- <li class="dash-item">
                                             <a class="dash-link"
                                                 href="<?php echo e(route('attendanceemployee.bulkattendance')); ?>"><?php echo e(__('Bulk Attendance')); ?></a>
-                                        </li>
+                                        </li> -->
                                     <?php endif; ?>
                                 </ul>
                             </li>
@@ -258,6 +264,12 @@
                 </li>
             <?php endif; ?>
             <!--timesheet-->
+
+            <li class="dash-item <?php echo e(Request::segment(1) == 'wfh' ? 'active' : ''); ?>" style="display:none !important;">
+                        <a href="<?php echo e(route('wfh.index')); ?>" class="dash-link"><span class="dash-micon"><i
+                                    class="ti ti-book"></i></span><span
+                                class="dash-mtext"><?php echo e(__('Work From Home')); ?></span></a>
+            </li>
 
             <!-- performance-->
             <?php if(Gate::check('Manage Indicator') || Gate::check('Manage Appraisal') || Gate::check('Manage Goal Tracking')): ?>

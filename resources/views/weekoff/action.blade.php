@@ -5,7 +5,7 @@
             <table class="table modal-table" id="pc-dt-simple">
                 <tr role="row">
                     <th>{{ __('Employee') }}</th>
-                    <td>{{ !empty($employee->name) ? $employee->name : '' }}</td>
+                    <td>{{ !empty($weekoff->employee_id) ? $weekoff->employees->name : '' }}</td>
                 </tr>
                 <tr>
                     <th>{{ __('Weekoff Date ') }}</th>

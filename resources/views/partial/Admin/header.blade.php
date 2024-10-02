@@ -8,6 +8,27 @@
 
     $mode_setting = \App\Models\Utility::mode_layout();
 @endphp
+<style>
+    #statusToggle + label:before {
+        content: "";
+        position: absolute;
+        background-color: white;
+        border-radius: 50%;
+        transition: .4s;
+        width: 20px;
+        height: 20px;
+        left: 4px;
+        bottom: 4px;
+    }
+    
+    #statusToggle:checked + label {
+        background-color: #4CAF50; /* Color when checked (active) */
+    }
+    
+    #statusToggle:checked + label:before {
+        transform: translateX(20px);
+    }
+</style>
 <header
     class="dash-header  {{ isset($mode_setting['is_sidebar_transperent']) && $mode_setting['is_sidebar_transperent'] == 'on' ? 'transprent-bg' : '' }}">
     <div class="header-wrapper">
@@ -59,6 +80,60 @@
                         ->where('seen', 0)
                         ->count();
                 @endphp
+
+
+                @if (Auth::user()->type == 'employee')
+                <li class="dash-h-item" style="padding-right:10px;">
+                <span style="color:red;"><b>OFF</b></span>
+                </li>
+
+                <li class="dash-h-item" style="margin-top:-15px;">
+                <div class="form-group">
+                    <div style="position: relative; display: inline-block; width: 60px; height: 34px;">
+                        <!-- <span>OFF</span> -->
+                        <input type="checkbox" id="statusToggle" name="statusToggle" style="opacity: 0; width: 0; height: 0;"
+                            {{ Auth::check() && Auth::user()->break == 'Active' ? 'checked' : '' }}>
+                        <label for="statusToggle" style="
+                            position: absolute; 
+                            cursor: pointer; 
+                            background-color: #000; /* Default color when unchecked */
+                            border-radius: 34px; 
+                            transition: .4s; 
+                            display: block; 
+                            width: 80%; 
+                            height: 80%;
+                            padding: 0;
+                            margin: 0;
+                            "></label>
+                            
+                    </div>
+                </div>
+            </li>
+            <li class="dash-h-item" style="padding-left:-4px;">
+                <span style="color:#52c906;"><b>ON</b></span>
+            </li>
+
+                <script>
+                    document.getElementById('statusToggle').addEventListener('change', function() {
+                        var isActive = this.checked;
+                        var status = isActive ? 'active' : 'inactive';
+                        
+                        fetch('{{ route('employee.break') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({ status: status })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('statusLabel').textContent = isActive ? true : false;
+                        })
+                        .catch(error => console.error('Error:', error));
+                    });
+                </script>
+            @endif
 
 
                 @if (Auth::user()->type != 'super admin')

@@ -1,12 +1,21 @@
 <div class="col-form-label">
     <div class="row m-2">
         @foreach ($leaves as $leave)
-            <div class="col text-center">
-                <div class="card p-4 mb-4">
-                    <h5 class="report-text gray-text mb-0">{{ $leave->title }} :</h5>
-                    <h5 class="report-text mb-0">{{ $leave->total }}</h5>
+            @if($leave->title=="Weekoff")
+                <div class="col text-center d-none">
+                    <div class="card p-4 mb-4">
+                        <h5 class="report-text gray-text mb-0">{{ $leave->title }} :</h5>
+                        <h5 class="report-text mb-0">{{ $leave->total }}</h5>
+                    </div>
                 </div>
-            </div>
+            @else
+                <div class="col text-center">
+                    <div class="card p-4 mb-4">
+                        <h5 class="report-text gray-text mb-0">{{ $leave->title }} :</h5>
+                        <h5 class="report-text mb-0">{{ $leave->total }}</h5>
+                    </div>
+                </div>
+            @endif
         @endforeach
     </div>
     <div class="row m-2">
