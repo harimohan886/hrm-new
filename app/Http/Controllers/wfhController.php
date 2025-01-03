@@ -18,7 +18,7 @@ class wfhController extends Controller
 {
     public function index(Request $request)
     {   
-        dd("checker");
+        // dd("checker");
         // Check for permission
         // if (\Auth::user()->can('Manage Weekoff')) {
             // Initialize the query

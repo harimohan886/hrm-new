@@ -276,7 +276,7 @@
             @endif
             <!--timesheet-->
 
-            <li class="dash-item {{ Request::segment(1) == 'wfh' ? 'active' : '' }}" style="display:none !important;">
+            <li class="dash-item {{ Request::segment(1) == 'wfh' ? 'active' : '' }}">
                         <a href="{{ route('wfh.index') }}" class="dash-link"><span class="dash-micon"><i
                                     class="ti ti-book"></i></span><span
                                 class="dash-mtext">{{ __('Work From Home') }}</span></a>

@@ -996,6 +996,9 @@ public function monthlyAttendancePdf(Request $request)
     $year = $request->input('year');
     $parts = explode('-', $monthWithYear);
     $month = $parts[1];
+    $year = $parts[0];
+
+    // dd($monthWithYear,  $year, $parts, $month);
 
     // Validate month to ensure it's not in the future
     $currentDate = date('Y-m');

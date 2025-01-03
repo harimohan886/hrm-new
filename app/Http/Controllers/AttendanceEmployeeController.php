@@ -17,97 +17,338 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceEmployeeController extends Controller
 {
-    public function index(Request $request)
-    {
-        if(\Auth::user()->can('Manage Attendance'))
-        {   
-            // $attendanceEmployee = AttendanceEmployee::get();
-            // dd($attendanceEmployee);
-            $branch = Branch::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
-            $branch->prepend('Select Branch', '');
+    // public function index(Request $request)
+    // {
+    //     if(\Auth::user()->can('Manage Attendance'))
+    //     {   
+    //         // $attendanceEmployee = AttendanceEmployee::get();
+    //         // dd($attendanceEmployee);
+    //         $branch = Branch::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
+    //         $branch->prepend('Select Branch', '');
 
-            $department = Department::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
-            $department->prepend('All', '');
+    //         $department = Department::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
+    //         $department->prepend('All', '');
 
-            if(\Auth::user()->type == 'employee')
-            {
+    //         if(\Auth::user()->type == 'employee')
+    //         {
 
-                $emp = !empty(\Auth::user()->employee) ? \Auth::user()->employee->id : 0;
+    //             $emp = !empty(\Auth::user()->employee) ? \Auth::user()->employee->id : 0;
 
-                $attendanceEmployee = AttendanceEmployee::where('employee_id', $emp);
+    //             $attendanceEmployee = AttendanceEmployee::where('employee_id', $emp);
 
-                $date = $request->input('date');
-                if ($date) {
-                    $attendanceEmployee->whereDate('date', $date);
-                }
+    //             $date = $request->input('date');
+    //             if ($date) {
+    //                 $attendanceEmployee->whereDate('date', $date);
+    //             }
 
-                if ($request->filled('employee')) {
-                    $employeeId = $request->input('employee');
-                    $attendanceEmployee->where('employee_id', $employeeId);
-                }
+    //             if ($request->filled('employee')) {
+    //                 $employeeId = $request->input('employee');
+    //                 $attendanceEmployee->where('employee_id', $employeeId);
+    //             }
 
                 
-                if ($request->filled('start_date') && $request->filled('end_date')) {
-                    $startDate = $request->input('start_date');
-                    $endDate = $request->input('end_date');
-                    $attendanceEmployee->whereBetween('date', [$startDate, $endDate]);
-                }
+    //             if ($request->filled('start_date') && $request->filled('end_date')) {
+    //                 $startDate = $request->input('start_date');
+    //                 $endDate = $request->input('end_date');
+    //                 $attendanceEmployee->whereBetween('date', [$startDate, $endDate]);
+    //             }
 
-                $attendanceEmployee = $attendanceEmployee->orderBy('updated_at', 'desc')->get();
+    //             $attendanceEmployee = $attendanceEmployee->orderBy('updated_at', 'desc')->get();
 
-            }
-            else
-            {   
-                $employee = Employee::select('id')->where('created_by', \Auth::user()->creatorId());
-                // dd($employee );
+    //         }
+    //         else
+    //         {   
+    //             $employee = Employee::select('id')->where('created_by', \Auth::user()->creatorId());
+    //             // dd($employee );
                
-                $employee = $employee->get()->pluck('id');
+    //             $employee = $employee->get()->pluck('id');
 
-                $attendanceEmployee = AttendanceEmployee::whereIn('employee_id', $employee);
+    //             $attendanceEmployee = AttendanceEmployee::whereIn('employee_id', $employee);
 
-                $date = $request->input('date');
-                if ($date) {
-                    $attendanceEmployee->whereDate('date', $date);
-                }
+    //             $date = $request->input('date');
+    //             if ($date) {
+    //                 $attendanceEmployee->whereDate('date', $date);
+    //             }
 
-                if ($request->filled('employee')) {
-                    $employeeId = $request->input('employee');
-                    // dd($employeeId);
-                    //$emp =  Employee::where('user_id',$employeeId)->first();
-                    // dd($emp->id);
-                    $attendanceEmployee->where('employee_id',  $employeeId);
-                }
+    //             if ($request->filled('employee')) {
+    //                 $employeeId = $request->input('employee');
+    //                 // dd($employeeId);
+    //                 //$emp =  Employee::where('user_id',$employeeId)->first();
+    //                 // dd($emp->id);
+    //                 $attendanceEmployee->where('employee_id',  $employeeId);
+    //             }
 
-                if ($request->filled('start_date') && $request->filled('end_date')) {
-                    $startDate = $request->input('start_date');
-                    $endDate = $request->input('end_date');
-                    $attendanceEmployee->whereBetween('date', [$startDate, $endDate]);
-                }
+    //             if ($request->filled('start_date') && $request->filled('end_date')) {
+    //                 $startDate = $request->input('start_date');
+    //                 $endDate = $request->input('end_date');
+    //                 $attendanceEmployee->whereBetween('date', [$startDate, $endDate]);
+    //             }
 
 
-                $attendanceEmployee = $attendanceEmployee->orderBy('updated_at', 'desc')->get();
-                // dd($attendanceEmployee);
+    //             $attendanceEmployee = $attendanceEmployee->orderBy('updated_at', 'desc')->get();
+    //             // dd($attendanceEmployee);
+    //         }
+
+    //         $created_by = Auth::user()->creatorId();
+    //         $employee_option = User::where('created_by', $created_by)->whereNotIn('type', ['company','hr'])->pluck('name', 'id');
+
+    //         $objUser = \Auth::user();
+    //         $usersList = Employee::where('created_by', $objUser->creatorId())
+    //             // ->whereNotIn('type', ['super admin', 'company'])
+    //             ->get()
+    //             ->pluck('name', 'id');
+    //         $usersList->prepend('All', '');
+
+    //         // dd($attendanceEmployee);
+
+    //         return view('attendance.index', compact('attendanceEmployee', 'branch', 'department','employee_option','usersList'));
+    //     }
+    //     else
+    //     {
+    //         return redirect()->back()->with('error', __('Permission denied.'));
+    //     }
+    // }
+
+public function index(Request $request)
+{
+    if (\Auth::user()->can('Manage Attendance')) {
+        // Fetch branches and departments with 'created_by' condition
+        $branch = Branch::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
+        $branch->prepend('Select Branch', '');
+
+        $department = Department::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
+        $department->prepend('All', '');
+
+        // Start building the attendance query
+        if (\Auth::user()->type == 'employee') {
+            $emp = !empty(\Auth::user()->employee) ? \Auth::user()->employee->id : 0;
+            $attendanceEmployee = AttendanceEmployee::where('employee_id', $emp);
+
+            // Default to last month's data if no filters are set
+            if (!$request->hasAny([
+                'date', 'employee', 'start_date', 'end_date', 'filter_name', 'filter_id', 
+                'filter_customer', 'filter_mobile', 'filter_booking_date', 'filter_created_date', 
+                'filter_time', 'filter_user', 'filter_vendor', 'filter_type', 'filter_estimate', 
+                'filter_booking_status', 'filter_payment_status', 'filter_permit_uploaded'
+            ])) {
+                // Default to the last month's data
+                // $attendanceEmployee->whereBetween('date', [
+                //     now()->subMonth()->startOfMonth()->format('Y-m-d'),
+                //     now()->subMonth()->endOfMonth()->format('Y-m-d'),
+                // ]);
+
+                $attendanceEmployee->whereBetween('date', [
+                    now()->subDays(15)->format('Y-m-d'), // 15 days ago
+                    now()->format('Y-m-d'), // Today
+                ]);
+
             }
 
-            $created_by = Auth::user()->creatorId();
-            $employee_option = User::where('created_by', $created_by)->whereNotIn('type', ['company','hr'])->pluck('name', 'id');
+            // Apply filters based on the request
+            if ($date = $request->input('date')) {
+                $attendanceEmployee->whereDate('date', $date);
+            }
 
-            $objUser = \Auth::user();
-            $usersList = Employee::where('created_by', $objUser->creatorId())
-                // ->whereNotIn('type', ['super admin', 'company'])
-                ->get()
-                ->pluck('name', 'id');
-            $usersList->prepend('All', '');
+            if ($request->filled('employee')) {
+                $employeeId = $request->input('employee');
+                $attendanceEmployee->where('employee_id', $employeeId);
+            }
 
-            // dd($attendanceEmployee);
+            if ($request->filled('start_date') && $request->filled('end_date')) {
+                $startDate = $request->input('start_date');
+                $endDate = $request->input('end_date');
+                $attendanceEmployee->whereBetween('date', [$startDate, $endDate]);
+            }
 
-            return view('attendance.index', compact('attendanceEmployee', 'branch', 'department','employee_option','usersList'));
+            // Apply additional filters (example: filter_name, filter_id, etc.)
+            if ($request->filled('filter_name')) {
+                $attendanceEmployee->where('name', 'like', '%' . $request->input('filter_name') . '%');
+            }
+
+            if ($request->filled('filter_id')) {
+                $attendanceEmployee->where('id', $request->input('filter_id'));
+            }
+
+            // Add more filters as necessary
+            // Repeat the filter check for other parameters (filter_customer, filter_mobile, etc.)
+            if ($request->filled('filter_customer')) {
+                $attendanceEmployee->where('customer', 'like', '%' . $request->input('filter_customer') . '%');
+            }
+
+            if ($request->filled('filter_mobile')) {
+                $attendanceEmployee->where('mobile', 'like', '%' . $request->input('filter_mobile') . '%');
+            }
+
+            if ($request->filled('filter_booking_date')) {
+                $attendanceEmployee->whereDate('booking_date', $request->input('filter_booking_date'));
+            }
+
+            if ($request->filled('filter_created_date')) {
+                $attendanceEmployee->whereDate('created_at', $request->input('filter_created_date'));
+            }
+
+            if ($request->filled('filter_time')) {
+                $attendanceEmployee->where('time', 'like', '%' . $request->input('filter_time') . '%');
+            }
+
+            if ($request->filled('filter_user')) {
+                $attendanceEmployee->where('user', 'like', '%' . $request->input('filter_user') . '%');
+            }
+
+            if ($request->filled('filter_vendor')) {
+                $attendanceEmployee->where('vendor', 'like', '%' . $request->input('filter_vendor') . '%');
+            }
+
+            if ($request->filled('filter_type')) {
+                $attendanceEmployee->where('type', 'like', '%' . $request->input('filter_type') . '%');
+            }
+
+            if ($request->filled('filter_estimate')) {
+                $attendanceEmployee->where('estimate', 'like', '%' . $request->input('filter_estimate') . '%');
+            }
+
+            if ($request->filled('filter_booking_status')) {
+                $attendanceEmployee->where('booking_status', $request->input('filter_booking_status'));
+            }
+
+            if ($request->filled('filter_payment_status')) {
+                $attendanceEmployee->where('payment_status', $request->input('filter_payment_status'));
+            }
+
+            if ($request->filled('filter_permit_uploaded')) {
+                $attendanceEmployee->where('permit_uploaded', $request->input('filter_permit_uploaded'));
+            }
+
+            $attendanceEmployee = $attendanceEmployee->orderBy('updated_at', 'desc')->get();
+
+        } else {   
+            // For admins or managers, show attendance for all employees
+            $employeeIds = Employee::where('created_by', \Auth::user()->creatorId())->pluck('id');
+            $attendanceEmployee = AttendanceEmployee::whereIn('employee_id', $employeeIds);
+
+            // Default to last month's data if no filters are set
+            if (!$request->hasAny([
+                'date', 'employee', 'start_date', 'end_date', 'filter_name', 'filter_id', 
+                'filter_customer', 'filter_mobile', 'filter_booking_date', 'filter_created_date', 
+                'filter_time', 'filter_user', 'filter_vendor', 'filter_type', 'filter_estimate', 
+                'filter_booking_status', 'filter_payment_status', 'filter_permit_uploaded'
+            ])) {
+                // Default to the last month's data
+                // $attendanceEmployee->whereBetween('date', [
+                //     now()->subMonth()->startOfMonth()->format('Y-m-d'),
+                //     now()->subMonth()->endOfMonth()->format('Y-m-d'),
+                // ]);
+
+                $attendanceEmployee->whereBetween('date', [
+                    now()->subDays(15)->format('Y-m-d'), // 15 days ago
+                    now()->format('Y-m-d'), // Today
+                ]);
+                
+            }
+
+            // Apply filters based on the request
+            if ($date = $request->input('date')) {
+                $attendanceEmployee->whereDate('date', $date);
+            }
+
+            if ($request->filled('employee')) {
+                $employeeId = $request->input('employee');
+                $attendanceEmployee->where('employee_id', $employeeId);
+            }
+
+            if ($request->filled('start_date') && $request->filled('end_date')) {
+                $startDate = $request->input('start_date');
+                $endDate = $request->input('end_date');
+                $attendanceEmployee->whereBetween('date', [$startDate, $endDate]);
+            }
+
+            // Apply additional filters (example: filter_name, filter_id, etc.)
+            if ($request->filled('filter_name')) {
+                $attendanceEmployee->where('name', 'like', '%' . $request->input('filter_name') . '%');
+            }
+
+            if ($request->filled('filter_id')) {
+                $attendanceEmployee->where('id', $request->input('filter_id'));
+            }
+
+            // Add more filters as necessary
+            // Repeat the filter check for other parameters (filter_customer, filter_mobile, etc.)
+            if ($request->filled('filter_customer')) {
+                $attendanceEmployee->where('customer', 'like', '%' . $request->input('filter_customer') . '%');
+            }
+
+            if ($request->filled('filter_mobile')) {
+                $attendanceEmployee->where('mobile', 'like', '%' . $request->input('filter_mobile') . '%');
+            }
+
+            if ($request->filled('filter_booking_date')) {
+                $attendanceEmployee->whereDate('booking_date', $request->input('filter_booking_date'));
+            }
+
+            if ($request->filled('filter_created_date')) {
+                $attendanceEmployee->whereDate('created_at', $request->input('filter_created_date'));
+            }
+
+            if ($request->filled('filter_time')) {
+                $attendanceEmployee->where('time', 'like', '%' . $request->input('filter_time') . '%');
+            }
+
+            if ($request->filled('filter_user')) {
+                $attendanceEmployee->where('user', 'like', '%' . $request->input('filter_user') . '%');
+            }
+
+            if ($request->filled('filter_vendor')) {
+                $attendanceEmployee->where('vendor', 'like', '%' . $request->input('filter_vendor') . '%');
+            }
+
+            if ($request->filled('filter_type')) {
+                $attendanceEmployee->where('type', 'like', '%' . $request->input('filter_type') . '%');
+            }
+
+            if ($request->filled('filter_estimate')) {
+                $attendanceEmployee->where('estimate', 'like', '%' . $request->input('filter_estimate') . '%');
+            }
+
+            if ($request->filled('filter_booking_status')) {
+                $attendanceEmployee->where('booking_status', $request->input('filter_booking_status'));
+            }
+
+            if ($request->filled('filter_payment_status')) {
+                $attendanceEmployee->where('payment_status', $request->input('filter_payment_status'));
+            }
+
+            if ($request->filled('filter_permit_uploaded')) {
+                $attendanceEmployee->where('permit_uploaded', $request->input('filter_permit_uploaded'));
+            }
+
+            $attendanceEmployee = $attendanceEmployee->orderBy('updated_at', 'desc')->get();
         }
-        else
-        {
-            return redirect()->back()->with('error', __('Permission denied.'));
-        }
+
+        // Fetch user options for employee selection
+        $created_by = Auth::user()->creatorId();
+        $employee_option = User::where('created_by', $created_by)
+            ->whereNotIn('type', ['company', 'hr'])
+            ->pluck('name', 'id');
+
+        // Fetch the list of users with their names
+        $usersList = Employee::where('created_by', \Auth::user()->creatorId())
+            ->get()
+            ->pluck('name', 'id');
+        $usersList->prepend('All', '');
+
+        // Return the attendance view with necessary data
+        return view('attendance.index', compact(
+            'attendanceEmployee', 
+            'branch', 
+            'department',
+            'employee_option',
+            'usersList'
+        ));
+    } else {
+        // If the user doesn't have permission, redirect with an error
+        return redirect()->back()->with('error', __('Permission denied.'));
     }
+}
 
 //     public function index(Request $request)
 // {
