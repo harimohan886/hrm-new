@@ -1,0 +1,64 @@
+image: abhishek9921/jawai:jawai1
+
+
+before_script:
+  - php -v
+  - apt-get update && apt-get install -y software-properties-common zip unzip sshpass
+  - curl -LO https://deployer.org/deployer.phar
+  - mv deployer.phar /usr/local/bin/dep
+  - chmod +x /usr/local/bin/dep
+stages:
+  - unit_test
+  - test
+  - deploy
+
+.sonarqube-check:
+  stage: unit_test
+  image: 
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  
+    GIT_DEPTH: "0" 
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script: 
+    - sonar-scanner
+  allow_failure: true
+  only:
+    - production 
+  
+.test:
+  stage: test
+  script:
+    - cp .env.example .env
+    - composer install
+    - php artisan key:generate
+    - php artisan optimize:clear
+    #- php artisan migrate:fresh --seed 
+    #- vendor/bin/phpunit
+  tags:
+    - hrm
+
+deploy:
+  stage: deploy
+  script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ~/.composer/vendor/bin/dep deploy production
+
+#    - dep deploy 2>/dev/null || true  # Suppress stderr output or errors
+  tags:
+    - HRM
+   
+
+  environment:
+    name: production
+    url: http://13.232.130.57
+  only:
+    - master
