@@ -20,6 +20,14 @@ namespace Google\Service\SecurityCommandCenter;
 class EventThreatDetectionCustomModule extends \Google\Model
 {
   /**
+   * @var string
+   */
+  public $ancestorModule;
+  /**
+   * @var string
+   */
+  public $cloudProvider;
+  /**
    * @var array[]
    */
   public $config;
@@ -52,6 +60,34 @@ class EventThreatDetectionCustomModule extends \Google\Model
    */
   public $updateTime;
 
+  /**
+   * @param string
+   */
+  public function setAncestorModule($ancestorModule)
+  {
+    $this->ancestorModule = $ancestorModule;
+  }
+  /**
+   * @return string
+   */
+  public function getAncestorModule()
+  {
+    return $this->ancestorModule;
+  }
+  /**
+   * @param string
+   */
+  public function setCloudProvider($cloudProvider)
+  {
+    $this->cloudProvider = $cloudProvider;
+  }
+  /**
+   * @return string
+   */
+  public function getCloudProvider()
+  {
+    return $this->cloudProvider;
+  }
   /**
    * @param array[]
    */

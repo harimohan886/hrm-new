@@ -22,12 +22,16 @@ class AgentTaskSpec extends \Google\Collection
   protected $collection_key = 'runnables';
   protected $environmentType = AgentEnvironment::class;
   protected $environmentDataType = '';
+  protected $loggingOptionType = AgentTaskLoggingOption::class;
+  protected $loggingOptionDataType = '';
   /**
    * @var string
    */
   public $maxRunDuration;
   protected $runnablesType = AgentTaskRunnable::class;
   protected $runnablesDataType = 'array';
+  protected $userAccountType = AgentTaskUserAccount::class;
+  protected $userAccountDataType = '';
 
   /**
    * @param AgentEnvironment
@@ -42,6 +46,20 @@ class AgentTaskSpec extends \Google\Collection
   public function getEnvironment()
   {
     return $this->environment;
+  }
+  /**
+   * @param AgentTaskLoggingOption
+   */
+  public function setLoggingOption(AgentTaskLoggingOption $loggingOption)
+  {
+    $this->loggingOption = $loggingOption;
+  }
+  /**
+   * @return AgentTaskLoggingOption
+   */
+  public function getLoggingOption()
+  {
+    return $this->loggingOption;
   }
   /**
    * @param string
@@ -70,6 +88,20 @@ class AgentTaskSpec extends \Google\Collection
   public function getRunnables()
   {
     return $this->runnables;
+  }
+  /**
+   * @param AgentTaskUserAccount
+   */
+  public function setUserAccount(AgentTaskUserAccount $userAccount)
+  {
+    $this->userAccount = $userAccount;
+  }
+  /**
+   * @return AgentTaskUserAccount
+   */
+  public function getUserAccount()
+  {
+    return $this->userAccount;
   }
 }
 

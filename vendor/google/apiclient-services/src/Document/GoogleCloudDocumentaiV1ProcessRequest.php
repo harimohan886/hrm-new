@@ -25,8 +25,16 @@ class GoogleCloudDocumentaiV1ProcessRequest extends \Google\Model
   public $fieldMask;
   protected $gcsDocumentType = GoogleCloudDocumentaiV1GcsDocument::class;
   protected $gcsDocumentDataType = '';
+  /**
+   * @var bool
+   */
+  public $imagelessMode;
   protected $inlineDocumentType = GoogleCloudDocumentaiV1Document::class;
   protected $inlineDocumentDataType = '';
+  /**
+   * @var string[]
+   */
+  public $labels;
   protected $processOptionsType = GoogleCloudDocumentaiV1ProcessOptions::class;
   protected $processOptionsDataType = '';
   protected $rawDocumentType = GoogleCloudDocumentaiV1RawDocument::class;
@@ -65,6 +73,20 @@ class GoogleCloudDocumentaiV1ProcessRequest extends \Google\Model
     return $this->gcsDocument;
   }
   /**
+   * @param bool
+   */
+  public function setImagelessMode($imagelessMode)
+  {
+    $this->imagelessMode = $imagelessMode;
+  }
+  /**
+   * @return bool
+   */
+  public function getImagelessMode()
+  {
+    return $this->imagelessMode;
+  }
+  /**
    * @param GoogleCloudDocumentaiV1Document
    */
   public function setInlineDocument(GoogleCloudDocumentaiV1Document $inlineDocument)
@@ -77,6 +99,20 @@ class GoogleCloudDocumentaiV1ProcessRequest extends \Google\Model
   public function getInlineDocument()
   {
     return $this->inlineDocument;
+  }
+  /**
+   * @param string[]
+   */
+  public function setLabels($labels)
+  {
+    $this->labels = $labels;
+  }
+  /**
+   * @return string[]
+   */
+  public function getLabels()
+  {
+    return $this->labels;
   }
   /**
    * @param GoogleCloudDocumentaiV1ProcessOptions

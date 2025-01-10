@@ -37,12 +37,19 @@ class Regions extends \Google\Service\Resource
    * information (the `quotas` field). To exclude one or more fields, set your
    * request's `fields` query parameter to only include the fields you need. For
    * example, to only include the `id` and `selfLink` fields, add the query
-   * parameter `?fields=id,selfLink` to your request. (regions.get)
+   * parameter `?fields=id,selfLink` to your request. This method fails if the
+   * quota information is unavailable for the region and if the organization
+   * policy constraint compute.requireBasicQuotaInResponse is enforced. This
+   * constraint, when enforced, disables the fail-open behaviour when quota
+   * information (the `items.quotas` field) is unavailable for the region. It is
+   * recommended to use the default setting for the constraint unless your
+   * application requires the fail-closed behaviour for this method. (regions.get)
    *
    * @param string $project Project ID for this request.
    * @param string $region Name of the region resource to return.
    * @param array $optParams Optional parameters.
    * @return Region
+   * @throws \Google\Service\Exception
    */
   public function get($project, $region, $optParams = [])
   {
@@ -58,7 +65,13 @@ class Regions extends \Google\Service\Resource
    * field). To exclude one or more fields, set your request's `fields` query
    * parameter to only include the fields you need. For example, to only include
    * the `id` and `selfLink` fields, add the query parameter `?fields=id,selfLink`
-   * to your request. (regions.listRegions)
+   * to your request. This method fails if the quota information is unavailable
+   * for the region and if the organization policy constraint
+   * compute.requireBasicQuotaInResponse is enforced. This constraint, when
+   * enforced, disables the fail-open behaviour when quota information (the
+   * `items.quotas` field) is unavailable for the region. It is recommended to use
+   * the default setting for the constraint unless your application requires the
+   * fail-closed behaviour for this method. (regions.listRegions)
    *
    * @param string $project Project ID for this request.
    * @param array $optParams Optional parameters.
@@ -113,8 +126,11 @@ class Regions extends \Google\Service\Resource
    * of results.
    * @opt_param bool returnPartialSuccess Opt-in for partial success behavior
    * which provides partial results in case of failure. The default value is
-   * false.
+   * false. For example, when partial success behavior is enabled, aggregatedList
+   * for a single zone scope either returns all resources in the zone or no
+   * resources, with an error code.
    * @return RegionList
+   * @throws \Google\Service\Exception
    */
   public function listRegions($project, $optParams = [])
   {

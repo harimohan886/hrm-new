@@ -19,10 +19,16 @@ namespace Google\Service\HangoutsChat;
 
 class Space extends \Google\Model
 {
+  protected $accessSettingsType = AccessSettings::class;
+  protected $accessSettingsDataType = '';
   /**
    * @var bool
    */
   public $adminInstalled;
+  /**
+   * @var string
+   */
+  public $createTime;
   /**
    * @var string
    */
@@ -32,9 +38,29 @@ class Space extends \Google\Model
    */
   public $externalUserAllowed;
   /**
+   * @var bool
+   */
+  public $importMode;
+  /**
+   * @var string
+   */
+  public $importModeExpireTime;
+  /**
+   * @var string
+   */
+  public $lastActiveTime;
+  protected $membershipCountType = MembershipCount::class;
+  protected $membershipCountDataType = '';
+  /**
    * @var string
    */
   public $name;
+  protected $permissionSettingsType = PermissionSettings::class;
+  protected $permissionSettingsDataType = '';
+  /**
+   * @var string
+   */
+  public $predefinedPermissionSettings;
   /**
    * @var bool
    */
@@ -54,6 +80,10 @@ class Space extends \Google\Model
    */
   public $spaceType;
   /**
+   * @var string
+   */
+  public $spaceUri;
+  /**
    * @var bool
    */
   public $threaded;
@@ -62,6 +92,20 @@ class Space extends \Google\Model
    */
   public $type;
 
+  /**
+   * @param AccessSettings
+   */
+  public function setAccessSettings(AccessSettings $accessSettings)
+  {
+    $this->accessSettings = $accessSettings;
+  }
+  /**
+   * @return AccessSettings
+   */
+  public function getAccessSettings()
+  {
+    return $this->accessSettings;
+  }
   /**
    * @param bool
    */
@@ -75,6 +119,20 @@ class Space extends \Google\Model
   public function getAdminInstalled()
   {
     return $this->adminInstalled;
+  }
+  /**
+   * @param string
+   */
+  public function setCreateTime($createTime)
+  {
+    $this->createTime = $createTime;
+  }
+  /**
+   * @return string
+   */
+  public function getCreateTime()
+  {
+    return $this->createTime;
   }
   /**
    * @param string
@@ -105,6 +163,62 @@ class Space extends \Google\Model
     return $this->externalUserAllowed;
   }
   /**
+   * @param bool
+   */
+  public function setImportMode($importMode)
+  {
+    $this->importMode = $importMode;
+  }
+  /**
+   * @return bool
+   */
+  public function getImportMode()
+  {
+    return $this->importMode;
+  }
+  /**
+   * @param string
+   */
+  public function setImportModeExpireTime($importModeExpireTime)
+  {
+    $this->importModeExpireTime = $importModeExpireTime;
+  }
+  /**
+   * @return string
+   */
+  public function getImportModeExpireTime()
+  {
+    return $this->importModeExpireTime;
+  }
+  /**
+   * @param string
+   */
+  public function setLastActiveTime($lastActiveTime)
+  {
+    $this->lastActiveTime = $lastActiveTime;
+  }
+  /**
+   * @return string
+   */
+  public function getLastActiveTime()
+  {
+    return $this->lastActiveTime;
+  }
+  /**
+   * @param MembershipCount
+   */
+  public function setMembershipCount(MembershipCount $membershipCount)
+  {
+    $this->membershipCount = $membershipCount;
+  }
+  /**
+   * @return MembershipCount
+   */
+  public function getMembershipCount()
+  {
+    return $this->membershipCount;
+  }
+  /**
    * @param string
    */
   public function setName($name)
@@ -117,6 +231,34 @@ class Space extends \Google\Model
   public function getName()
   {
     return $this->name;
+  }
+  /**
+   * @param PermissionSettings
+   */
+  public function setPermissionSettings(PermissionSettings $permissionSettings)
+  {
+    $this->permissionSettings = $permissionSettings;
+  }
+  /**
+   * @return PermissionSettings
+   */
+  public function getPermissionSettings()
+  {
+    return $this->permissionSettings;
+  }
+  /**
+   * @param string
+   */
+  public function setPredefinedPermissionSettings($predefinedPermissionSettings)
+  {
+    $this->predefinedPermissionSettings = $predefinedPermissionSettings;
+  }
+  /**
+   * @return string
+   */
+  public function getPredefinedPermissionSettings()
+  {
+    return $this->predefinedPermissionSettings;
   }
   /**
    * @param bool
@@ -187,6 +329,20 @@ class Space extends \Google\Model
   public function getSpaceType()
   {
     return $this->spaceType;
+  }
+  /**
+   * @param string
+   */
+  public function setSpaceUri($spaceUri)
+  {
+    $this->spaceUri = $spaceUri;
+  }
+  /**
+   * @return string
+   */
+  public function getSpaceUri()
+  {
+    return $this->spaceUri;
   }
   /**
    * @param bool

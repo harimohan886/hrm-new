@@ -23,10 +23,18 @@ class NetworkConfig extends \Google\Model
    * @var string
    */
   public $datapathProvider;
+  /**
+   * @var bool
+   */
+  public $defaultEnablePrivateNodes;
   protected $defaultSnatStatusType = DefaultSnatStatus::class;
   protected $defaultSnatStatusDataType = '';
   protected $dnsConfigType = DNSConfig::class;
   protected $dnsConfigDataType = '';
+  /**
+   * @var bool
+   */
+  public $enableCiliumClusterwideNetworkPolicy;
   /**
    * @var bool
    */
@@ -45,6 +53,10 @@ class NetworkConfig extends \Google\Model
   public $enableMultiNetworking;
   protected $gatewayApiConfigType = GatewayAPIConfig::class;
   protected $gatewayApiConfigDataType = '';
+  /**
+   * @var string
+   */
+  public $inTransitEncryptionConfig;
   /**
    * @var string
    */
@@ -77,6 +89,20 @@ class NetworkConfig extends \Google\Model
     return $this->datapathProvider;
   }
   /**
+   * @param bool
+   */
+  public function setDefaultEnablePrivateNodes($defaultEnablePrivateNodes)
+  {
+    $this->defaultEnablePrivateNodes = $defaultEnablePrivateNodes;
+  }
+  /**
+   * @return bool
+   */
+  public function getDefaultEnablePrivateNodes()
+  {
+    return $this->defaultEnablePrivateNodes;
+  }
+  /**
    * @param DefaultSnatStatus
    */
   public function setDefaultSnatStatus(DefaultSnatStatus $defaultSnatStatus)
@@ -103,6 +129,20 @@ class NetworkConfig extends \Google\Model
   public function getDnsConfig()
   {
     return $this->dnsConfig;
+  }
+  /**
+   * @param bool
+   */
+  public function setEnableCiliumClusterwideNetworkPolicy($enableCiliumClusterwideNetworkPolicy)
+  {
+    $this->enableCiliumClusterwideNetworkPolicy = $enableCiliumClusterwideNetworkPolicy;
+  }
+  /**
+   * @return bool
+   */
+  public function getEnableCiliumClusterwideNetworkPolicy()
+  {
+    return $this->enableCiliumClusterwideNetworkPolicy;
   }
   /**
    * @param bool
@@ -173,6 +213,20 @@ class NetworkConfig extends \Google\Model
   public function getGatewayApiConfig()
   {
     return $this->gatewayApiConfig;
+  }
+  /**
+   * @param string
+   */
+  public function setInTransitEncryptionConfig($inTransitEncryptionConfig)
+  {
+    $this->inTransitEncryptionConfig = $inTransitEncryptionConfig;
+  }
+  /**
+   * @return string
+   */
+  public function getInTransitEncryptionConfig()
+  {
+    return $this->inTransitEncryptionConfig;
   }
   /**
    * @param string

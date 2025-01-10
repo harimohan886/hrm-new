@@ -32,6 +32,12 @@ class ClusterUpdate extends \Google\Collection
   protected $desiredBinaryAuthorizationDataType = '';
   protected $desiredClusterAutoscalingType = ClusterAutoscaling::class;
   protected $desiredClusterAutoscalingDataType = '';
+  protected $desiredCompliancePostureConfigType = CompliancePostureConfig::class;
+  protected $desiredCompliancePostureConfigDataType = '';
+  protected $desiredContainerdConfigType = ContainerdConfig::class;
+  protected $desiredContainerdConfigDataType = '';
+  protected $desiredControlPlaneEndpointsConfigType = ControlPlaneEndpointsConfig::class;
+  protected $desiredControlPlaneEndpointsConfigDataType = '';
   protected $desiredCostManagementConfigType = CostManagementConfig::class;
   protected $desiredCostManagementConfigDataType = '';
   protected $desiredDatabaseEncryptionType = DatabaseEncryption::class;
@@ -40,6 +46,10 @@ class ClusterUpdate extends \Google\Collection
    * @var string
    */
   public $desiredDatapathProvider;
+  /**
+   * @var bool
+   */
+  public $desiredDefaultEnablePrivateNodes;
   protected $desiredDefaultSnatStatusType = DefaultSnatStatus::class;
   protected $desiredDefaultSnatStatusDataType = '';
   protected $desiredDnsConfigType = DNSConfig::class;
@@ -47,11 +57,21 @@ class ClusterUpdate extends \Google\Collection
   /**
    * @var bool
    */
+  public $desiredEnableCiliumClusterwideNetworkPolicy;
+  /**
+   * @var bool
+   */
   public $desiredEnableFqdnNetworkPolicy;
   /**
    * @var bool
    */
+  public $desiredEnableMultiNetworking;
+  /**
+   * @var bool
+   */
   public $desiredEnablePrivateEndpoint;
+  protected $desiredEnterpriseConfigType = DesiredEnterpriseConfig::class;
+  protected $desiredEnterpriseConfigDataType = '';
   protected $desiredFleetType = Fleet::class;
   protected $desiredFleetDataType = '';
   protected $desiredGatewayApiConfigType = GatewayAPIConfig::class;
@@ -64,6 +84,10 @@ class ClusterUpdate extends \Google\Collection
    * @var string
    */
   public $desiredImageType;
+  /**
+   * @var string
+   */
+  public $desiredInTransitEncryptionConfig;
   protected $desiredIntraNodeVisibilityConfigType = IntraNodeVisibilityConfig::class;
   protected $desiredIntraNodeVisibilityConfigDataType = '';
   protected $desiredK8sBetaApisType = K8sBetaAPIConfig::class;
@@ -96,6 +120,12 @@ class ClusterUpdate extends \Google\Collection
   public $desiredMonitoringService;
   protected $desiredNetworkPerformanceConfigType = ClusterNetworkPerformanceConfig::class;
   protected $desiredNetworkPerformanceConfigDataType = '';
+  protected $desiredNodeKubeletConfigType = NodeKubeletConfig::class;
+  protected $desiredNodeKubeletConfigDataType = '';
+  protected $desiredNodePoolAutoConfigKubeletConfigType = NodeKubeletConfig::class;
+  protected $desiredNodePoolAutoConfigKubeletConfigDataType = '';
+  protected $desiredNodePoolAutoConfigLinuxNodeConfigType = LinuxNodeConfig::class;
+  protected $desiredNodePoolAutoConfigLinuxNodeConfigDataType = '';
   protected $desiredNodePoolAutoConfigNetworkTagsType = NetworkTags::class;
   protected $desiredNodePoolAutoConfigNetworkTagsDataType = '';
   protected $desiredNodePoolAutoConfigResourceManagerTagsType = ResourceManagerTags::class;
@@ -122,10 +152,14 @@ class ClusterUpdate extends \Google\Collection
    * @var string
    */
   public $desiredPrivateIpv6GoogleAccess;
+  protected $desiredRbacBindingConfigType = RBACBindingConfig::class;
+  protected $desiredRbacBindingConfigDataType = '';
   protected $desiredReleaseChannelType = ReleaseChannel::class;
   protected $desiredReleaseChannelDataType = '';
   protected $desiredResourceUsageExportConfigType = ResourceUsageExportConfig::class;
   protected $desiredResourceUsageExportConfigDataType = '';
+  protected $desiredSecretManagerConfigType = SecretManagerConfig::class;
+  protected $desiredSecretManagerConfigDataType = '';
   protected $desiredSecurityPostureConfigType = SecurityPostureConfig::class;
   protected $desiredSecurityPostureConfigDataType = '';
   protected $desiredServiceExternalIpsConfigType = ServiceExternalIPsConfig::class;
@@ -148,6 +182,8 @@ class ClusterUpdate extends \Google\Collection
   public $etag;
   protected $removedAdditionalPodRangesConfigType = AdditionalPodRangesConfig::class;
   protected $removedAdditionalPodRangesConfigDataType = '';
+  protected $userManagedKeysConfigType = UserManagedKeysConfig::class;
+  protected $userManagedKeysConfigDataType = '';
 
   /**
    * @param AdditionalPodRangesConfig
@@ -234,6 +270,48 @@ class ClusterUpdate extends \Google\Collection
     return $this->desiredClusterAutoscaling;
   }
   /**
+   * @param CompliancePostureConfig
+   */
+  public function setDesiredCompliancePostureConfig(CompliancePostureConfig $desiredCompliancePostureConfig)
+  {
+    $this->desiredCompliancePostureConfig = $desiredCompliancePostureConfig;
+  }
+  /**
+   * @return CompliancePostureConfig
+   */
+  public function getDesiredCompliancePostureConfig()
+  {
+    return $this->desiredCompliancePostureConfig;
+  }
+  /**
+   * @param ContainerdConfig
+   */
+  public function setDesiredContainerdConfig(ContainerdConfig $desiredContainerdConfig)
+  {
+    $this->desiredContainerdConfig = $desiredContainerdConfig;
+  }
+  /**
+   * @return ContainerdConfig
+   */
+  public function getDesiredContainerdConfig()
+  {
+    return $this->desiredContainerdConfig;
+  }
+  /**
+   * @param ControlPlaneEndpointsConfig
+   */
+  public function setDesiredControlPlaneEndpointsConfig(ControlPlaneEndpointsConfig $desiredControlPlaneEndpointsConfig)
+  {
+    $this->desiredControlPlaneEndpointsConfig = $desiredControlPlaneEndpointsConfig;
+  }
+  /**
+   * @return ControlPlaneEndpointsConfig
+   */
+  public function getDesiredControlPlaneEndpointsConfig()
+  {
+    return $this->desiredControlPlaneEndpointsConfig;
+  }
+  /**
    * @param CostManagementConfig
    */
   public function setDesiredCostManagementConfig(CostManagementConfig $desiredCostManagementConfig)
@@ -276,6 +354,20 @@ class ClusterUpdate extends \Google\Collection
     return $this->desiredDatapathProvider;
   }
   /**
+   * @param bool
+   */
+  public function setDesiredDefaultEnablePrivateNodes($desiredDefaultEnablePrivateNodes)
+  {
+    $this->desiredDefaultEnablePrivateNodes = $desiredDefaultEnablePrivateNodes;
+  }
+  /**
+   * @return bool
+   */
+  public function getDesiredDefaultEnablePrivateNodes()
+  {
+    return $this->desiredDefaultEnablePrivateNodes;
+  }
+  /**
    * @param DefaultSnatStatus
    */
   public function setDesiredDefaultSnatStatus(DefaultSnatStatus $desiredDefaultSnatStatus)
@@ -306,6 +398,20 @@ class ClusterUpdate extends \Google\Collection
   /**
    * @param bool
    */
+  public function setDesiredEnableCiliumClusterwideNetworkPolicy($desiredEnableCiliumClusterwideNetworkPolicy)
+  {
+    $this->desiredEnableCiliumClusterwideNetworkPolicy = $desiredEnableCiliumClusterwideNetworkPolicy;
+  }
+  /**
+   * @return bool
+   */
+  public function getDesiredEnableCiliumClusterwideNetworkPolicy()
+  {
+    return $this->desiredEnableCiliumClusterwideNetworkPolicy;
+  }
+  /**
+   * @param bool
+   */
   public function setDesiredEnableFqdnNetworkPolicy($desiredEnableFqdnNetworkPolicy)
   {
     $this->desiredEnableFqdnNetworkPolicy = $desiredEnableFqdnNetworkPolicy;
@@ -320,6 +426,20 @@ class ClusterUpdate extends \Google\Collection
   /**
    * @param bool
    */
+  public function setDesiredEnableMultiNetworking($desiredEnableMultiNetworking)
+  {
+    $this->desiredEnableMultiNetworking = $desiredEnableMultiNetworking;
+  }
+  /**
+   * @return bool
+   */
+  public function getDesiredEnableMultiNetworking()
+  {
+    return $this->desiredEnableMultiNetworking;
+  }
+  /**
+   * @param bool
+   */
   public function setDesiredEnablePrivateEndpoint($desiredEnablePrivateEndpoint)
   {
     $this->desiredEnablePrivateEndpoint = $desiredEnablePrivateEndpoint;
@@ -330,6 +450,20 @@ class ClusterUpdate extends \Google\Collection
   public function getDesiredEnablePrivateEndpoint()
   {
     return $this->desiredEnablePrivateEndpoint;
+  }
+  /**
+   * @param DesiredEnterpriseConfig
+   */
+  public function setDesiredEnterpriseConfig(DesiredEnterpriseConfig $desiredEnterpriseConfig)
+  {
+    $this->desiredEnterpriseConfig = $desiredEnterpriseConfig;
+  }
+  /**
+   * @return DesiredEnterpriseConfig
+   */
+  public function getDesiredEnterpriseConfig()
+  {
+    return $this->desiredEnterpriseConfig;
   }
   /**
    * @param Fleet
@@ -400,6 +534,20 @@ class ClusterUpdate extends \Google\Collection
   public function getDesiredImageType()
   {
     return $this->desiredImageType;
+  }
+  /**
+   * @param string
+   */
+  public function setDesiredInTransitEncryptionConfig($desiredInTransitEncryptionConfig)
+  {
+    $this->desiredInTransitEncryptionConfig = $desiredInTransitEncryptionConfig;
+  }
+  /**
+   * @return string
+   */
+  public function getDesiredInTransitEncryptionConfig()
+  {
+    return $this->desiredInTransitEncryptionConfig;
   }
   /**
    * @param IntraNodeVisibilityConfig
@@ -570,6 +718,48 @@ class ClusterUpdate extends \Google\Collection
     return $this->desiredNetworkPerformanceConfig;
   }
   /**
+   * @param NodeKubeletConfig
+   */
+  public function setDesiredNodeKubeletConfig(NodeKubeletConfig $desiredNodeKubeletConfig)
+  {
+    $this->desiredNodeKubeletConfig = $desiredNodeKubeletConfig;
+  }
+  /**
+   * @return NodeKubeletConfig
+   */
+  public function getDesiredNodeKubeletConfig()
+  {
+    return $this->desiredNodeKubeletConfig;
+  }
+  /**
+   * @param NodeKubeletConfig
+   */
+  public function setDesiredNodePoolAutoConfigKubeletConfig(NodeKubeletConfig $desiredNodePoolAutoConfigKubeletConfig)
+  {
+    $this->desiredNodePoolAutoConfigKubeletConfig = $desiredNodePoolAutoConfigKubeletConfig;
+  }
+  /**
+   * @return NodeKubeletConfig
+   */
+  public function getDesiredNodePoolAutoConfigKubeletConfig()
+  {
+    return $this->desiredNodePoolAutoConfigKubeletConfig;
+  }
+  /**
+   * @param LinuxNodeConfig
+   */
+  public function setDesiredNodePoolAutoConfigLinuxNodeConfig(LinuxNodeConfig $desiredNodePoolAutoConfigLinuxNodeConfig)
+  {
+    $this->desiredNodePoolAutoConfigLinuxNodeConfig = $desiredNodePoolAutoConfigLinuxNodeConfig;
+  }
+  /**
+   * @return LinuxNodeConfig
+   */
+  public function getDesiredNodePoolAutoConfigLinuxNodeConfig()
+  {
+    return $this->desiredNodePoolAutoConfigLinuxNodeConfig;
+  }
+  /**
    * @param NetworkTags
    */
   public function setDesiredNodePoolAutoConfigNetworkTags(NetworkTags $desiredNodePoolAutoConfigNetworkTags)
@@ -710,6 +900,20 @@ class ClusterUpdate extends \Google\Collection
     return $this->desiredPrivateIpv6GoogleAccess;
   }
   /**
+   * @param RBACBindingConfig
+   */
+  public function setDesiredRbacBindingConfig(RBACBindingConfig $desiredRbacBindingConfig)
+  {
+    $this->desiredRbacBindingConfig = $desiredRbacBindingConfig;
+  }
+  /**
+   * @return RBACBindingConfig
+   */
+  public function getDesiredRbacBindingConfig()
+  {
+    return $this->desiredRbacBindingConfig;
+  }
+  /**
    * @param ReleaseChannel
    */
   public function setDesiredReleaseChannel(ReleaseChannel $desiredReleaseChannel)
@@ -736,6 +940,20 @@ class ClusterUpdate extends \Google\Collection
   public function getDesiredResourceUsageExportConfig()
   {
     return $this->desiredResourceUsageExportConfig;
+  }
+  /**
+   * @param SecretManagerConfig
+   */
+  public function setDesiredSecretManagerConfig(SecretManagerConfig $desiredSecretManagerConfig)
+  {
+    $this->desiredSecretManagerConfig = $desiredSecretManagerConfig;
+  }
+  /**
+   * @return SecretManagerConfig
+   */
+  public function getDesiredSecretManagerConfig()
+  {
+    return $this->desiredSecretManagerConfig;
   }
   /**
    * @param SecurityPostureConfig
@@ -862,6 +1080,20 @@ class ClusterUpdate extends \Google\Collection
   public function getRemovedAdditionalPodRangesConfig()
   {
     return $this->removedAdditionalPodRangesConfig;
+  }
+  /**
+   * @param UserManagedKeysConfig
+   */
+  public function setUserManagedKeysConfig(UserManagedKeysConfig $userManagedKeysConfig)
+  {
+    $this->userManagedKeysConfig = $userManagedKeysConfig;
+  }
+  /**
+   * @return UserManagedKeysConfig
+   */
+  public function getUserManagedKeysConfig()
+  {
+    return $this->userManagedKeysConfig;
   }
 }
 

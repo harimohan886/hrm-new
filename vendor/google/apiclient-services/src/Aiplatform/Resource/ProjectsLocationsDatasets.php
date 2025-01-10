@@ -42,6 +42,7 @@ class ProjectsLocationsDatasets extends \Google\Service\Resource
    * @param GoogleCloudAiplatformV1Dataset $postBody
    * @param array $optParams Optional parameters.
    * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
    */
   public function create($parent, GoogleCloudAiplatformV1Dataset $postBody, $optParams = [])
   {
@@ -56,6 +57,7 @@ class ProjectsLocationsDatasets extends \Google\Service\Resource
    * Format: `projects/{project}/locations/{location}/datasets/{dataset}`
    * @param array $optParams Optional parameters.
    * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
    */
   public function delete($name, $optParams = [])
   {
@@ -71,6 +73,7 @@ class ProjectsLocationsDatasets extends \Google\Service\Resource
    * @param GoogleCloudAiplatformV1ExportDataRequest $postBody
    * @param array $optParams Optional parameters.
    * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
    */
   public function export($name, GoogleCloudAiplatformV1ExportDataRequest $postBody, $optParams = [])
   {
@@ -86,6 +89,7 @@ class ProjectsLocationsDatasets extends \Google\Service\Resource
    *
    * @opt_param string readMask Mask specifying which fields to read.
    * @return GoogleCloudAiplatformV1Dataset
+   * @throws \Google\Service\Exception
    */
   public function get($name, $optParams = [])
   {
@@ -101,6 +105,7 @@ class ProjectsLocationsDatasets extends \Google\Service\Resource
    * @param GoogleCloudAiplatformV1ImportDataRequest $postBody
    * @param array $optParams Optional parameters.
    * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
    */
   public function import($name, GoogleCloudAiplatformV1ImportDataRequest $postBody, $optParams = [])
   {
@@ -129,6 +134,7 @@ class ProjectsLocationsDatasets extends \Google\Service\Resource
    * @opt_param string pageToken The standard list page token.
    * @opt_param string readMask Mask specifying which fields to read.
    * @return GoogleCloudAiplatformV1ListDatasetsResponse
+   * @throws \Google\Service\Exception
    */
   public function listProjectsLocationsDatasets($parent, $optParams = [])
   {
@@ -139,7 +145,8 @@ class ProjectsLocationsDatasets extends \Google\Service\Resource
   /**
    * Updates a Dataset. (datasets.patch)
    *
-   * @param string $name Output only. The resource name of the Dataset.
+   * @param string $name Output only. Identifier. The resource name of the
+   * Dataset. Format: `projects/{project}/locations/{location}/datasets/{dataset}`
    * @param GoogleCloudAiplatformV1Dataset $postBody
    * @param array $optParams Optional parameters.
    *
@@ -147,6 +154,7 @@ class ProjectsLocationsDatasets extends \Google\Service\Resource
    * resource. For the `FieldMask` definition, see google.protobuf.FieldMask.
    * Updatable fields: * `display_name` * `description` * `labels`
    * @return GoogleCloudAiplatformV1Dataset
+   * @throws \Google\Service\Exception
    */
   public function patch($name, GoogleCloudAiplatformV1Dataset $postBody, $optParams = [])
   {
@@ -206,6 +214,7 @@ class ProjectsLocationsDatasets extends \Google\Service\Resource
    * avedQueries/{saved_query}` All of the search will be done in the context of
    * this SavedQuery.
    * @return GoogleCloudAiplatformV1SearchDataItemsResponse
+   * @throws \Google\Service\Exception
    */
   public function searchDataItems($dataset, $optParams = [])
   {

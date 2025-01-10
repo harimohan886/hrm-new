@@ -31,17 +31,47 @@ class GoogleCloudAiplatformV1SchemaTextPromptDatasetMetadata extends \Google\Col
   protected $groundingConfigType = GoogleCloudAiplatformV1SchemaPredictParamsGroundingConfig::class;
   protected $groundingConfigDataType = '';
   /**
+   * @var bool
+   */
+  public $hasPromptVariable;
+  /**
+   * @var bool
+   */
+  public $logprobs;
+  /**
    * @var string
    */
   public $maxOutputTokens;
   /**
    * @var string
    */
+  public $note;
+  protected $promptApiSchemaType = GoogleCloudAiplatformV1SchemaPromptApiSchema::class;
+  protected $promptApiSchemaDataType = '';
+  /**
+   * @var string
+   */
   public $promptType;
+  /**
+   * @var bool
+   */
+  public $seedEnabled;
+  /**
+   * @var string
+   */
+  public $seedValue;
   /**
    * @var string[]
    */
   public $stopSequences;
+  /**
+   * @var string
+   */
+  public $systemInstruction;
+  /**
+   * @var string
+   */
+  public $systemInstructionGcsUri;
   /**
    * @var float
    */
@@ -102,6 +132,34 @@ class GoogleCloudAiplatformV1SchemaTextPromptDatasetMetadata extends \Google\Col
     return $this->groundingConfig;
   }
   /**
+   * @param bool
+   */
+  public function setHasPromptVariable($hasPromptVariable)
+  {
+    $this->hasPromptVariable = $hasPromptVariable;
+  }
+  /**
+   * @return bool
+   */
+  public function getHasPromptVariable()
+  {
+    return $this->hasPromptVariable;
+  }
+  /**
+   * @param bool
+   */
+  public function setLogprobs($logprobs)
+  {
+    $this->logprobs = $logprobs;
+  }
+  /**
+   * @return bool
+   */
+  public function getLogprobs()
+  {
+    return $this->logprobs;
+  }
+  /**
    * @param string
    */
   public function setMaxOutputTokens($maxOutputTokens)
@@ -118,6 +176,34 @@ class GoogleCloudAiplatformV1SchemaTextPromptDatasetMetadata extends \Google\Col
   /**
    * @param string
    */
+  public function setNote($note)
+  {
+    $this->note = $note;
+  }
+  /**
+   * @return string
+   */
+  public function getNote()
+  {
+    return $this->note;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1SchemaPromptApiSchema
+   */
+  public function setPromptApiSchema(GoogleCloudAiplatformV1SchemaPromptApiSchema $promptApiSchema)
+  {
+    $this->promptApiSchema = $promptApiSchema;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1SchemaPromptApiSchema
+   */
+  public function getPromptApiSchema()
+  {
+    return $this->promptApiSchema;
+  }
+  /**
+   * @param string
+   */
   public function setPromptType($promptType)
   {
     $this->promptType = $promptType;
@@ -128,6 +214,34 @@ class GoogleCloudAiplatformV1SchemaTextPromptDatasetMetadata extends \Google\Col
   public function getPromptType()
   {
     return $this->promptType;
+  }
+  /**
+   * @param bool
+   */
+  public function setSeedEnabled($seedEnabled)
+  {
+    $this->seedEnabled = $seedEnabled;
+  }
+  /**
+   * @return bool
+   */
+  public function getSeedEnabled()
+  {
+    return $this->seedEnabled;
+  }
+  /**
+   * @param string
+   */
+  public function setSeedValue($seedValue)
+  {
+    $this->seedValue = $seedValue;
+  }
+  /**
+   * @return string
+   */
+  public function getSeedValue()
+  {
+    return $this->seedValue;
   }
   /**
    * @param string[]
@@ -142,6 +256,34 @@ class GoogleCloudAiplatformV1SchemaTextPromptDatasetMetadata extends \Google\Col
   public function getStopSequences()
   {
     return $this->stopSequences;
+  }
+  /**
+   * @param string
+   */
+  public function setSystemInstruction($systemInstruction)
+  {
+    $this->systemInstruction = $systemInstruction;
+  }
+  /**
+   * @return string
+   */
+  public function getSystemInstruction()
+  {
+    return $this->systemInstruction;
+  }
+  /**
+   * @param string
+   */
+  public function setSystemInstructionGcsUri($systemInstructionGcsUri)
+  {
+    $this->systemInstructionGcsUri = $systemInstructionGcsUri;
+  }
+  /**
+   * @return string
+   */
+  public function getSystemInstructionGcsUri()
+  {
+    return $this->systemInstructionGcsUri;
   }
   /**
    * @param float

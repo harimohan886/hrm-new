@@ -48,16 +48,17 @@ class ProjectsLocationsNetworkconnectivityGlobalPolicyBasedRoutes extends \Googl
    * route to create.
    * @opt_param string requestId Optional. An optional request ID to identify
    * requests. Specify a unique request ID so that if you must retry your request,
-   * the server will know to ignore the request if it has already been completed.
-   * The server will guarantee that for at least 60 minutes since the first
-   * request. For example, consider a situation where you make an initial request
-   * and the request times out. If you make the request again with the same
-   * request ID, the server can check if original operation with the same request
-   * ID was received, and if so, will ignore the second request. This prevents
-   * clients from accidentally creating duplicate commitments. The request ID must
-   * be a valid UUID with the exception that zero UUID is not supported
+   * the server knows to ignore the request if it has already been completed. The
+   * server guarantees that for at least 60 minutes since the first request. For
+   * example, consider a situation where you make an initial request and the
+   * request times out. If you make the request again with the same request ID,
+   * the server can check if original operation with the same request ID was
+   * received, and if so, ignores the second request. This prevents clients from
+   * accidentally creating duplicate commitments. The request ID must be a valid
+   * UUID with the exception that zero UUID is not supported
    * (00000000-0000-0000-0000-000000000000).
    * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
    */
   public function create($parent, PolicyBasedRoute $postBody, $optParams = [])
   {
@@ -74,16 +75,17 @@ class ProjectsLocationsNetworkconnectivityGlobalPolicyBasedRoutes extends \Googl
    *
    * @opt_param string requestId Optional. An optional request ID to identify
    * requests. Specify a unique request ID so that if you must retry your request,
-   * the server will know to ignore the request if it has already been completed.
-   * The server will guarantee that for at least 60 minutes after the first
-   * request. For example, consider a situation where you make an initial request
-   * and the request times out. If you make the request again with the same
-   * request ID, the server can check if original operation with the same request
-   * ID was received, and if so, will ignore the second request. This prevents
-   * clients from accidentally creating duplicate commitments. The request ID must
-   * be a valid UUID with the exception that zero UUID is not supported
+   * the server knows to ignore the request if it has already been completed. The
+   * server guarantees that for at least 60 minutes after the first request. For
+   * example, consider a situation where you make an initial request and the
+   * request times out. If you make the request again with the same request ID,
+   * the server can check if original operation with the same request ID was
+   * received, and if so, ignores the second request. This prevents clients from
+   * accidentally creating duplicate commitments. The request ID must be a valid
+   * UUID with the exception that zero UUID is not supported
    * (00000000-0000-0000-0000-000000000000).
    * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
    */
   public function delete($name, $optParams = [])
   {
@@ -97,6 +99,7 @@ class ProjectsLocationsNetworkconnectivityGlobalPolicyBasedRoutes extends \Googl
    * @param string $name Required. Name of the PolicyBasedRoute resource to get.
    * @param array $optParams Optional parameters.
    * @return PolicyBasedRoute
+   * @throws \Google\Service\Exception
    */
   public function get($name, $optParams = [])
   {
@@ -128,6 +131,7 @@ class ProjectsLocationsNetworkconnectivityGlobalPolicyBasedRoutes extends \Googl
    * documentation](https://cloud.google.com/iam/help/conditions/resource-
    * policies).
    * @return Policy
+   * @throws \Google\Service\Exception
    */
   public function getIamPolicy($resource, $optParams = [])
   {
@@ -149,6 +153,7 @@ class ProjectsLocationsNetworkconnectivityGlobalPolicyBasedRoutes extends \Googl
    * returned.
    * @opt_param string pageToken The page token.
    * @return ListPolicyBasedRoutesResponse
+   * @throws \Google\Service\Exception
    */
   public function listProjectsLocationsNetworkconnectivityGlobalPolicyBasedRoutes($parent, $optParams = [])
   {
@@ -168,6 +173,7 @@ class ProjectsLocationsNetworkconnectivityGlobalPolicyBasedRoutes extends \Googl
    * @param SetIamPolicyRequest $postBody
    * @param array $optParams Optional parameters.
    * @return Policy
+   * @throws \Google\Service\Exception
    */
   public function setIamPolicy($resource, SetIamPolicyRequest $postBody, $optParams = [])
   {
@@ -190,6 +196,7 @@ class ProjectsLocationsNetworkconnectivityGlobalPolicyBasedRoutes extends \Googl
    * @param TestIamPermissionsRequest $postBody
    * @param array $optParams Optional parameters.
    * @return TestIamPermissionsResponse
+   * @throws \Google\Service\Exception
    */
   public function testIamPermissions($resource, TestIamPermissionsRequest $postBody, $optParams = [])
   {

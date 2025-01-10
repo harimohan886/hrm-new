@@ -30,11 +30,31 @@ class GoogleCloudAiplatformV1DatasetVersion extends \Google\Model
   /**
    * @var string
    */
+  public $displayName;
+  /**
+   * @var string
+   */
   public $etag;
+  /**
+   * @var array
+   */
+  public $metadata;
+  /**
+   * @var string
+   */
+  public $modelReference;
   /**
    * @var string
    */
   public $name;
+  /**
+   * @var bool
+   */
+  public $satisfiesPzi;
+  /**
+   * @var bool
+   */
+  public $satisfiesPzs;
   /**
    * @var string
    */
@@ -71,6 +91,20 @@ class GoogleCloudAiplatformV1DatasetVersion extends \Google\Model
   /**
    * @param string
    */
+  public function setDisplayName($displayName)
+  {
+    $this->displayName = $displayName;
+  }
+  /**
+   * @return string
+   */
+  public function getDisplayName()
+  {
+    return $this->displayName;
+  }
+  /**
+   * @param string
+   */
   public function setEtag($etag)
   {
     $this->etag = $etag;
@@ -81,6 +115,34 @@ class GoogleCloudAiplatformV1DatasetVersion extends \Google\Model
   public function getEtag()
   {
     return $this->etag;
+  }
+  /**
+   * @param array
+   */
+  public function setMetadata($metadata)
+  {
+    $this->metadata = $metadata;
+  }
+  /**
+   * @return array
+   */
+  public function getMetadata()
+  {
+    return $this->metadata;
+  }
+  /**
+   * @param string
+   */
+  public function setModelReference($modelReference)
+  {
+    $this->modelReference = $modelReference;
+  }
+  /**
+   * @return string
+   */
+  public function getModelReference()
+  {
+    return $this->modelReference;
   }
   /**
    * @param string
@@ -95,6 +157,34 @@ class GoogleCloudAiplatformV1DatasetVersion extends \Google\Model
   public function getName()
   {
     return $this->name;
+  }
+  /**
+   * @param bool
+   */
+  public function setSatisfiesPzi($satisfiesPzi)
+  {
+    $this->satisfiesPzi = $satisfiesPzi;
+  }
+  /**
+   * @return bool
+   */
+  public function getSatisfiesPzi()
+  {
+    return $this->satisfiesPzi;
+  }
+  /**
+   * @param bool
+   */
+  public function setSatisfiesPzs($satisfiesPzs)
+  {
+    $this->satisfiesPzs = $satisfiesPzs;
+  }
+  /**
+   * @return bool
+   */
+  public function getSatisfiesPzs()
+  {
+    return $this->satisfiesPzs;
   }
   /**
    * @param string

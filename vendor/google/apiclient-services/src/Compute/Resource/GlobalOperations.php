@@ -32,7 +32,8 @@ use Google\Service\Compute\OperationList;
 class GlobalOperations extends \Google\Service\Resource
 {
   /**
-   * Retrieves an aggregated list of all operations.
+   * Retrieves an aggregated list of all operations. To prevent failure, Google
+   * recommends that you set the `returnPartialSuccess` parameter to `true`.
    * (globalOperations.aggregatedList)
    *
    * @param string $project Project ID for this request.
@@ -95,9 +96,14 @@ class GlobalOperations extends \Google\Service\Resource
    * of results.
    * @opt_param bool returnPartialSuccess Opt-in for partial success behavior
    * which provides partial results in case of failure. The default value is
-   * false.
-   * @opt_param string serviceProjectNumber
+   * false. For example, when partial success behavior is enabled, aggregatedList
+   * for a single zone scope either returns all resources in the zone or no
+   * resources, with an error code.
+   * @opt_param string serviceProjectNumber The Shared VPC service project id or
+   * service project number for which aggregated list request is invoked for
+   * subnetworks list-usable api.
    * @return OperationAggregatedList
+   * @throws \Google\Service\Exception
    */
   public function aggregatedList($project, $optParams = [])
   {
@@ -109,8 +115,10 @@ class GlobalOperations extends \Google\Service\Resource
    * Deletes the specified Operations resource. (globalOperations.delete)
    *
    * @param string $project Project ID for this request.
-   * @param string $operation Name of the Operations resource to delete.
+   * @param string $operation Name of the Operations resource to delete, or its
+   * unique numeric identifier.
    * @param array $optParams Optional parameters.
+   * @throws \Google\Service\Exception
    */
   public function delete($project, $operation, $optParams = [])
   {
@@ -122,9 +130,11 @@ class GlobalOperations extends \Google\Service\Resource
    * Retrieves the specified Operations resource. (globalOperations.get)
    *
    * @param string $project Project ID for this request.
-   * @param string $operation Name of the Operations resource to return.
+   * @param string $operation Name of the Operations resource to return, or its
+   * unique numeric identifier.
    * @param array $optParams Optional parameters.
    * @return Operation
+   * @throws \Google\Service\Exception
    */
   public function get($project, $operation, $optParams = [])
   {
@@ -189,8 +199,11 @@ class GlobalOperations extends \Google\Service\Resource
    * of results.
    * @opt_param bool returnPartialSuccess Opt-in for partial success behavior
    * which provides partial results in case of failure. The default value is
-   * false.
+   * false. For example, when partial success behavior is enabled, aggregatedList
+   * for a single zone scope either returns all resources in the zone or no
+   * resources, with an error code.
    * @return OperationList
+   * @throws \Google\Service\Exception
    */
   public function listGlobalOperations($project, $optParams = [])
   {
@@ -212,9 +225,11 @@ class GlobalOperations extends \Google\Service\Resource
    * is not `DONE`.  (globalOperations.wait)
    *
    * @param string $project Project ID for this request.
-   * @param string $operation Name of the Operations resource to return.
+   * @param string $operation Name of the Operations resource to return, or its
+   * unique numeric identifier.
    * @param array $optParams Optional parameters.
    * @return Operation
+   * @throws \Google\Service\Exception
    */
   public function wait($project, $operation, $optParams = [])
   {

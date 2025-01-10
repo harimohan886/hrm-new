@@ -26,10 +26,14 @@ class Target extends \Google\Collection
   public $annotations;
   protected $anthosClusterType = AnthosCluster::class;
   protected $anthosClusterDataType = '';
+  protected $associatedEntitiesType = AssociatedEntities::class;
+  protected $associatedEntitiesDataType = 'map';
   /**
    * @var string
    */
   public $createTime;
+  protected $customTargetType = CustomTarget::class;
+  protected $customTargetDataType = '';
   /**
    * @var string[]
    */
@@ -104,6 +108,20 @@ class Target extends \Google\Collection
     return $this->anthosCluster;
   }
   /**
+   * @param AssociatedEntities[]
+   */
+  public function setAssociatedEntities($associatedEntities)
+  {
+    $this->associatedEntities = $associatedEntities;
+  }
+  /**
+   * @return AssociatedEntities[]
+   */
+  public function getAssociatedEntities()
+  {
+    return $this->associatedEntities;
+  }
+  /**
    * @param string
    */
   public function setCreateTime($createTime)
@@ -116,6 +134,20 @@ class Target extends \Google\Collection
   public function getCreateTime()
   {
     return $this->createTime;
+  }
+  /**
+   * @param CustomTarget
+   */
+  public function setCustomTarget(CustomTarget $customTarget)
+  {
+    $this->customTarget = $customTarget;
+  }
+  /**
+   * @return CustomTarget
+   */
+  public function getCustomTarget()
+  {
+    return $this->customTarget;
   }
   /**
    * @param string[]

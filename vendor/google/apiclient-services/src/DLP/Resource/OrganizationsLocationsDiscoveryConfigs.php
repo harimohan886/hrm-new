@@ -38,13 +38,16 @@ class OrganizationsLocationsDiscoveryConfigs extends \Google\Service\Resource
    * (discoveryConfigs.create)
    *
    * @param string $parent Required. Parent resource name. The format of this
-   * value is as follows: `projects/`PROJECT_ID`/locations/`LOCATION_ID The
+   * value varies depending on the scope of the request (project or organization):
+   * + Projects scope: `projects/{project_id}/locations/{location_id}` +
+   * Organizations scope: `organizations/{org_id}/locations/{location_id}` The
    * following example `parent` string specifies a parent project with the
    * identifier `example-project`, and specifies the `europe-west3` location for
    * processing data: parent=projects/example-project/locations/europe-west3
    * @param GooglePrivacyDlpV2CreateDiscoveryConfigRequest $postBody
    * @param array $optParams Optional parameters.
    * @return GooglePrivacyDlpV2DiscoveryConfig
+   * @throws \Google\Service\Exception
    */
   public function create($parent, GooglePrivacyDlpV2CreateDiscoveryConfigRequest $postBody, $optParams = [])
   {
@@ -59,6 +62,7 @@ class OrganizationsLocationsDiscoveryConfigs extends \Google\Service\Resource
    * for example `projects/dlp-test-project/discoveryConfigs/53234423`.
    * @param array $optParams Optional parameters.
    * @return GoogleProtobufEmpty
+   * @throws \Google\Service\Exception
    */
   public function delete($name, $optParams = [])
   {
@@ -74,6 +78,7 @@ class OrganizationsLocationsDiscoveryConfigs extends \Google\Service\Resource
    * project/discoveryConfigs/53234423`.
    * @param array $optParams Optional parameters.
    * @return GooglePrivacyDlpV2DiscoveryConfig
+   * @throws \Google\Service\Exception
    */
   public function get($name, $optParams = [])
   {
@@ -86,13 +91,13 @@ class OrganizationsLocationsDiscoveryConfigs extends \Google\Service\Resource
    * (discoveryConfigs.listOrganizationsLocationsDiscoveryConfigs)
    *
    * @param string $parent Required. Parent resource name. The format of this
-   * value is as follows: `projects/`PROJECT_ID`/locations/`LOCATION_ID The
+   * value is as follows: `projects/{project_id}/locations/{location_id}` The
    * following example `parent` string specifies a parent project with the
    * identifier `example-project`, and specifies the `europe-west3` location for
    * processing data: parent=projects/example-project/locations/europe-west3
    * @param array $optParams Optional parameters.
    *
-   * @opt_param string orderBy Comma separated list of config fields to order by,
+   * @opt_param string orderBy Comma-separated list of config fields to order by,
    * followed by `asc` or `desc` postfix. This list is case insensitive. The
    * default sorting order is ascending. Redundant space characters are
    * insignificant. Example: `name asc,update_time, create_time desc` Supported
@@ -105,6 +110,7 @@ class OrganizationsLocationsDiscoveryConfigs extends \Google\Service\Resource
    * previous call to ListDiscoveryConfigs. `order_by` field must not change for
    * subsequent calls.
    * @return GooglePrivacyDlpV2ListDiscoveryConfigsResponse
+   * @throws \Google\Service\Exception
    */
   public function listOrganizationsLocationsDiscoveryConfigs($parent, $optParams = [])
   {
@@ -121,6 +127,7 @@ class OrganizationsLocationsDiscoveryConfigs extends \Google\Service\Resource
    * @param GooglePrivacyDlpV2UpdateDiscoveryConfigRequest $postBody
    * @param array $optParams Optional parameters.
    * @return GooglePrivacyDlpV2DiscoveryConfig
+   * @throws \Google\Service\Exception
    */
   public function patch($name, GooglePrivacyDlpV2UpdateDiscoveryConfigRequest $postBody, $optParams = [])
   {

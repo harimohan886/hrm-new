@@ -20,6 +20,8 @@ namespace Google\Service\ChromeManagement;
 class GoogleChromeManagementV1TelemetryUserDevice extends \Google\Collection
 {
   protected $collection_key = 'peripheralsReport';
+  protected $appReportType = GoogleChromeManagementV1AppReport::class;
+  protected $appReportDataType = 'array';
   protected $audioStatusReportType = GoogleChromeManagementV1AudioStatusReport::class;
   protected $audioStatusReportDataType = 'array';
   protected $deviceActivityReportType = GoogleChromeManagementV1DeviceActivityReport::class;
@@ -28,9 +30,25 @@ class GoogleChromeManagementV1TelemetryUserDevice extends \Google\Collection
    * @var string
    */
   public $deviceId;
+  protected $networkBandwidthReportType = GoogleChromeManagementV1NetworkBandwidthReport::class;
+  protected $networkBandwidthReportDataType = 'array';
   protected $peripheralsReportType = GoogleChromeManagementV1PeripheralsReport::class;
   protected $peripheralsReportDataType = 'array';
 
+  /**
+   * @param GoogleChromeManagementV1AppReport[]
+   */
+  public function setAppReport($appReport)
+  {
+    $this->appReport = $appReport;
+  }
+  /**
+   * @return GoogleChromeManagementV1AppReport[]
+   */
+  public function getAppReport()
+  {
+    return $this->appReport;
+  }
   /**
    * @param GoogleChromeManagementV1AudioStatusReport[]
    */
@@ -72,6 +90,20 @@ class GoogleChromeManagementV1TelemetryUserDevice extends \Google\Collection
   public function getDeviceId()
   {
     return $this->deviceId;
+  }
+  /**
+   * @param GoogleChromeManagementV1NetworkBandwidthReport[]
+   */
+  public function setNetworkBandwidthReport($networkBandwidthReport)
+  {
+    $this->networkBandwidthReport = $networkBandwidthReport;
+  }
+  /**
+   * @return GoogleChromeManagementV1NetworkBandwidthReport[]
+   */
+  public function getNetworkBandwidthReport()
+  {
+    return $this->networkBandwidthReport;
   }
   /**
    * @param GoogleChromeManagementV1PeripheralsReport[]

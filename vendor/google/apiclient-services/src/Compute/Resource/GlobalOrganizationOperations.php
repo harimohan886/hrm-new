@@ -34,10 +34,12 @@ class GlobalOrganizationOperations extends \Google\Service\Resource
    * Deletes the specified Operations resource.
    * (globalOrganizationOperations.delete)
    *
-   * @param string $operation Name of the Operations resource to delete.
+   * @param string $operation Name of the Operations resource to delete, or its
+   * unique numeric identifier.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string parentId Parent ID for this request.
+   * @throws \Google\Service\Exception
    */
   public function delete($operation, $optParams = [])
   {
@@ -49,11 +51,13 @@ class GlobalOrganizationOperations extends \Google\Service\Resource
    * Retrieves the specified Operations resource. Gets a list of operations by
    * making a `list()` request. (globalOrganizationOperations.get)
    *
-   * @param string $operation Name of the Operations resource to return.
+   * @param string $operation Name of the Operations resource to return, or its
+   * unique numeric identifier.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string parentId Parent ID for this request.
    * @return Operation
+   * @throws \Google\Service\Exception
    */
   public function get($operation, $optParams = [])
   {
@@ -118,8 +122,11 @@ class GlobalOrganizationOperations extends \Google\Service\Resource
    * @opt_param string parentId Parent ID for this request.
    * @opt_param bool returnPartialSuccess Opt-in for partial success behavior
    * which provides partial results in case of failure. The default value is
-   * false.
+   * false. For example, when partial success behavior is enabled, aggregatedList
+   * for a single zone scope either returns all resources in the zone or no
+   * resources, with an error code.
    * @return OperationList
+   * @throws \Google\Service\Exception
    */
   public function listGlobalOrganizationOperations($optParams = [])
   {

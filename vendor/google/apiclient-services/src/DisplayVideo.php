@@ -76,6 +76,7 @@ class DisplayVideo extends \Google\Service
   public $customLists;
   public $firstAndThirdPartyAudiences;
   public $floodlightGroups;
+  public $floodlightGroups_floodlightActivities;
   public $googleAudiences;
   public $guaranteedOrders;
   public $inventorySourceGroups;
@@ -90,6 +91,7 @@ class DisplayVideo extends \Google\Service
   public $sdfdownloadtasks_operations;
   public $targetingTypes_targetingOptions;
   public $users;
+  public $rootUrlTemplate;
 
   /**
    * Constructs the internal representation of the DisplayVideo service.
@@ -102,6 +104,7 @@ class DisplayVideo extends \Google\Service
   {
     parent::__construct($clientOrConfig);
     $this->rootUrl = $rootUrl ?: 'https://displayvideo.googleapis.com/';
+    $this->rootUrlTemplate = $rootUrl ?: 'https://displayvideo.UNIVERSE_DOMAIN/';
     $this->servicePath = '';
     $this->batchPath = 'batch';
     $this->version = 'v3';
@@ -2506,6 +2509,61 @@ class DisplayVideo extends \Google\Service
                   'type' => 'string',
                 ],
                 'updateMask' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->floodlightGroups_floodlightActivities = new DisplayVideo\Resource\FloodlightGroupsFloodlightActivities(
+        $this,
+        $this->serviceName,
+        'floodlightActivities',
+        [
+          'methods' => [
+            'get' => [
+              'path' => 'v3/floodlightGroups/{+floodlightGroupId}/floodlightActivities/{+floodlightActivityId}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'floodlightGroupId' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'floodlightActivityId' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'partnerId' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'list' => [
+              'path' => 'v3/floodlightGroups/{+floodlightGroupId}/floodlightActivities',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'floodlightGroupId' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'orderBy' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'partnerId' => [
                   'location' => 'query',
                   'type' => 'string',
                 ],

@@ -18,6 +18,7 @@
 namespace Google\Service\Compute\Resource;
 
 use Google\Service\Compute\Operation;
+use Google\Service\Compute\RegionSetLabelsRequest;
 use Google\Service\Compute\SecurityPolicy;
 use Google\Service\Compute\SecurityPolicyList;
 use Google\Service\Compute\SecurityPolicyRule;
@@ -43,6 +44,7 @@ class RegionSecurityPolicies extends \Google\Service\Resource
    *
    * @opt_param bool validateOnly If true, the request will not be committed.
    * @return Operation
+   * @throws \Google\Service\Exception
    */
   public function addRule($project, $region, $securityPolicy, SecurityPolicyRule $postBody, $optParams = [])
   {
@@ -69,6 +71,7 @@ class RegionSecurityPolicies extends \Google\Service\Resource
    * valid UUID with the exception that zero UUID is not supported (
    * 00000000-0000-0000-0000-000000000000).
    * @return Operation
+   * @throws \Google\Service\Exception
    */
   public function delete($project, $region, $securityPolicy, $optParams = [])
   {
@@ -85,6 +88,7 @@ class RegionSecurityPolicies extends \Google\Service\Resource
    * @param string $securityPolicy Name of the security policy to get.
    * @param array $optParams Optional parameters.
    * @return SecurityPolicy
+   * @throws \Google\Service\Exception
    */
   public function get($project, $region, $securityPolicy, $optParams = [])
   {
@@ -104,6 +108,7 @@ class RegionSecurityPolicies extends \Google\Service\Resource
    * @opt_param int priority The priority of the rule to get from the security
    * policy.
    * @return SecurityPolicyRule
+   * @throws \Google\Service\Exception
    */
   public function getRule($project, $region, $securityPolicy, $optParams = [])
   {
@@ -132,6 +137,7 @@ class RegionSecurityPolicies extends \Google\Service\Resource
    * 00000000-0000-0000-0000-000000000000).
    * @opt_param bool validateOnly If true, the request will not be committed.
    * @return Operation
+   * @throws \Google\Service\Exception
    */
   public function insert($project, $region, SecurityPolicy $postBody, $optParams = [])
   {
@@ -197,8 +203,11 @@ class RegionSecurityPolicies extends \Google\Service\Resource
    * of results.
    * @opt_param bool returnPartialSuccess Opt-in for partial success behavior
    * which provides partial results in case of failure. The default value is
-   * false.
+   * false. For example, when partial success behavior is enabled, aggregatedList
+   * for a single zone scope either returns all resources in the zone or no
+   * resources, with an error code.
    * @return SecurityPolicyList
+   * @throws \Google\Service\Exception
    */
   public function listRegionSecurityPolicies($project, $region, $optParams = [])
   {
@@ -232,6 +241,7 @@ class RegionSecurityPolicies extends \Google\Service\Resource
    * @opt_param string updateMask Indicates fields to be cleared as part of this
    * request.
    * @return Operation
+   * @throws \Google\Service\Exception
    */
   public function patch($project, $region, $securityPolicy, SecurityPolicy $postBody, $optParams = [])
   {
@@ -255,6 +265,7 @@ class RegionSecurityPolicies extends \Google\Service\Resource
    * request.
    * @opt_param bool validateOnly If true, the request will not be committed.
    * @return Operation
+   * @throws \Google\Service\Exception
    */
   public function patchRule($project, $region, $securityPolicy, SecurityPolicyRule $postBody, $optParams = [])
   {
@@ -273,12 +284,42 @@ class RegionSecurityPolicies extends \Google\Service\Resource
    * @opt_param int priority The priority of the rule to remove from the security
    * policy.
    * @return Operation
+   * @throws \Google\Service\Exception
    */
   public function removeRule($project, $region, $securityPolicy, $optParams = [])
   {
     $params = ['project' => $project, 'region' => $region, 'securityPolicy' => $securityPolicy];
     $params = array_merge($params, $optParams);
     return $this->call('removeRule', [$params], Operation::class);
+  }
+  /**
+   * Sets the labels on a security policy. To learn more about labels, read the
+   * Labeling Resources documentation. (regionSecurityPolicies.setLabels)
+   *
+   * @param string $project Project ID for this request.
+   * @param string $region The region for this request.
+   * @param string $resource Name or id of the resource for this request.
+   * @param RegionSetLabelsRequest $postBody
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param string requestId An optional request ID to identify requests.
+   * Specify a unique request ID so that if you must retry your request, the
+   * server will know to ignore the request if it has already been completed. For
+   * example, consider a situation where you make an initial request and the
+   * request times out. If you make the request again with the same request ID,
+   * the server can check if original operation with the same request ID was
+   * received, and if so, will ignore the second request. This prevents clients
+   * from accidentally creating duplicate commitments. The request ID must be a
+   * valid UUID with the exception that zero UUID is not supported (
+   * 00000000-0000-0000-0000-000000000000).
+   * @return Operation
+   * @throws \Google\Service\Exception
+   */
+  public function setLabels($project, $region, $resource, RegionSetLabelsRequest $postBody, $optParams = [])
+  {
+    $params = ['project' => $project, 'region' => $region, 'resource' => $resource, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('setLabels', [$params], Operation::class);
   }
 }
 

@@ -45,12 +45,12 @@ class BillingAccountsSubAccounts extends \Google\Service\Resource
    * provisioned for subaccounts. (subAccounts.create)
    *
    * @param string $parent Optional. The parent to create a billing account from.
-   * Format: - organizations/{organization_id} eg organizations/12345678 -
-   * billingAccounts/{billing_account_id} eg
+   * Format: - `billingAccounts/{billing_account_id}`, for example,
    * `billingAccounts/012345-567890-ABCDEF`
    * @param BillingAccount $postBody
    * @param array $optParams Optional parameters.
    * @return BillingAccount
+   * @throws \Google\Service\Exception
    */
   public function create($parent, BillingAccount $postBody, $optParams = [])
   {
@@ -64,16 +64,16 @@ class BillingAccountsSubAccounts extends \Google\Service\Resource
    * (subAccounts.listBillingAccountsSubAccounts)
    *
    * @param string $parent Optional. The parent resource to list billing accounts
-   * from. Format: - organizations/{organization_id} eg organizations/12345678 -
-   * billingAccounts/{billing_account_id} eg
-   * `billingAccounts/012345-567890-ABCDEF`
+   * from. Format: - `organizations/{organization_id}`, for example,
+   * `organizations/12345678` - `billingAccounts/{billing_account_id}`, for
+   * example, `billingAccounts/012345-567890-ABCDEF`
    * @param array $optParams Optional parameters.
    *
    * @opt_param string filter Options for how to filter the returned billing
    * accounts. This only supports filtering for
    * [subaccounts](https://cloud.google.com/billing/docs/concepts) under a single
-   * provided parent billing account. (e.g.
-   * "master_billing_account=billingAccounts/012345-678901-ABCDEF"). Boolean
+   * provided parent billing account. (for example,
+   * `master_billing_account=billingAccounts/012345-678901-ABCDEF`). Boolean
    * algebra and other fields are not currently supported.
    * @opt_param int pageSize Requested page size. The maximum page size is 100;
    * this is also the default.
@@ -82,6 +82,7 @@ class BillingAccountsSubAccounts extends \Google\Service\Resource
    * `ListBillingAccounts` call. If unspecified, the first page of results is
    * returned.
    * @return ListBillingAccountsResponse
+   * @throws \Google\Service\Exception
    */
   public function listBillingAccountsSubAccounts($parent, $optParams = [])
   {

@@ -48,6 +48,7 @@ class ProjectsTimeSeries extends \Google\Service\Resource
    * @param CreateTimeSeriesRequest $postBody
    * @param array $optParams Optional parameters.
    * @return MonitoringEmpty
+   * @throws \Google\Service\Exception
    */
   public function create($name, CreateTimeSeriesRequest $postBody, $optParams = [])
   {
@@ -70,6 +71,7 @@ class ProjectsTimeSeries extends \Google\Service\Resource
    * @param CreateTimeSeriesRequest $postBody
    * @param array $optParams Optional parameters.
    * @return MonitoringEmpty
+   * @throws \Google\Service\Exception
    */
   public function createService($name, CreateTimeSeriesRequest $postBody, $optParams = [])
   {
@@ -201,6 +203,7 @@ class ProjectsTimeSeries extends \Google\Service\Resource
    * @opt_param string view Required. Specifies which information is returned
    * about the time series.
    * @return ListTimeSeriesResponse
+   * @throws \Google\Service\Exception
    */
   public function listProjectsTimeSeries($name, $optParams = [])
   {
@@ -209,7 +212,11 @@ class ProjectsTimeSeries extends \Google\Service\Resource
     return $this->call('list', [$params], ListTimeSeriesResponse::class);
   }
   /**
-   * Queries time series using Monitoring Query Language. (timeSeries.query)
+   * Queries time series by using Monitoring Query Language (MQL). We recommend
+   * using PromQL instead of MQL. For more information about the status of MQL,
+   * see the MQL deprecation notice
+   * (https://cloud.google.com/stackdriver/docs/deprecations/mql).
+   * (timeSeries.query)
    *
    * @param string $name Required. The project
    * (https://cloud.google.com/monitoring/api/v3#project_name) on which to execute
@@ -217,6 +224,7 @@ class ProjectsTimeSeries extends \Google\Service\Resource
    * @param QueryTimeSeriesRequest $postBody
    * @param array $optParams Optional parameters.
    * @return QueryTimeSeriesResponse
+   * @throws \Google\Service\Exception
    */
   public function query($name, QueryTimeSeriesRequest $postBody, $optParams = [])
   {

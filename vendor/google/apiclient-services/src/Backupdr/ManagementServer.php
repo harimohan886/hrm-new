@@ -21,6 +21,10 @@ class ManagementServer extends \Google\Collection
 {
   protected $collection_key = 'networks';
   /**
+   * @var string[]
+   */
+  public $baProxyUri;
+  /**
    * @var string
    */
   public $createTime;
@@ -49,6 +53,14 @@ class ManagementServer extends \Google\Collection
    */
   public $oauth2ClientId;
   /**
+   * @var bool
+   */
+  public $satisfiesPzi;
+  /**
+   * @var bool
+   */
+  public $satisfiesPzs;
+  /**
    * @var string
    */
   public $state;
@@ -60,7 +72,25 @@ class ManagementServer extends \Google\Collection
    * @var string
    */
   public $updateTime;
+  protected $workforceIdentityBasedManagementUriType = WorkforceIdentityBasedManagementURI::class;
+  protected $workforceIdentityBasedManagementUriDataType = '';
+  protected $workforceIdentityBasedOauth2ClientIdType = WorkforceIdentityBasedOAuth2ClientID::class;
+  protected $workforceIdentityBasedOauth2ClientIdDataType = '';
 
+  /**
+   * @param string[]
+   */
+  public function setBaProxyUri($baProxyUri)
+  {
+    $this->baProxyUri = $baProxyUri;
+  }
+  /**
+   * @return string[]
+   */
+  public function getBaProxyUri()
+  {
+    return $this->baProxyUri;
+  }
   /**
    * @param string
    */
@@ -174,6 +204,34 @@ class ManagementServer extends \Google\Collection
     return $this->oauth2ClientId;
   }
   /**
+   * @param bool
+   */
+  public function setSatisfiesPzi($satisfiesPzi)
+  {
+    $this->satisfiesPzi = $satisfiesPzi;
+  }
+  /**
+   * @return bool
+   */
+  public function getSatisfiesPzi()
+  {
+    return $this->satisfiesPzi;
+  }
+  /**
+   * @param bool
+   */
+  public function setSatisfiesPzs($satisfiesPzs)
+  {
+    $this->satisfiesPzs = $satisfiesPzs;
+  }
+  /**
+   * @return bool
+   */
+  public function getSatisfiesPzs()
+  {
+    return $this->satisfiesPzs;
+  }
+  /**
    * @param string
    */
   public function setState($state)
@@ -214,6 +272,34 @@ class ManagementServer extends \Google\Collection
   public function getUpdateTime()
   {
     return $this->updateTime;
+  }
+  /**
+   * @param WorkforceIdentityBasedManagementURI
+   */
+  public function setWorkforceIdentityBasedManagementUri(WorkforceIdentityBasedManagementURI $workforceIdentityBasedManagementUri)
+  {
+    $this->workforceIdentityBasedManagementUri = $workforceIdentityBasedManagementUri;
+  }
+  /**
+   * @return WorkforceIdentityBasedManagementURI
+   */
+  public function getWorkforceIdentityBasedManagementUri()
+  {
+    return $this->workforceIdentityBasedManagementUri;
+  }
+  /**
+   * @param WorkforceIdentityBasedOAuth2ClientID
+   */
+  public function setWorkforceIdentityBasedOauth2ClientId(WorkforceIdentityBasedOAuth2ClientID $workforceIdentityBasedOauth2ClientId)
+  {
+    $this->workforceIdentityBasedOauth2ClientId = $workforceIdentityBasedOauth2ClientId;
+  }
+  /**
+   * @return WorkforceIdentityBasedOAuth2ClientID
+   */
+  public function getWorkforceIdentityBasedOauth2ClientId()
+  {
+    return $this->workforceIdentityBasedOauth2ClientId;
   }
 }
 

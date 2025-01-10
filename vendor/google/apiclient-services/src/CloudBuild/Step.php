@@ -41,7 +41,17 @@ class Step extends \Google\Collection
   /**
    * @var string
    */
+  public $onError;
+  protected $paramsType = Param::class;
+  protected $paramsDataType = 'array';
+  protected $refType = StepRef::class;
+  protected $refDataType = '';
+  /**
+   * @var string
+   */
   public $script;
+  protected $securityContextType = SecurityContext::class;
+  protected $securityContextDataType = '';
   /**
    * @var string
    */
@@ -126,6 +136,48 @@ class Step extends \Google\Collection
   /**
    * @param string
    */
+  public function setOnError($onError)
+  {
+    $this->onError = $onError;
+  }
+  /**
+   * @return string
+   */
+  public function getOnError()
+  {
+    return $this->onError;
+  }
+  /**
+   * @param Param[]
+   */
+  public function setParams($params)
+  {
+    $this->params = $params;
+  }
+  /**
+   * @return Param[]
+   */
+  public function getParams()
+  {
+    return $this->params;
+  }
+  /**
+   * @param StepRef
+   */
+  public function setRef(StepRef $ref)
+  {
+    $this->ref = $ref;
+  }
+  /**
+   * @return StepRef
+   */
+  public function getRef()
+  {
+    return $this->ref;
+  }
+  /**
+   * @param string
+   */
   public function setScript($script)
   {
     $this->script = $script;
@@ -136,6 +188,20 @@ class Step extends \Google\Collection
   public function getScript()
   {
     return $this->script;
+  }
+  /**
+   * @param SecurityContext
+   */
+  public function setSecurityContext(SecurityContext $securityContext)
+  {
+    $this->securityContext = $securityContext;
+  }
+  /**
+   * @return SecurityContext
+   */
+  public function getSecurityContext()
+  {
+    return $this->securityContext;
   }
   /**
    * @param string

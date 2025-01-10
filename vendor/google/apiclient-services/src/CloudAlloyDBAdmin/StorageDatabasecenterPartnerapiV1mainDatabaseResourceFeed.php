@@ -27,6 +27,10 @@ class StorageDatabasecenterPartnerapiV1mainDatabaseResourceFeed extends \Google\
    * @var string
    */
   public $feedType;
+  protected $observabilityMetricDataType = StorageDatabasecenterPartnerapiV1mainObservabilityMetricData::class;
+  protected $observabilityMetricDataDataType = '';
+  protected $recommendationSignalDataType = StorageDatabasecenterPartnerapiV1mainDatabaseResourceRecommendationSignalData::class;
+  protected $recommendationSignalDataDataType = '';
   protected $resourceHealthSignalDataType = StorageDatabasecenterPartnerapiV1mainDatabaseResourceHealthSignalData::class;
   protected $resourceHealthSignalDataDataType = '';
   protected $resourceIdType = StorageDatabasecenterPartnerapiV1mainDatabaseResourceId::class;
@@ -61,6 +65,34 @@ class StorageDatabasecenterPartnerapiV1mainDatabaseResourceFeed extends \Google\
   public function getFeedType()
   {
     return $this->feedType;
+  }
+  /**
+   * @param StorageDatabasecenterPartnerapiV1mainObservabilityMetricData
+   */
+  public function setObservabilityMetricData(StorageDatabasecenterPartnerapiV1mainObservabilityMetricData $observabilityMetricData)
+  {
+    $this->observabilityMetricData = $observabilityMetricData;
+  }
+  /**
+   * @return StorageDatabasecenterPartnerapiV1mainObservabilityMetricData
+   */
+  public function getObservabilityMetricData()
+  {
+    return $this->observabilityMetricData;
+  }
+  /**
+   * @param StorageDatabasecenterPartnerapiV1mainDatabaseResourceRecommendationSignalData
+   */
+  public function setRecommendationSignalData(StorageDatabasecenterPartnerapiV1mainDatabaseResourceRecommendationSignalData $recommendationSignalData)
+  {
+    $this->recommendationSignalData = $recommendationSignalData;
+  }
+  /**
+   * @return StorageDatabasecenterPartnerapiV1mainDatabaseResourceRecommendationSignalData
+   */
+  public function getRecommendationSignalData()
+  {
+    return $this->recommendationSignalData;
   }
   /**
    * @param StorageDatabasecenterPartnerapiV1mainDatabaseResourceHealthSignalData
