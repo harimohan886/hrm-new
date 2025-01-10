@@ -29,6 +29,11 @@ task('deploy', [
     'deploy:optimize_clear'
 ]);
 
+task('deploy:vendors', function () {
+    run('cd {{release_path}} && composer install');
+});
+
+
 task('deploy:optimize_clear', function () {
     run('cd {{release_path}} && php artisan optimize:clear');
 });
