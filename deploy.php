@@ -5,7 +5,7 @@ require 'recipe/laravel.php';
 
 // Config
 set('repository', 'git@gitlab.junglesafariindia.in:abhishek.sinha/hrm.git');
-set('keep_releases', 3); // Keep only 3 releases
+set('keep_releases', 2); // Keep only 3 releases
 
 // Define shared directories and files
 add('shared_dirs', ['storage']);  // Ensure that storage is shared across releases
@@ -25,6 +25,7 @@ task('deploy', [
     'deploy:vendors',
     'deploy:lock',
     'artisan:storage:link',  // Link storage to shared directory
+    'deploy:create_symlink', // Create the symlink to the storage directory
     'artisan:view:cache',
     'artisan:config:cache',
     'deploy:unlock',
@@ -52,6 +53,12 @@ task('deploy:unlock', function () {
 desc('Create symbolic link to the current release');
 task('deploy:symlink', function () {
     run('cd {{deploy_path}} && ln -sfn {{release_path}} current');
+});
+
+// Create the symbolic link from public/storage to the shared storage
+desc('Create symbolic link for storage');
+task('deploy:create_symlink', function () {
+    run('ln -sfn {{deploy_path}}/storage {{release_path}}/public/storage');
 });
 
 // Handle failed deployments
