@@ -4,7 +4,7 @@ namespace Deployer;
 require 'recipe/laravel.php';
 
 // Config
-set('repository', 'git@gitlab.junglesafariindia.in:abhishek.sinha/hrm-system.git');
+set('repository', 'git@gitlab.junglesafariindia.in:abhishek.sinha/hrm.git');
 set('keep_releases', 3); // Keep only 3 releases
 
 // Define shared directories and files
