@@ -25,7 +25,7 @@ task('deploy', [
     'deploy:vendors',
     'deploy:lock',
     'artisan:storage:link',  // Link storage to shared directory
-    'deploy:create_symlink', // Create the symlink to the storage directory
+   // 'deploy:create_symlink', // Create the symlink to the storage directory
     'artisan:view:cache',
     'artisan:config:cache',
     'deploy:unlock',
@@ -56,10 +56,10 @@ task('deploy:symlink', function () {
 });
 
 // Create the symbolic link from public/storage to the shared storage
-desc('Create symbolic link for storage');
-task('deploy:create_symlink', function () {
-    run('ln -sfn {{deploy_path}}/storage {{release_path}}/public/storage');
-});
+// desc('Create symbolic link for storage');
+// task('deploy:create_symlink', function () {
+//     run('ln -sfn {{deploy_path}}/storage {{release_path}}/public/storage');
+// });
 
 // Handle failed deployments
 after('deploy:failed', 'deploy:unlock');
