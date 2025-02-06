@@ -34,6 +34,7 @@ class Employee extends Model
         'enable_ot',
         'enable_weekoff',
         'enable_letter',
+        'is_active',
         'salary_type',
         'account_type',
         'salary',
@@ -55,7 +56,7 @@ class Employee extends Model
     {
         return $this->hasOne('App\Models\AccountList', 'id', 'account_type')->pluck('account_name')->first();
     }
- 
+
     public function get_net_salary()
     {
         //allowance
@@ -95,7 +96,7 @@ class Employee extends Model
             } else {
                 $total_loan = $loan->amount + $total_loan;
             }
-           
+
         }
 
         //Saturation Deduction

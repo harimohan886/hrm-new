@@ -66,10 +66,10 @@ class AuthenticatedSessionController extends Controller
         // }
 
         $getUser1 = User::where('email', $request->email)->where('is_active', 0)->first();
-        // dd($getUser1); 
+        // dd($getUser1);
 
         if($getUser1){
-            return redirect()->back()->with('error', __('You are not allowed, Please contact admadministrator!!'));
+            return redirect()->back()->with('error', __('You are not allowed, Please contact administrator!!'));
         }
         // dd("esle");
         // dd($request->all());

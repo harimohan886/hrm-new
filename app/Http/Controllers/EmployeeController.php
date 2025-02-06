@@ -42,7 +42,7 @@ class EmployeeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {  
+    {
 
         if (\Auth::user()->can('Manage Employee')) {
             if (Auth::user()->type == 'employee') {
@@ -71,7 +71,7 @@ class EmployeeController extends Controller
             $employeesId      = \Auth::user()->employeeIdFormat($this->employeeNumber());
 
             $manageShift = ManageShift::pluck('shift_name', 'shift_code');
-            
+
             return view('employee.create', compact('employees', 'employeesId', 'departments', 'designations', 'documents', 'branches', 'company_settings','manageShift'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
@@ -275,7 +275,7 @@ class EmployeeController extends Controller
         if (\Auth::user()->can('Edit Employee')) {
 
             $employee = Employee::findOrFail($id);
-            
+
             $rules = [
                 'name' => 'required',
                 'dob' => 'required',
@@ -287,6 +287,7 @@ class EmployeeController extends Controller
                 'enable_ot' => 'required',
                 'enable_weekoff' => 'required',
                 'enable_letter' => 'required',
+                'is_active' => 'required',
             ];
 
             if ($request->has('biometric_emp_id') && $employee->biometric_emp_id != $request->biometric_emp_id) {
@@ -297,7 +298,7 @@ class EmployeeController extends Controller
                     })
                 ];
             }
-        
+
             $validator = \Validator::make(
                 $request->all(),
                 $rules
@@ -358,7 +359,7 @@ class EmployeeController extends Controller
             $input    = $request->all();
             $employee->fill($input)->save();
 
-            User::where('id',$employee->user_id)->update(['email'=>$employee->email]);
+            User::where('id',$employee->user_id)->update(['email'=>$employee->email, 'is_active' => $request->is_active ]);
 
             if ($request->salary) {
                 return redirect()->route('setsalary.index')->with('success', 'Employee successfully updated.');
@@ -857,23 +858,23 @@ class EmployeeController extends Controller
     }
 
     // public function employeeBreak(Request $request)
-    // {   
+    // {
     //         $id = Auth::user()->id;
 
     //         dd($request->all(),$id);
 
     //         $break = new EmpBreak();
     //         $break->id = $id;
-    //         $break->date = 
-    //         $break->start_break = 
-    //         $break->end_break = 
-    //         $break->total_break = 
+    //         $break->date =
+    //         $break->start_break =
+    //         $break->end_break =
+    //         $break->total_break =
 
     //         return;
     // }
 
 //     public function employeeBreak(Request $request)
-// {   
+// {
 //     $id = Auth::user()->id;
 //     $date = now()->format('Y-m-d'); // Current date
 
@@ -910,7 +911,7 @@ class EmployeeController extends Controller
 // }
 
 // public function employeeBreak(Request $request)
-// {   
+// {
 //     $id = Auth::user()->id;
 //     $date = now()->format('Y-m-d'); // Current date
 //     $now = now()->format('H:i:s'); // Current time
@@ -1108,11 +1109,11 @@ public function employeeBreak(Request $request)
 //             ->get()
 //             ->map(function ($break) {
 //                 $totalBreakTimeInSeconds = $break->total_break_seconds;
-                
+
 //                 $totalHours = floor($totalBreakTimeInSeconds / 3600);
 //                 $totalMinutes = floor(($totalBreakTimeInSeconds % 3600) / 60);
 //                 $totalSeconds = $totalBreakTimeInSeconds % 60;
-                
+
 //                 $break->total_break = sprintf("%02d:%02d:%02d", $totalHours, $totalMinutes, $totalSeconds);
 //                 return $break;
 //             });
@@ -1129,11 +1130,11 @@ public function employeeBreak(Request $request)
 //             ->get()
 //             ->map(function ($break) {
 //                 $totalBreakTimeInSeconds = $break->total_break_seconds;
-                
+
 //                 $totalHours = floor($totalBreakTimeInSeconds / 3600);
 //                 $totalMinutes = floor(($totalBreakTimeInSeconds % 3600) / 60);
 //                 $totalSeconds = $totalBreakTimeInSeconds % 60;
-                
+
 //                 $break->total_break = sprintf("%02d:%02d:%02d", $totalHours, $totalMinutes, $totalSeconds);
 //                 return $break;
 //             });

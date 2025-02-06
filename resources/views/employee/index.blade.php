@@ -22,7 +22,7 @@
         <i class="ti ti-file"></i>
     </a>
     @can('Create Employee')
-        <a href="{{ route('employee.create') }}" 
+        <a href="{{ route('employee.create') }}"
             data-title="{{ __('Create New Employee') }}" data-bs-toggle="tooltip" title="" class="btn btn-sm btn-primary"
             data-bs-original-title="{{ __('Create') }}">
             <i class="ti ti-plus"></i>
@@ -78,7 +78,6 @@
                                     </td>
                                     @if (Gate::check('Edit Employee') || Gate::check('Delete Employee'))
                                         <td class="Action">
-                                            @if ($employee->is_active == 1)
                                                 <span>
                                                     @can('Edit Employee')
                                                         <div class="action-btn bg-info ms-2">
@@ -102,18 +101,15 @@
                                                         </div>
                                                     @endcan
 
-                                                    
+
                                                     <div class="action-btn bg-success ms-2">
                                                         <a href="{{ route('employee.idcard', $employee->id) }}" class="mx-3 btn btn-sm align-items-center" target="blank">
                                                             <i class="ti ti-download text-white"></i>
                                                         </a>
-                                                    </div>                                                    
-                                                    
+                                                    </div>
+
 
                                                 </span>
-                                            @else
-                                                <i class="ti ti-lock"></i>
-                                            @endif
                                         </td>
                                     @endif
                                 </tr>

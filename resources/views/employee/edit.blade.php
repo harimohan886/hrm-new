@@ -169,6 +169,14 @@
                                             'required' => 'required'
                                         ]) !!}
                                     </div>
+                                    <div class="form-group col-md-6">
+                                        {!! Form::label('is_active', 'Employee Status', ['class' => 'form-label']) !!}
+                                        {!! Form::select('is_active', ['1' => 'Active', '0' => 'Inactive'], $selectedEmployeeStatus, [
+                                                'class' => 'form-control',
+                                                'id' => 'is_active',
+                                                'required' => 'required'
+                                        ]) !!}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -243,7 +251,7 @@
                                                 @php
                                                     $employeedoc = !empty($employee->documents) ? $employee->documents()->pluck('document_value', __('document_id')) : [];
                                                     $logo = \App\Models\Utility::get_file('uploads/document');
-                                                    
+
                                                 @endphp
                                                 <div class="choose-files ">
                                                     <label for="document[{{ $document->id }}]">
