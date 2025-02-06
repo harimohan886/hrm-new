@@ -263,8 +263,9 @@ class EmployeeController extends Controller
             $selectedOvertime = $employee->enable_ot;
             $selectedWeekoff = $employee->enable_weekoff;
             $selectedLetter = $employee->enable_letter;
+            $selectedEmployeeStatus = $employee->is_active;
 
-            return view('employee.edit', compact('employee', 'employeesId', 'branches', 'departments', 'designations', 'documents','manageShift','selectedShift','selectedOvertime','selectedWeekoff','selectedLetter'));
+            return view('employee.edit', compact('employee', 'employeesId', 'branches', 'departments', 'designations', 'documents','manageShift','selectedShift','selectedOvertime','selectedWeekoff','selectedLetter','selectedEmployeeStatus'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
