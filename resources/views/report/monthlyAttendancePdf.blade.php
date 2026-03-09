@@ -309,9 +309,6 @@ $attendanceRecords = DB::table('attendance_employees')
                     $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
                     $status = 'A'; // Default to Absent
 
-                    $isShortLeave = false;
-                    $isHalfDay = false;
-
                     //  $date = "2024-08-27";
 
                     $holidays = DB::table('holidays')
@@ -342,7 +339,7 @@ $attendanceRecords = DB::table('attendance_employees')
                         if ($leaveType) {
                             
                             if ($leaveType->title === 'Short Leave') {
-                                $isShortLeave = true;
+                                
 
                                 $late = $attendanceByDate->get($date)->late ?? '00:00';
                                 $lateObj = new DateTime($late);
@@ -376,7 +373,7 @@ $attendanceRecords = DB::table('attendance_employees')
                                 }
 
                             } elseif ($leaveType->title === 'Half Day') {
-                                $isHalfDay = true;
+                                
                                 
                                 if ($leave->start_date == $date || $leave->end_date == $date) {
 
@@ -430,8 +427,8 @@ $attendanceRecords = DB::table('attendance_employees')
                             if ($arrivalTime > $lateAllow) {
                                 $status = "P-L";
                             } 
-                            elseif ($goingTime1 > $goingTimeDefine1 && $goingTime1 < $shiftEndTime1 && !$isShortLeave && !$isHalfDay ){
-                                $status = 'P-EG';
+                            elseif ($goingTime1 > $goingTimeDefine1 && $goingTime1 < $shiftEndTime1 ){
+                               
                             }
                             else{
                                 $status = 'P';
