@@ -420,13 +420,25 @@
                                         <tr>
                                             <th>{{ __('Name') }}</th>
                                             <th>{{ __('Status') }}</th>
+                                            <th>{{ __('Clock In') }}</th>
+                                            <th>{{ __('Clock Out') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody class="list">
                                         @foreach ($clockIns as $clockIn)
+                                        @php
+
+                                          $currentDate = date('Y-m-d');
+                                        
+                                        $presentCheckIn = App\Models\AttendanceEmployee::where('date', '=', $currentDate)->where('employee_id',$clockIn->id)->value('clock_in');
+                                        $presentCheckOut = App\Models\AttendanceEmployee::where('date', '=', $currentDate)->where('employee_id',$clockIn->id)->value('clock_out');
+                                        
+                                        @endphp
                                             <tr>
                                                 <td>{{ $clockIn->name }}</td>
                                                 <td><span class="absent-btn">{{ __('Present') }}</span></td>
+                                                <td>{{ $presentCheckIn }}</td>
+                                                 <td>{{ $presentCheckOut }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>

@@ -32,8 +32,8 @@
         - {{ __('Job Requirements') }}</title>
 
     <!-- SEO META -->
-    <meta name="title" content="{{ $metatitle }}">
-    <meta name="description" content="{{ $metadesc }}">
+    <meta name="title" content="{{ $job->title }}">
+    <meta name="description" content="We Are Hiring - {{ $job->title }}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">

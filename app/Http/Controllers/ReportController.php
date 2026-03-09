@@ -990,7 +990,8 @@ class ReportController extends Controller
 public function monthlyAttendancePdf(Request $request)
 {       
 
-    ini_set('memory_limit', '512M');
+    ini_set('memory_limit', '1024M');
+    ini_set('max_execution_time', 300);
 
     $monthWithYear = $request->input('month');
     $year = $request->input('year');

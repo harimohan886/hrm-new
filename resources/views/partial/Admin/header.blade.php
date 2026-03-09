@@ -83,57 +83,158 @@
 
 
                 @if (Auth::user()->type == 'employee')
-                <li class="dash-h-item" style="padding-right:10px;">
-                <span style="color:red;"><b>OFF</b></span>
-                </li>
+    <!-- Display OFF status initially -->
+    <li class="dash-h-item" style="padding-right:10px;">
+        <span id="breakStatus" style="color:red;"><b>OFF</b></span>
+    </li>
 
-                <li class="dash-h-item" style="margin-top:-15px;">
-                <div class="form-group">
-                    <div style="position: relative; display: inline-block; width: 60px; height: 34px;">
-                        <!-- <span>OFF</span> -->
-                        <input type="checkbox" id="statusToggle" name="statusToggle" style="opacity: 0; width: 0; height: 0;"
-                            {{ Auth::check() && Auth::user()->break == 'Active' ? 'checked' : '' }}>
-                        <label for="statusToggle" style="
-                            position: absolute; 
-                            cursor: pointer; 
-                            background-color: #000; /* Default color when unchecked */
-                            border-radius: 34px; 
-                            transition: .4s; 
-                            display: block; 
-                            width: 80%; 
-                            height: 80%;
-                            padding: 0;
-                            margin: 0;
-                            "></label>
-                            
-                    </div>
-                </div>
-            </li>
-            <li class="dash-h-item" style="padding-left:-4px;">
-                <span style="color:#52c906;"><b>ON</b></span>
-            </li>
+    <!-- Toggle switch for break status -->
+    <li class="dash-h-item" style="margin-top:-15px;">
+        <div class="form-group">
+            <div style="position: relative; display: inline-block; width: 60px; height: 34px;">
+                <input type="checkbox" id="statusToggle" name="statusToggle" style="opacity: 0; width: 0; height: 0;"
+                    {{ Auth::check() && Auth::user()->break == 'Active' ? 'checked' : '' }}>
+                <label for="statusToggle" style="position: absolute; cursor: pointer; background-color: #000; 
+                        border-radius: 34px; transition: .4s; display: block; width: 80%; height: 80%;
+                        padding: 0; margin: 0;"></label>
+            </div>
+        </div>
+    </li>
 
-                <script>
-                    document.getElementById('statusToggle').addEventListener('change', function() {
-                        var isActive = this.checked;
-                        var status = isActive ? 'active' : 'inactive';
-                        
-                        fetch('{{ route('employee.break') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({ status: status })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            document.getElementById('statusLabel').textContent = isActive ? true : false;
-                        })
-                        .catch(error => console.error('Error:', error));
-                    });
-                </script>
-            @endif
+    <!-- Display ON status when toggle is checked -->
+    <!-- <li class="dash-h-item" style="padding-left:-4px;">
+        <span style="color:#52c906;"><b>ON</b></span>
+    </li> -->
+
+    <!-- Timer display -->
+    <li class="dash-h-item" id="timerDisplay" style="padding-left: 10px;">
+        <span id="timer" style="font-size: 16px;">00:00:00</span>
+    </li>
+
+    <!-- Notification sound -->
+    <audio id="notificationSound" src="{{ asset('storage/audio/notification.mp3') }}" preload="auto"></audio>
+
+    <script>
+        // Timer variables
+        let timerInterval = null;
+        let startTime = null;
+        let timerRunning = false;
+        let notificationCounter = 0;
+
+        // Function to format time in HH:MM:SS format
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const sec = seconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+        }
+
+        // Timer function
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000); // time in seconds
+            document.getElementById('timer').textContent = formatTime(elapsed);
+
+            // If 30 minutes have passed, trigger the notification
+            if (elapsed >= 1800 && notificationCounter === 0) {
+                // Play sound once after 30 minutes
+                document.getElementById('notificationSound').play();
+                notificationCounter++;
+                setTimeout(() => {
+                    // Play sound again if not turned off after a minute
+                    if (timerRunning) {
+                        document.getElementById('notificationSound').play();
+                        notificationCounter++;
+                    }
+                }, 60000); // Play the sound 1 minute later if not off
+
+                setTimeout(() => {
+                    // Play sound third time if not turned off after another minute
+                    if (timerRunning) {
+                        document.getElementById('notificationSound').play();
+                        notificationCounter++;
+                    }
+                }, 120000); // Play the sound 2 minutes later if not off
+            }
+        }
+
+        // Handle toggle switch changes
+        document.getElementById('statusToggle').addEventListener('change', function() {
+            var isActive = this.checked;
+            var status = isActive ? 'active' : 'inactive';
+
+            // Store status in browser cache
+            if (isActive) {
+                // Save start time in local storage
+                localStorage.setItem('breakStartTime', Date.now());
+                startTime = Date.now();
+                timerRunning = true;
+                notificationCounter = 0;
+
+                // Update break status in database
+                fetch('{{ route('employee.break') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ status: status })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('breakStatus').textContent = 'ON';
+                    document.getElementById('breakStatus').style.color = '#52c906';
+                })
+                .catch(error => console.error('Error:', error));
+
+                // Start the timer
+                if (!timerInterval) {
+                    timerInterval = setInterval(updateTimer, 1000);
+                }
+            } else {
+                // Stop the timer
+                localStorage.removeItem('breakStartTime');
+                clearInterval(timerInterval);
+                timerInterval = null;
+                timerRunning = false;
+                notificationCounter = 0;
+
+                // Update break status in database
+                fetch('{{ route('employee.break') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ status: status })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('breakStatus').textContent = 'OFF';
+                    document.getElementById('breakStatus').style.color = 'red';
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+
+        // Check if there's any cached time and restart the timer if necessary
+        window.addEventListener('load', function() {
+            const cachedStartTime = localStorage.getItem('breakStartTime');
+            if (cachedStartTime) {
+                startTime = Number(cachedStartTime);
+                timerRunning = true;
+                notificationCounter = 0;
+                document.getElementById('statusToggle').checked = true;
+                document.getElementById('breakStatus').textContent = 'ON';
+                document.getElementById('breakStatus').style.color = '#52c906';
+
+                if (!timerInterval) {
+                    timerInterval = setInterval(updateTimer, 1000);
+                }
+            }
+        });
+    </script>
+@endif
+
 
 
                 @if (Auth::user()->type != 'super admin')
