@@ -309,6 +309,9 @@ $attendanceRecords = DB::table('attendance_employees')
                     $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
                     $status = 'A'; // Default to Absent
 
+                    $isShortLeave = false;
+                    $isHalfDay = false;
+
                     //  $date = "2024-08-27";
 
                     $holidays = DB::table('holidays')
@@ -335,8 +338,6 @@ $attendanceRecords = DB::table('attendance_employees')
 
                         $leaveType = DB::table('leave_types')->where('id', $leave->leave_type_id)->first();
 
-                        $isShortLeave = false;
-                        $isHalfDay = false;
                        
                         if ($leaveType) {
                             

@@ -309,6 +309,9 @@ $attendanceRecords = DB::table('attendance_employees')
                     $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
                     $status = 'A'; // Default to Absent
 
+                    $isShortLeave = false;
+                    $isHalfDay = false;
+
                     //  $date = "2024-08-27";
 
                     $holidays = DB::table('holidays')
@@ -329,18 +332,17 @@ $attendanceRecords = DB::table('attendance_employees')
                                     })
                                     ->get();
 
-                    $timeSheet = DB::table('time_sheets2')->first();
-                    $permittedLateArrival = $timeSheet ? $timeSheet->permitted_late_arrival : '00:00:00';
-
 
                     if($leaveRecords){
                     foreach ($leaveRecords as $leave) {
 
                         $leaveType = DB::table('leave_types')->where('id', $leave->leave_type_id)->first();
+
                        
                         if ($leaveType) {
                             
                             if ($leaveType->title === 'Short Leave') {
+                                $isShortLeave = true;
 
                                 $late = $attendanceByDate->get($date)->late ?? '00:00';
                                 $lateObj = new DateTime($late);
@@ -352,10 +354,29 @@ $attendanceRecords = DB::table('attendance_employees')
                                 if($arrivalTime > $lateAllow){
                                     $status = 'PSL-LT';
                                 }else{
-                                    $status = 'PSL';
+
+                                    $end_time1_sl = $attendanceByDate->get($date)->clock_out ?? '00:00';
+                                    $goingTime_sl = new DateTime($end_time1_sl);
+                                    $shiftEndTime_sl = new DateTime($shift_end_time);
+
+                                    // shift end se 1 hour pehle
+                                    $oneHourBefore_sl = clone $shiftEndTime_sl;
+                                    $oneHourBefore_sl->modify('-1 hour');
+
+                                    if ($goingTime_sl < $oneHourBefore_sl) {
+                                        $status = 'PSL-5';
+                                    } 
+                                    elseif ($goingTime_sl >= $oneHourBefore_sl && $goingTime_sl < $shiftEndTime_sl) {
+                                        $status = 'PSL-6';
+                                    } 
+                                    else {
+                                        $status = 'PSL';
+                                    }
+                                    
                                 }
 
                             } elseif ($leaveType->title === 'Half Day') {
+                                $isHalfDay = true;
                                 
                                 if ($leave->start_date == $date || $leave->end_date == $date) {
 
@@ -383,6 +404,8 @@ $attendanceRecords = DB::table('attendance_employees')
                 }
              
 
+                    $timeSheet = DB::table('time_sheets2')->first();
+                    $permittedLateArrival = $timeSheet ? $timeSheet->permitted_late_arrival : '00:00:00';
                     
                     if ($attendanceByDate->has($date)) {
                         if( $status=="P/2" || $status=="PSL"){
@@ -407,7 +430,7 @@ $attendanceRecords = DB::table('attendance_employees')
                             if ($arrivalTime > $lateAllow) {
                                 $status = "P-L";
                             } 
-                            elseif ($goingTime1 > $goingTimeDefine1 && $goingTime1 < $shiftEndTime1){
+                            elseif ($goingTime1 > $goingTimeDefine1 && $goingTime1 < $shiftEndTime1 && !$isShortLeave && !$isHalfDay ){
                                 $status = 'P-EG';
                             }
                             else{
@@ -423,6 +446,8 @@ $attendanceRecords = DB::table('attendance_employees')
                     "A" => "red",
                     "HL" => "brown",
                     "PSL-LT" => "#0af253",
+                    "PSL-6" => "#f20a7a",
+                    "PSL-5" => "#f20a7a",
                     "PSL" => "#f20a7a",
                     "P/2-LT" => "#f2860a",
                     "P/2" => "#f5672a",
