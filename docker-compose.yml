@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  # Laravel Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hrm_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./storage/app/public:/var/www/public/storage
+    ports:
+      - "8000:80"
+    networks:
+      - hrm_network
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=hrm
+      - DB_USERNAME=root
+      - DB_PASSWORD=rootpassword
+      - REDIS_HOST=redis
+      - MAIL_HOST=mailhog
+      - MAIL_PORT=1025
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: hrm_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: hrm
+      MYSQL_USER: hrm_user
+      MYSQL_PASSWORD: hrm_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./hrm_backup_20260406_132748.sql:/docker-entrypoint-initdb.d/backup.sql
+    ports:
+      - "3309:3306"
+    networks:
+      - hrm_network
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    container_name: hrm_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - hrm_network
+    volumes:
+      - redis_data:/data
+
+  # MailHog for email testing
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: hrm_mailhog
+    restart: unless-stopped
+    ports:
+      - "8025:8025"  # Web UI
+      - "1025:1025"  # SMTP
+    networks:
+      - hrm_network
+
+  # Node.js for asset compilation
+  node:
+    image: node:18-alpine
+    container_name: hrm_node
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    command: >
+      sh -c "npm install &&
+             npm run watch"
+    networks:
+      - hrm_network
+
+  # phpMyAdmin (optional - for database management)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: hrm_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
+    ports:
+      - "8080:80"
+    networks:
+      - hrm_network
+    depends_on:
+      - mysql
+
+networks:
+  hrm_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
